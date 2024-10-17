@@ -4,6 +4,10 @@ This repository contains the training code for Yuji's part. To reproduce the 2nd
 (Yuji's prediction * 2 + Ian's prediction * 2 + Bartley's prediction) / 5
 ```
 
+solution: https://www.kaggle.com/competitions/rsna-2024-lumbar-spine-degenerative-classification/discussion/539452  
+Ian's train code: https://github.com/i-pan/rsna-lspine  
+Bartley's train code: https://github.com/brendanartley/RSNA-2024-Competition  
+
 # 1, data download
 ```
 download_competition_data.sh
@@ -64,4 +68,5 @@ Note that the label noise data is also used for Ian's training.
 
 # 11, inference in kaggle notebook
 The trained model needs to be uploaded to kaggle.
-Also, it is necessary to correctly set the model weights by referencing the config name. In the notebook, pre-calculated model weights are used.
+Also, it is necessary to correctly set the model weights by referencing the config name. In the notebook, pre-calculated model weights are used.  
+https://www.kaggle.com/code/yujiariyasu/rsna-lumbar-spine-2nd-place-solution
