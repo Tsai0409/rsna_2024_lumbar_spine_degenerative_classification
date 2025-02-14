@@ -1,3 +1,4 @@
+# train_one_fold.py
 import os
 import shutil
 from multiprocessing import cpu_count
@@ -16,9 +17,15 @@ import warnings
 warnings.simplefilter('ignore')
 
 import argparse
+import ssl
+
+# 禁用 SSL 驗證
+ssl._create_default_https_context = ssl._create_unverified_context
+
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")
+    parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")  # 呼叫 configs.py
+    # 如何知道是要選擇 class rsna_sagittal_level_cl_spinal_v1 及 class rsna_sagittal_level_cl_nfn_v1 -> 在 inf_sagittal_slice_1st.sh 有寫出
     parser.add_argument("--type", '-t', type=str, default='classification')
     parser.add_argument("--gpu", '-g', type=str, default='nochange')
     parser.add_argument("--debug", action='store_true', help="debug")
@@ -28,6 +35,7 @@ def parse_args():
 if __name__ == "__main__":
     start = time.time()
     args = parse_args()
+    print(f"Starting training for config: {args.config}, fold: {args.fold}")  # 我加
     if args.type == 'classification':
         from src.configs import *
     elif args.type == 'seg':
@@ -118,7 +126,8 @@ if __name__ == "__main__":
         cfg.transform = cfg.transform(cfg.image_size)
 
     seed_everything(cfg.seed)
-    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
+#    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
+    OUTPUT_PATH = f'/kaggle/working/ckpt/{args.config}'
     cfg.output_path = OUTPUT_PATH
     os.system(f'mkdir -p {cfg.output_path}/val_preds/fold{args.fold}')
     logger = CSVLogger(save_dir=OUTPUT_PATH, name=f"fold_{args.fold}")
@@ -165,7 +174,9 @@ if __name__ == "__main__":
 
     print('start training.')
     trainer.fit(model, datamodule=datamodule)
-    os.system(f'ls {OUTPUT_PATH}/')
+    print(f"Training completed for fold {args.fold} in {time.time() - start_time:.2f} seconds.")  # 我加
+#    os.system(f'ls {OUTPUT_PATH}/')
+    os.system('ls -R /kaggle/working/ckpt/')  # 遞歸列出所有目錄
     torch.save(model.model.state_dict(), f'{OUTPUT_PATH}/last_fold{args.fold}.ckpt')
     best_model_path = checkpoint_callback.best_model_path
     best_model = model.load_from_checkpoint(cfg=cfg, checkpoint_path=best_model_path)
