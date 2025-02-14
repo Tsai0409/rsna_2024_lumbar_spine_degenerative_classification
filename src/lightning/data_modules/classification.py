@@ -49,6 +49,7 @@ class ClassificationDataset(Dataset):
     def __init__(self, df, transforms, cfg, phase, current_epoch=None):
         self.transforms = transforms
         self.paths = df.path.values
+#        self.paths = df.origin_path.values
         self.cfg = cfg
         self.phase = phase
         self.current_epoch = current_epoch
@@ -62,8 +63,7 @@ class ClassificationDataset(Dataset):
 
     def __getitem__(self, idx):
         path = self.paths[idx]
-        image = cv2.imread(path)[:,:,::-1]
-
+        image = cv2.imread(path)[:,:,::-1]  # [:,:,::-1] 對圖片進行反轉
 
         if self.cfg.box_crop:
             box = self.boxes[idx]
@@ -90,6 +90,7 @@ class ClassificationDataset(Dataset):
         return image, torch.FloatTensor(label)
 
 import math
+
 def crop_between_keypoints(img, keypoint1, keypoint2, ratio=0.1):
     h, w = img.shape[:2]
     x1, y1 = int(keypoint1[0]), int(keypoint1[1])

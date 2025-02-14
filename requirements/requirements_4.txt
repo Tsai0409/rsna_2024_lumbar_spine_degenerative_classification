@@ -1,0 +1,23 @@
+--extra-index-url https://pypi.nvidia.com
+cubinlinker-cu11==0.3.0.post1
+cucim-cu11==23.12.1
+cuda-python==11.8.3
+cudf-cu11==23.12.1
+cugraph-cu11==23.12.0
+cuml-cu11==23.12.0
+cuproj-cu11==23.12.1
+cupy-cuda11x==12.3.0
+cuspatial-cu11==23.12.1
+cuxfilter-cu11==23.12.0
+dask-cuda==23.12.0
+dask-cudf-cu11==23.12.0
+fastrlock==0.8.2
+nvtx==0.2.8
+pylibcugraph-cu11==23.12.0
+pylibraft-cu11==23.12.0
+pynvml==11.4.1
+ptxcompiler-cu11==0.7.0.post1
+raft-dask-cu11==23.12.0
+rapids-dask-dependency==23.12.1
+rmm-cu11==23.12.0
+ucx-py-cu11==0.35.0

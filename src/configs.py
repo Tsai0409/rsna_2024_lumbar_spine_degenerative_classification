@@ -1,3 +1,4 @@
+#configs.py
 from pathlib import Path
 from pprint import pprint
 import timm
@@ -44,7 +45,8 @@ import numpy as np
 from scipy.special import softmax
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
-
+    
+WORKING_DIR="/kaggle/working/duplicate"
 ################
 
 class Baseline:
@@ -136,9 +138,12 @@ class rsna_v1(Baseline):
         self.p_rand_order_v1 = 0
 
 class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
-    def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
-        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
+        self.fold = fold  # 如果你要在這裡使用 fold，就給它存起來
+#        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
+        self.train_df_path = f'{WORKING_DIR}/2nd_csv_train/5.sagittal_slice_estimation/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
+        print("I'm reading from path:", self.train_df_path)
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
         self.num_classes = len(self.label_features)
@@ -156,13 +161,17 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
         self.rsna_2024_agg_val = False
         self.epochs = 15
         self.box_crop = None
-        self.test_df = pd.read_csv('input/sagittal_df.csv')
+#        self.test_df = pd.read_csv('input/sagittal_df.csv')
+        self.test_df = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/3.dcm_to_png/sagittal_df.csv')
         self.predict_test = True
 
 class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
-    def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
-        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
+        self.fold = fold  # 如果你要在這裡使用 fold，就給它存起來
+#        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
+        self.train_df_path = f'{WORKING_DIR}/2nd_csv_train/5.sagittal_slice_estimation/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
+        print("I'm reading from path:", self.train_df_path)
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']
         self.num_classes = len(self.label_features)
@@ -180,13 +189,15 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
         self.rsna_2024_agg_val = False
         self.epochs = 15
         self.box_crop = None
-        self.test_df = pd.read_csv('input/sagittal_df.csv')
+#        self.test_df = pd.read_csv('input/sagittal_df.csv')
+        self.test_df = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/3.dcm_to_png/sagittal_df.csv')
         self.predict_test = True
 
 class rsna_sagittal_cl(rsna_v1):
     def __init__(self, fold):
         super().__init__()
-        self.train_df_path = f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
+#        self.train_df_path = f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
+        self.train_df_path = f'{WORKING_DIR}/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal', 'l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']
         self.label_features = ['pred_'+c for c in self.label_features]
@@ -210,7 +221,8 @@ class rsna_sagittal_cl(rsna_v1):
 class rsna_axial_spinal_crop_base(rsna_v1):
     def __init__(self):
         super().__init__()
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
 
         cols = []
@@ -256,6 +268,7 @@ class rsna_axial_spinal_dis3_crop_x1_y2(rsna_axial_spinal_crop_base):
         super().__init__()
         self.box_crop_x_ratio = 1
         self.box_crop_y_ratio = 2
+        
 class rsna_axial_spinal_dis3_crop_x05_y6_reduce_noise(rsna_axial_spinal_dis3_crop_x05_y6):
     def __init__(self):
         super().__init__()
@@ -330,7 +343,8 @@ class rsna_axial_ss_nfn_x2_y2_center_pad0(rsna_axial_ss_nfn_crop_base):
         self.box_crop_y_ratio = 2
         center_pad_ratio = 0
 
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['x_min'] = (self.train_df.x_max + self.train_df.x_min)/2
         del self.train_df['x_max']
@@ -376,7 +390,8 @@ class rsna_axial_ss_nfn_x2_y6_center_pad0(rsna_axial_ss_nfn_crop_base):
         self.box_crop_y_ratio = 6
         center_pad_ratio = 0
 
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['x_min'] = (self.train_df.x_max + self.train_df.x_min)/2
         del self.train_df['x_max']
@@ -422,7 +437,8 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10(rsna_axial_ss_nfn_crop_base):
         self.box_crop_y_ratio = 8
         center_pad_ratio = 10
 
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['x_min'] = (self.train_df.x_max + self.train_df.x_min)/2
         del self.train_df['x_max']
@@ -469,7 +485,8 @@ class rsna_axial_ss_nfn_x2_y2_center_pad0_reduce_noise(rsna_axial_ss_nfn_crop_ba
         self.box_crop_y_ratio = 2
         center_pad_ratio = 0
 
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
 
         self.train_df['level'] = self.train_df.pred_level.map({
@@ -540,7 +557,8 @@ class rsna_axial_ss_nfn_x2_y6_center_pad0_reduce_noise(rsna_axial_ss_nfn_crop_ba
         self.box_crop_y_ratio = 6
         center_pad_ratio = 0
 
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['level'] = self.train_df.pred_level.map({
             1: 'l1_l2',
@@ -608,7 +626,8 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10_reduce_noise(rsna_axial_ss_nfn_crop_b
         self.box_crop_y_ratio = 8
         center_pad_ratio = 10
 
-        self.train_df_path = 'input/axial_classification.csv'
+#        self.train_df_path = 'input/axial_classification.csv'
+        self.train_df_path = '/kaggle/working/rsna_2024_lumbar_spine_degenerative_classification-main/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['level'] = self.train_df.pred_level.map({
             1: 'l1_l2',

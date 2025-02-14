@@ -1,3 +1,4 @@
+# predict.py
 import torch
 import random
 import os
@@ -81,7 +82,8 @@ if __name__ == "__main__":
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{cfg.force_use_model_path_config_when_inf}'
     else:
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'
-    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
+#    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
+    OUTPUT_PATH = f'{args.config}'
     os.system(f'mkdir -p {OUTPUT_PATH}')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

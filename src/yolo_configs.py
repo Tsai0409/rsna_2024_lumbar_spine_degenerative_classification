@@ -1,3 +1,4 @@
+# yolo_configs.py
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,6 +6,9 @@ import pandas as pd
 import os
 from pdb import set_trace as st
 import copy
+
+# 設定環境變數
+WORKING_DIR="/kaggle/working/duplicate"
 
 class Baseline:
     def __init__(self):
@@ -80,11 +84,14 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         val = self.train_df[self.train_df.fold==0]
         self.train_df['fold'] = -1
         self.train_df = pd.concat([self.train_df, val])
-        self.test_df_path = 'input/train_with_fold.csv'
+        
+#        self.test_df_path = 'input/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/train_with_fold.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
-        ldf = pd.read_csv('input/axial_closest_df.csv')
+#        ldf = pd.read_csv('input/axial_closest_df.csv')
+        ldf = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/2.axial_level_estimation/axial_closest_df.csv')
         ldf = ldf[ldf.closest==1]
         ldf = ldf[ldf.dis<3]
         ldf['pred_level'] = ldf.level.values
@@ -111,11 +118,14 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         val = self.train_df[self.train_df.fold==0]
         self.train_df['fold'] = -1
         self.train_df = pd.concat([self.train_df, val])
-        self.test_df_path = 'input/train_with_fold.csv'
+        
+#        self.test_df_path = 'input/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/train_with_fold.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
-        ldf = pd.read_csv('input/axial_closest_df.csv')
+#        ldf = pd.read_csv('input/axial_closest_df.csv')
+        ldf = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/2.axial_level_estimation/axial_closest_df.csv')
         ldf = ldf[ldf.closest==1]
         ldf = ldf[ldf.dis<3]
         ldf['pred_level'] = ldf.level.values
@@ -133,7 +143,8 @@ class rsna_10classes_yolox_x(Baseline):
         self.batch_size = 8
         self.predict_valid = True
         self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
-        self.test_df_path = 'input/train_with_fold.csv'
+#        self.test_df_path = 'input/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/train_with_fold.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.test_df = pd.read_csv(self.test_df_path)
         oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
