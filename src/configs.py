@@ -142,7 +142,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
         super().__init__()
         self.fold = fold  # 如果你要在這裡使用 fold，就給它存起來
 #        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
-        self.train_df_path = f'{WORKING_DIR}/2nd_csv_train/5.sagittal_slice_estimation/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_5/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
         print("I'm reading from path:", self.train_df_path)
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
@@ -162,7 +162,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
         self.epochs = 15
         self.box_crop = None
 #        self.test_df = pd.read_csv('input/sagittal_df.csv')
-        self.test_df = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/3.dcm_to_png/sagittal_df.csv')
+        self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
         self.predict_test = True
 
 class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
@@ -170,7 +170,7 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
         super().__init__()
         self.fold = fold  # 如果你要在這裡使用 fold，就給它存起來
 #        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
-        self.train_df_path = f'{WORKING_DIR}/2nd_csv_train/5.sagittal_slice_estimation/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_5/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
         print("I'm reading from path:", self.train_df_path)
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']
@@ -190,7 +190,7 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
         self.epochs = 15
         self.box_crop = None
 #        self.test_df = pd.read_csv('input/sagittal_df.csv')
-        self.test_df = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/3.dcm_to_png/sagittal_df.csv')
+        self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
         self.predict_test = True
 
 class rsna_sagittal_cl(rsna_v1):

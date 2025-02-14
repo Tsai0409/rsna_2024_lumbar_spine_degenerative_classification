@@ -91,7 +91,7 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.test_df = self.test_df[self.test_df.series_description=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 #        ldf = pd.read_csv('input/axial_closest_df.csv')
-        ldf = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/2.axial_level_estimation/axial_closest_df.csv')
+        ldf = pd.read_csv(f'{WORKING_DIR}/csv_train/axial_level_estimation_2/axial_closest_df.csv')
         ldf = ldf[ldf.closest==1]
         ldf = ldf[ldf.dis<3]
         ldf['pred_level'] = ldf.level.values
@@ -125,7 +125,7 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         self.test_df = self.test_df[self.test_df.series_description=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 #        ldf = pd.read_csv('input/axial_closest_df.csv')
-        ldf = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/2.axial_level_estimation/axial_closest_df.csv')
+        ldf = pd.read_csv(f'{WORKING_DIR}/csv_train/axial_level_estimation_2/axial_closest_df.csv')
         ldf = ldf[ldf.closest==1]
         ldf = ldf[ldf.dis<3]
         ldf['pred_level'] = ldf.level.values
