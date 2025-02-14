@@ -165,7 +165,7 @@ if __name__ == "__main__":
         enable_progress_bar=False,
         resume_from_checkpoint=f'{OUTPUT_PATH}/fold_{args.fold}.ckpt' if cfg.resume else None,
         accelerator='gpu' if torch.cuda.is_available() else 'cpu',
-        strategy=strategy,
+        # strategy=strategy,
         devices=devices if torch.cuda.is_available() else None,
         reload_dataloaders_every_n_epochs=getattr(cfg, 'reload_dataloaders_every_n_epochs', 0),
         fast_dev_run=args.debug,
