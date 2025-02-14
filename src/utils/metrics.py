@@ -88,7 +88,9 @@ class MetricTemplate:
         if str(type(target))=="<class 'torch.Tensor'>":
             target = target.detach().cpu().numpy()
         if str(type(approx))=="<class 'torch.Tensor'>":
-            approx = approx.detach().cpu().numpy()
+            #approx = approx.detach().cpu().numpy()
+            approx = approx.detach().to(torch.float32).cpu().numpy()
+
         return self._test(target, approx)
 
 class SeUnderSp(MetricTemplate):
