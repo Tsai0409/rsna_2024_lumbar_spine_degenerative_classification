@@ -36,7 +36,7 @@ if __name__ == "__main__":
     start = time.time()
     args = parse_args()
     print(f"Starting training for config: {args.config}, fold: {args.fold}")  # 我加
-    if args.type == 'classification':
+    if args.type == 'classification':  # args.type 如果沒有定義 default='classification'
         from src.configs import *
     elif args.type == 'seg':
         from src.seg_configs import *
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     RESULTS_PATH_BASE = f'results'
 
-    if args.type == 'classification':
+    if args.type == 'classification':  # default='classification'
         from src.lightning.lightning_modules.classification import MyLightningModule
         from src.lightning.data_modules.classification import MyDataModule
     elif args.type == 'seg':
@@ -148,6 +148,7 @@ if __name__ == "__main__":
 
     # https://pytorch-lightning.readthedocs.io/en/latest/common/trainer.html
     trainer = Trainer(
+        strategy=DDPStrategy(find_unused_parameters=False),  # 我加
         max_epochs=cfg.epochs,
         gpus=n_gpu,
         accumulate_grad_batches=cfg.grad_accumulations,
