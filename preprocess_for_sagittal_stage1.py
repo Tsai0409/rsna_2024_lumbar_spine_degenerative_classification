@@ -35,7 +35,7 @@ cood.loc[(cood.level=='L4/L5') & (cood.condition == 'Right Neural Foraminal Narr
 cood.loc[(cood.level=='L5/S1') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l5_right_neural'
 #train = pd.read_csv('input/train_with_fold.csv')
 #train = pd.read_csv('train_with_fold.csv')
-train = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/4.preprocess/train_with_fold.csv')
+train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 df = train[train.series_description_x!='Axial T2']
 df[['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']] = 0
@@ -78,7 +78,7 @@ cood.loc[(cood.level=='L4/L5') & (cood.condition == 'Right Neural Foraminal Narr
 cood.loc[(cood.level=='L5/S1') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l5_right_neural'
 #train = pd.read_csv('input/train_with_fold.csv')
 #train = pd.read_csv('train_with_fold.csv')
-train = pd.read_csv(f'{WORKING_DIR}/2nd_csv_train/4.preprocess/train_with_fold.csv')
+train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 df = train[train.series_description_x!='Axial T2']
 df[['l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']] = 0
