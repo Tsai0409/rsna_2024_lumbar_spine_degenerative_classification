@@ -7,7 +7,6 @@ __pycache__/
 *.ckpt
 *.pt
 *.pth
-*.csv
 *.log
 *.zip
 *.gz
