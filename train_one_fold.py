@@ -175,10 +175,11 @@ if __name__ == "__main__":
 
     print('start training.')
     trainer.fit(model, datamodule=datamodule)
-    print(f"Training completed for fold {args.fold} in {time.time() - start_time:.2f} seconds.")  # 我加
+    # print(f"Training completed for fold {args.fold} in {time.time() - start_time:.2f} seconds.")  # 我加
 #    os.system(f'ls {OUTPUT_PATH}/')
     os.system('ls -R /kaggle/working/ckpt/')  # 遞歸列出所有目錄
     torch.save(model.model.state_dict(), f'{OUTPUT_PATH}/last_fold{args.fold}.ckpt')
+    print(f"{OUTPUT_PATH}/last_fold{args.fold}.ckpt create completed.")
     best_model_path = checkpoint_callback.best_model_path
     best_model = model.load_from_checkpoint(cfg=cfg, checkpoint_path=best_model_path)
     torch.save(best_model.model.state_dict(), f'{OUTPUT_PATH}/fold_{args.fold}.ckpt')
