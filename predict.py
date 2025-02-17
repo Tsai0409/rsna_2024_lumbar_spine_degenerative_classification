@@ -83,7 +83,7 @@ if __name__ == "__main__":
     else:
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
-    OUTPUT_PATH = f'{args.config}'
+    OUTPUT_PATH = '/kaggle/working/duplicate/{args.config}'  # rsna_sagittal_cl
     os.system(f'mkdir -p {OUTPUT_PATH}')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
