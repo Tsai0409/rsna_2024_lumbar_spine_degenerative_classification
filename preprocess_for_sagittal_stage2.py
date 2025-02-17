@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+
+WORKING_DIR="/kaggle/working/duplicate"  # 我加
+
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
@@ -11,7 +14,8 @@ for fold in range(5):
     ]
     preds = []
     for config in configs:
-        test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
+        # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/{config}/test_fold{fold}.csv')
         preds.append(test[pred_cols].values)
     test[pred_cols] = np.mean(preds, 0)
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)
@@ -25,12 +29,14 @@ for fold in range(5):
 
     preds = []
     for config in configs:
-        test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
+        # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/{config}/test_fold{fold}.csv')
         preds.append(test[pred_cols].values)
     test[pred_cols] = np.mean(preds, 0)
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)
     nfn = test.copy()
     df = spinal.merge(nfn[['path']+pred_cols], on='path')
-    fold_df = pd.read_csv('input/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]
+    # fold_df = pd.read_csv('input/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]
+    fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]
     df.merge(fold_df, on='study_id').to_csv(f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
     
