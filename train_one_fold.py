@@ -37,7 +37,7 @@ if __name__ == "__main__":
     args = parse_args()
     print(f"Starting training for config: {args.config}, fold: {args.fold}")  # 我加
     if args.type == 'classification':  # args.type 如果沒有定義 default='classification'
-        from src.configs import *
+        from src.configs import *  #  cfg 參數的初始定義是從 configs.py 的 class Baseline 來的
     elif args.type == 'seg':
         from src.seg_configs import *
     elif args.type == 'effdet':
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         from src.gnn_configs import *
 
     try:
-        cfg = eval(args.config)(args.fold)
+        cfg = eval(args.config)(args.fold)  # 執行一種 config\fold 建立一種形式的 cfg，建立 
     except Exception as e:
         cfg = eval(args.config)()
 
@@ -79,11 +79,11 @@ if __name__ == "__main__":
     if cfg.train_by_all_data & (args.fold != 0):
         exit()
     cfg.fold = args.fold
-    if cfg.seed is None:
+    if cfg.seed is None:  # 通常會設定 固定的 seed 值，確保每次執行程式時，隨機過程的結果是一樣的
         now = datetime.datetime.now()
         cfg.seed = int(now.strftime('%s'))
 
-    RESULTS_PATH_BASE = f'results'
+    # RESULTS_PATH_BASE = f'results'
 
     if args.type == 'classification':  # default='classification'
         from src.lightning.lightning_modules.classification import MyLightningModule
@@ -112,13 +112,13 @@ if __name__ == "__main__":
         cfg.n_cpu = 1
         n_gpu = 1
     else:
-        n_gpu = torch.cuda.device_count()
-        cfg.n_cpu = n_gpu * np.min([cpu_count(), cfg.batch_size])
+        n_gpu = torch.cuda.device_count()  # 獲取可用的 GPU 數量
+        cfg.n_cpu = n_gpu * np.min([cpu_count(), cfg.batch_size])  
 
     n_gpu = 1
 
     if n_gpu == 4:
-        os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"  # 由 NVIDIA CUDA 控制 哪些 GPU 可以被使用
 
     if args.type not in ['nlp', 'mlp_with_nlp', 'mlp', 'gnn']:
         if type(cfg.image_size) == int:
@@ -129,17 +129,22 @@ if __name__ == "__main__":
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
     OUTPUT_PATH = f'/kaggle/working/ckpt/{args.config}'
     cfg.output_path = OUTPUT_PATH
-    os.system(f'mkdir -p {cfg.output_path}/val_preds/fold{args.fold}')
-    logger = CSVLogger(save_dir=OUTPUT_PATH, name=f"fold_{args.fold}")
+    os.system(f'mkdir -p {cfg.output_path}/val_preds/fold{args.fold}')  # mkdir -p 確保建立目錄（如果已存在則不報錯）
+    logger = CSVLogger(save_dir=OUTPUT_PATH, name=f"fold_{args.fold}")  # 建立一個 CSVLogger，用來記錄訓練過程中的數據
+    # For example: /kaggle/working/ckpt/rsna_model/fold_0/version_0/
+    # ├── metrics.csv   # 記錄 loss、accuracy 等數據
+    # ├── hparams.yaml  # 記錄模型超參數
 
     monitor = 'val_metric'
-    checkpoint_callback = ModelCheckpoint(
+    checkpoint_callback = ModelCheckpoint(  # ModelCheckpoint（儲存最佳的模型權重）
         dirpath=OUTPUT_PATH, filename=f"fold_{args.fold}", auto_insert_metric_name=False,
         save_top_k=cfg.save_top_k, monitor=monitor, mode='max', verbose=True, save_last=False)
 
-    early_stop_callback = EarlyStopping(patience=cfg.early_stop_patience,
-        monitor=monitor, mode='max', verbose=True)
-    lr_monitor = LearningRateMonitor(logging_interval='epoch')
+    early_stop_callback = EarlyStopping(  # EarlyStopping（提前停止機制）
+        patience=cfg.early_stop_patience, monitor=monitor, mode='max', verbose=True)
+    
+    lr_monitor = LearningRateMonitor(  # LearningRateMonitor（學習率監控器）
+        logging_interval='epoch')  
 
     if cfg.gpu == 'small':
         strategy = None
@@ -147,7 +152,8 @@ if __name__ == "__main__":
         strategy = 'ddp'
 
     # https://pytorch-lightning.readthedocs.io/en/latest/common/trainer.html
-    trainer = Trainer(
+    trainer = Trainer(  # Trainer 負責管理模型訓練
+        # strategy=strategy,
         strategy=DDPStrategy(find_unused_parameters=False),  # 我加
         max_epochs=cfg.epochs,
         gpus=n_gpu,
@@ -165,7 +171,6 @@ if __name__ == "__main__":
         enable_progress_bar=False,
         resume_from_checkpoint=f'{OUTPUT_PATH}/fold_{args.fold}.ckpt' if cfg.resume else None,
         accelerator='gpu' if torch.cuda.is_available() else 'cpu',
-        # strategy=strategy,
         devices=devices if torch.cuda.is_available() else None,
         reload_dataloaders_every_n_epochs=getattr(cfg, 'reload_dataloaders_every_n_epochs', 0),
         fast_dev_run=args.debug,

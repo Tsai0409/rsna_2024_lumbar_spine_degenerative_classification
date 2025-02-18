@@ -140,7 +140,7 @@ class rsna_v1(Baseline):
 class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 如果你要在這裡使用 fold，就給它存起來
+        self.fold = fold  # 如果你要在這裡使用 fold，我加
 #        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
         self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_5/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
         print("I'm reading from path:", self.train_df_path)
@@ -168,7 +168,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
 class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 如果你要在這裡使用 fold，就給它存起來
+        self.fold = fold  # 我加
 #        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
         self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_5/train_for_sagittal_level_cl_v1_for_train_nfn_only.csv'
         print("I'm reading from path:", self.train_df_path)
@@ -194,8 +194,9 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
         self.predict_test = True
 
 class rsna_sagittal_cl(rsna_v1):
-    def __init__(self, fold):
+    def __init__(self, fold=0):
         super().__init__()
+        self.fold = fold  # 我加
 #        self.train_df_path = f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
         self.train_df_path = f'{WORKING_DIR}/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
         self.train_df = pd.read_csv(self.train_df_path)
