@@ -1,0 +1,364 @@
+const courseData = [
+    {
+        "name":"班週會及導師時間",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":["3","4"],
+            "wed":[],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"",
+        "link":"https://ntut-course.gnehs.net"
+    },
+        
+    {
+        "name":"觀光學概論",
+        "time":
+        {
+            "sun":[],
+            "mon":["5","6"],
+            "tue":[],
+            "wed":[],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"三教401",
+        "link":""
+    },
+    {
+        "name":"電力電子學實習",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":["5","6","7"],
+            "wed":[],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"綜科417",
+        "link":""
+    }, 
+    {
+        "name":"通訊系統",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":["8","9"],
+            "wed":["9"],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"三教401",
+        "link":""
+    }, 
+    {
+        "name":"通訊系統實習",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":[],
+            "wed":["2","3","4"],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"綜科422",
+        "link":""
+    },
+    {
+        "name":"職涯講座課程",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":[],
+            "wed":["7"],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"綜三演講廳",
+        "link":""
+    },
+        
+    {
+        "name":"創業0到2的思維與實作",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":[],
+            "wed":["A","B","C"],
+            "thu":[],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"二教103",
+        "link":""
+    },
+    {
+        "name":"電機機械實習（一）",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":[],
+            "wed":[],
+            "thu":["2","3","4"],
+            "fri":[],
+            "sat":[]
+        },
+        "classroom":"綜科216",
+        "link":""
+    },
+    {
+        "name":"影像處理與實習",
+        "time":
+        {
+            "sun":[],
+            "mon":[],
+            "tue":[],
+            "wed":[],
+            "thu":[],
+            "fri":["2","3","4"],
+            "sat":[]
+        },
+        "classroom":"共同413",
+        "link":""
+    },       
+]
+
+        
+function getUpcomingCourse() {
+    let currentDate = new Date()
+    let timetable = {
+        '1': ' 8:10',
+        '2': ' 9:10',
+        '3': '10:10',
+        '4': '11:10',
+        N: '12:10',
+        '5': '13:10',
+        '6': '14:10',
+        '7': '15:10',
+        '8': '16:10',
+        '9': '17:10',
+        A: '18:30',
+        B: '19:20',
+        C: '20:20',
+        D: '21:10'
+    }
+    let dateEng2zh = { 
+        sun: '週日',
+        mon: '週一',
+        tue: '週二',
+        wed: '週三',
+        thu: '週四',
+        fri: '週五',
+        sat: '週六'
+    }
+    
+    
+    // show upcoming course
+    let upcomingCourseIncludes = Object.entries(timetable).filter(([courseId, courseTime]) => {
+            let tempDate = new Date()
+            tempDate.setHours(courseTime.split(':')[0], courseTime.split(':')[1], 0)
+            return tempDate > currentDate
+        })
+        .map(x => x[0])
+    let todayDayOfWeek = Object.keys(dateEng2zh)[currentDate.getDay()]
+    return courseData
+        .filter(x => x.time[todayDayOfWeek].some(r => upcomingCourseIncludes.includes(r))).map(x => ({
+            ...x,
+            start: timetable[x.time[todayDayOfWeek][0]],
+            length: x.time[todayDayOfWeek].length,
+        }))
+        .sort((a, b) => a.time[todayDayOfWeek][0] - b.time[todayDayOfWeek][0])
+}
+function createWidget() {
+    let gradient = new LinearGradient()
+    gradient.locations = [0, 1]
+    gradient.colors = [
+        new Color("292929"),
+        new Color("141414")
+    ]
+
+    let widget = new ListWidget()
+    widget.backgroundGradient = gradient
+
+    let titleTxt = widget.addText('Tsai Next Class')
+    titleTxt.textColor = Color.white()
+    titleTxt.textOpacity = 0.5
+    titleTxt.font = Font.mediumSystemFont(13)
+
+    widget.addSpacer(7)
+    let upcomingCourse = getUpcomingCourse()
+    if (upcomingCourse.length) {
+        let course = upcomingCourse[0]
+        let courseTxt = widget.addText(course.name)
+        courseTxt.textColor = Color.orange()
+        courseTxt.font = Font.boldSystemFont(16)
+
+        widget.addSpacer(2)
+        if (course.classroom != '') {
+            let classTxt = widget.addText(`地點: ${course.classroom}`)
+            classTxt.textColor = Color.orange()
+            classTxt.font = Font.systemFont(13)
+        }
+        let summaryTxt = widget.addText(`${course.start} 開始上課  共 ${course.length} 節課`)
+        summaryTxt.textColor = Color.orange()
+        summaryTxt.font = Font.systemFont(13)
+        
+        
+        if (upcomingCourse[1]){
+            widget.addSpacer(5)
+            let course1 = upcomingCourse[1]
+            let course1Txt = widget.addText(course1.name)
+            course1Txt.textColor = Color.white()
+            course1Txt.font = Font.boldSystemFont(16)
+    
+            widget.addSpacer(2)
+            if (course1.classroom != '') {
+                let class1Txt = widget.addText(`地點: ${course1.classroom}`)
+                class1Txt.textColor = Color.white()
+                class1Txt.font = Font.systemFont(13)
+            }
+            let summary1Txt = widget.addText(`${course1.start} 開始上課  共 ${course1.length} 節課`)
+            summary1Txt.textColor = Color.white()
+            summary1Txt.font = Font.systemFont(13)
+        }
+        
+        if (upcomingCourse[2]){
+            widget.addSpacer(5)
+            let course2 = upcomingCourse[2]
+            let course2Txt = widget.addText(course2.name)
+            course2Txt.textColor = Color.white()
+            course2Txt.font = Font.boldSystemFont(16)
+    
+            widget.addSpacer(2)
+            if (course2.classroom != '') {
+                let class2Txt = widget.addText(`地點: ${course2.classroom}`)
+                class2Txt.textColor = Color.white()
+                class2Txt.font = Font.systemFont(13)
+            }
+            let summary2Txt = widget.addText(`${course2.start} 開始上課  共 ${course2.length} 節課`)
+            summary2Txt.textColor = Color.white()
+            summary2Txt.font = Font.systemFont(13)
+        }
+        
+        if (upcomingCourse[3]){
+            widget.addSpacer(5)
+            let course3 = upcomingCourse[3]
+            let course3Txt = widget.addText(course3.name)
+            course3Txt.textColor = Color.white()
+            course3Txt.font = Font.boldSystemFont(16)
+    
+            widget.addSpacer(2)
+            if (course3.classroom != '') {
+                let class3Txt = widget.addText(`地點: ${course3.classroom}`)
+                class3Txt.textColor = Color.white()
+                class3Txt.font = Font.systemFont(13)
+            }
+            let summary3Txt = widget.addText(`${course3.start} 開始上課  共 ${course3.length} 節課`)
+            summary3Txt.textColor = Color.white()
+            summary3Txt.font = Font.systemFont(13)
+        }
+        
+        if (upcomingCourse[4]){
+            widget.addSpacer(5)
+            let course4 = upcomingCourse[4]
+            let course4Txt = widget.addText(course4.name)
+            course4Txt.textColor = Color.white()
+            course4Txt.font = Font.boldSystemFont(16)
+    
+            widget.addSpacer(2)
+            if (course4.classroom != '') {
+                let class4Txt = widget.addText(`地點: ${course4.classroom}`)
+                class4Txt.textColor = Color.white()
+                class4Txt.font = Font.systemFont(13)
+            }
+            let summary4Txt = widget.addText(`${course4.start} 開始上課  共 ${course4.length} 節課`)
+            summary4Txt.textColor = Color.white()
+            summary4Txt.font = Font.systemFont(13)
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        widget.addSpacer()
+        // Add button to open course detail
+        let linkSymbol = SFSymbol.named("arrow.up.forward.square")
+        let footerStack = widget.addStack()
+        let linkStack = footerStack.addStack()
+        linkStack.centerAlignContent()
+        linkStack.url = course.link
+        let linkElement = linkStack.addText("詳細資料")
+        linkElement.font = Font.mediumSystemFont(13)
+        linkElement.textColor = Color.blue()
+        linkStack.addSpacer(3)
+        let linkSymbolElement = linkStack.addImage(linkSymbol.image)
+        linkSymbolElement.imageSize = new Size(13, 13)
+        linkSymbolElement.tintColor = Color.blue()
+        footerStack.addSpacer()
+        // Add link to open course detail
+
+        // 置右文字
+        let rightAlignedText = footerStack.addText("NTUT EE 113-1")
+        rightAlignedText.font = Font.mediumSystemFont(13)
+        rightAlignedText.textColor = Color.blue()
+        rightAlignedText.rightAlignText()
+        
+
+        let iconElement = footerStack.addText("")
+        iconElement.textOpacity = 0.5
+        iconElement.font = Font.mediumSystemFont(13)
+        iconElement.url = 'http://ntut-course.gnehs.net/'
+        
+    } else 
+    {
+        let courseTxt = widget.addText('沒有課程')
+        courseTxt.textColor = Color.white()
+        courseTxt.font = Font.boldSystemFont(18)
+        if (config.runsWithSiri) {
+            Speech.speak(` 好棒，你今天沒課了`)
+        }
+    }
+    // add footer
+    if (config.runsWithSiri || !upcomingCourse.length) {
+        widget.addSpacer()
+        let footerStack = widget.addStack()
+        let providerText = footerStack.addText("課程小幫手")
+        providerText.textColor = Color.white()
+        providerText.textOpacity = 0.7
+        providerText.font = Font.mediumSystemFont(13)
+        footerStack.url = 'http://ntut-course.gnehs.net/'
+    }
+
+    return widget
+}
+
+
+
+let widget = createWidget()
+if (config.runsInWidget) {
+    Script.setWidget(widget)
+} else {
+//     widget.presentMedium()
+    widget.presentLarge()
+    
+}
+Script.complete()
