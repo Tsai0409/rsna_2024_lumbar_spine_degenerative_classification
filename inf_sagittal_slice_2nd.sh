@@ -1,4 +1,4 @@
-# inf_sagittal_slice_1st.sh
+# inf_sagittal_slice_2nd.sh
 #!/bin/bash
 set +e  # 確保遇到錯誤時，讓腳本繼續執行
 

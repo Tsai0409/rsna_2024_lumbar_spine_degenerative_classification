@@ -4,7 +4,6 @@ nohup.out
 gspread.json
 .ipynb_checkpoints/
 __pycache__/
-*.ckpt
 *.pt
 *.pth
 *.log
@@ -14,6 +13,7 @@ __pycache__/
 *.jpeg
 *.png
 *.bin
+*.ckpt
 checkpoints/
 results/
 legacy/

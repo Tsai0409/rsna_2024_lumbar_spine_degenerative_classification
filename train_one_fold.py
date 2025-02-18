@@ -129,7 +129,8 @@ if __name__ == "__main__":
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
     OUTPUT_PATH = f'/kaggle/working/ckpt/{args.config}'
     cfg.output_path = OUTPUT_PATH
-    os.system(f'mkdir -p {cfg.output_path}/val_preds/fold{args.fold}')  # mkdir -p 確保建立目錄（如果已存在則不報錯）
+    # os.system(f'mkdir -p {cfg.output_path}/val_preds/fold{args.fold}')
+    os.system(f'mkdir -p {cfg.output_path}/fold{args.fold}')  # mkdir -p 確保建立目錄（如果已存在則不報錯）
     logger = CSVLogger(save_dir=OUTPUT_PATH, name=f"fold_{args.fold}")  # 建立一個 CSVLogger，用來記錄訓練過程中的數據
     # For example: /kaggle/working/ckpt/rsna_model/fold_0/version_0/
     # ├── metrics.csv   # 記錄 loss、accuracy 等數據
@@ -180,14 +181,14 @@ if __name__ == "__main__":
 
     print('start training.')
     trainer.fit(model, datamodule=datamodule)
-    # print(f"Training completed for fold {args.fold} in {time.time() - start_time:.2f} seconds.")  # 我加
     # os.system(f'ls {OUTPUT_PATH}/')
     os.system('ls -R /kaggle/working/ckpt/')  # 遞歸列出所有目錄
     torch.save(model.model.state_dict(), f'{OUTPUT_PATH}/last_fold{args.fold}.ckpt')
-    print(f"{OUTPUT_PATH}/last_fold{args.fold}.ckpt create completed.")
+    print(f"{OUTPUT_PATH}/last_fold{args.fold}.ckpt create completed.")  # 我加
     best_model_path = checkpoint_callback.best_model_path
     best_model = model.load_from_checkpoint(cfg=cfg, checkpoint_path=best_model_path)
     torch.save(best_model.model.state_dict(), f'{OUTPUT_PATH}/fold_{args.fold}.ckpt')
-    if args.fold == 3:
+    # if args.fold == 3:
+    if args.fold == 1: # 現在只要執行 fold 0.1
         cfg.train_df.to_csv(f'{OUTPUT_PATH}/train.csv', index=False)
     os.system(f'rm {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')
