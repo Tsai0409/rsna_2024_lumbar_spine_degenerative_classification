@@ -1,3 +1,10 @@
+# import ssl
+# import urllib3
+
+# 關閉 SSL 驗證
+# ssl._create_default_https_context = ssl._create_unverified_context  
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # 明天再試 可以不用手動下載權重檔
+
 """
 https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 """
