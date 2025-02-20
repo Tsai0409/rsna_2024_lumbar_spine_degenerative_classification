@@ -1,3 +1,5 @@
+# src/lighting/lightning_modules/classification.py
+# batch 在什麼時候被設定？
 from collections import OrderedDict
 import torch.optim as optim
 
@@ -78,10 +80,10 @@ class AWP:
             if name in self.backup:
                 param.data.copy_(self.backup[name])
 
-
+# mix_images, target_a, target_b, lam = mixup(images, targets, alpha=0.5)
 def mixup(x: torch.Tensor, y: torch.Tensor, alpha: float = 1.0):
     assert alpha > 0, "alpha should be larger than 0"
-    assert x.size(0) > 1, "Mixup cannot be applied to a single instance."
+    assert x.size(0) > 1, "Mixup cannot be applied to a single instance."  # 確保 batch 中至少有兩個樣本(x.size(0) > 1)； x=[batch_size, channels, height, width]
 
     lam = np.random.beta(alpha, alpha)
     rand_index = torch.randperm(x.size()[0])
@@ -100,18 +102,17 @@ def mixup_hms(x: torch.Tensor, y: torch.Tensor, w: torch.Tensor, alpha: float = 
     weight_a, weight_b = w, w[rand_index]
     return mixed_x, target_a, target_b, weight_a, weight_b, lam
 
-
 class MyLightningModule(pl.LightningModule):
     def __init__(self, cfg):
         super(MyLightningModule, self).__init__()
         self.model = cfg.model
         # if cfg.pretrained_path is not None:
         #     self.model.load_state_dict(torch.load(cfg.pretrained_path)['state_dict'])
-        self.cfg = cfg
-        if self.cfg.awp:
+        self.cfg = cfg  
+        if self.cfg.awp:  # AWP(Adversarial Weight Perturbation)（對抗性權重擾動），使模型對微小的權重變動更穩健，通常通過增加一個小的擾動來模擬最壞情況，從而提高模型的泛化能力；AWP 會在計算損失之前對模型的權重施加一個對抗性擾動，使模型在「更困難」的情況下進行訓練，以提高模型的魯棒性
             self.awp = AWP(self.model, None, adv_lr=self.cfg.adv_lr, adv_eps=self.cfg.adv_eps)
 
-        if self.cfg.ema:
+        if self.cfg.ema:  # EMA(Exponential Moving Average)，對模型參數建立一個指數移動平均（EMA）的版本。EMA 常用來平滑模型參數的更新，進而提高模型在驗證或測試階段的表現；EMA 是一種平滑技術，用於跟踪模型參數的移動平均值
             self.model_ema = ModelEmaV2(self.model, decay=0.998)
 
     def forward(self, x):
@@ -121,16 +122,16 @@ class MyLightningModule(pl.LightningModule):
         images, targets = batch
 
         if self.cfg.awp:
-            if self.cfg.adv_start_epoch > int(self.current_epoch):
+            if self.cfg.adv_start_epoch > int(self.current_epoch):  # 當前訓練 epoch 小於指定的起始 epoch（adv_start_epoch）時，調用 self.awp.perturb() 對模型權重施加對抗性擾動
                 # if self.cfg.adv_attack_ratio < random.uniform(0.0, 1.0):
                 #     delta = attack(self.model, images, targets, epsilon=self.cfg.adv_attack_eps)
                 #     images = images + delta
 
                 self.awp.perturb()  # Apply AWP perturbation
 
-        if self.cfg.mixup and (torch.rand(1)[0] < 0.5) and (self.cfg.warmup_epochs < self.current_epoch) and (images.size(0) > 1):
-            mix_images, target_a, target_b, lam = mixup(images, targets, alpha=0.5)
-            if self.cfg.arcface:
+        if self.cfg.mixup and (torch.rand(1)[0] < 0.5) and (self.cfg.warmup_epochs < self.current_epoch) and (images.size(0) > 1):  # Mixup 數據增強
+            mix_images, target_a, target_b, lam = mixup(images, targets, alpha=0.5)  # mix_images：混合後的影像、target_a 與 target_b：分別是兩個來源樣本的標籤、lam：混合比例（lam ∈ [0,1]）
+            if self.cfg.arcface:  # 根據配置參數 arcface 的值來決定如何進行前向傳播(即計算 logits)的方式；ArcFace 機制的模型在前向計算時需要同時獲取輸入影像和對應的標籤資訊；ArcFace 是一種常用於面部識別或其它需要更嚴格區分類別的任務的技術
                 logits = self.model(mix_images, targets)
             else:
                 logits = self.forward(mix_images)
@@ -156,7 +157,8 @@ class MyLightningModule(pl.LightningModule):
             #         loss = loss*self.cfg.criterion_for_origin_ratio + loss2*(1-self.cfg.criterion_for_origin_ratio)
             else:
                 loss = self.cfg.criterion(logits, target_a) * lam + (1 - lam) * self.cfg.criterion(logits, target_b)
-        else:
+        
+        else:  # 沒有使用 Mixup 數據增強
             if self.cfg.arcface:
                 logits = self.model(images, targets)
             else:
@@ -181,53 +183,55 @@ class MyLightningModule(pl.LightningModule):
             #         loss = loss*self.cfg.criterion_for_origin_ratio + loss2*(1-self.cfg.criterion_for_origin_ratio)
             # else:
             loss = self.cfg.criterion(logits, targets)
+        
         if self.cfg.awp:
-            self.awp.restore()  # Restore model parameters
+            self.awp.restore()  # Restore model parameters 還原
 
         self.log("train_loss", loss.item(), on_step=False, on_epoch=True)
         return loss
 
-    def on_after_backward(self):
+    def on_after_backward(self):  # on_after_backward 在每次反向傳播（backward pass）之後被調用
         if self.cfg.awp:
-            self.awp.restore()  # Restore model parameters after backward pass
+            self.awp.restore()  # Restore model parameters after backward pass；在反向傳播完成後，需要將這個擾動還原，以便接下來進行的優化步驟（例如參數更新）是基於原始（未擾動）的模型參數
 
-    def on_train_batch_end(self, outputs, batch, batch_idx):
+    def on_train_batch_end(self, outputs, batch, batch_idx):  # on_train_batch_end 在每個訓練批次結束後被調用。這個時候，一個 batch 的前向與反向傳播都已經完成，參數也已更新
         if self.cfg.ema:
             self.model_ema.update(self.model)
 
     def validation_step(self, batch, batch_nb):
         images, targets = batch
-        if self.cfg.ema:
+        if self.cfg.ema:  # 如果在配置 cfg 中啟用了 ema（Exponential Moving Average），則使用 EMA 模型進行前向傳播
             logits = self.model_ema.module(images)
-        else:
+        else:  # 否則使用本身的 forward
             logits = self.forward(images)
 
-        if isinstance(logits, tuple):
-            logits = logits[0]
-        loss = self.cfg.criterion(logits, targets)
+        if isinstance(logits, tuple):  # 某些模型（尤其是多輸出或特別架構）在 forward 時會回傳 (logits, 其他資訊)。
+            logits = logits[0]  # 這裡若檢測到是 tuple，僅取第一個元素作為 logits，避免後續計算出現錯誤
+
+        loss = self.cfg.criterion(logits, targets)  # logits 表示模型對於該類別的信心分數；在深度學習中，logits 通常指的是 模型最後一層尚未經過激活函式（如 sigmoid 或 softmax）處理的原始輸出。也就是說，logits 是一個未經歸一化的分數（通常是實數值，可正可負），代表模型對各類別或輸出維度的「信心值」。
         preds = logits
         # preds = logits.sigmoid()
-        output = OrderedDict({
+        output = OrderedDict( {
             "targets": targets.detach(), "preds": preds.detach(), "loss": loss.detach()
-        })
+        })  # "targets"：存放真實標籤，即 targets.detach() 的結果、"preds"：存放模型的預測值，即 preds.detach() 的結果、"loss"：存放計算出的損失，即 loss.detach() 的結果
         return output
 
     def validation_epoch_end(self, outputs):
-        d = dict()
+        d = dict()  # 建立字典 d：用來儲存本 epoch 的聚合結果
         d["epoch"] = int(self.current_epoch)
         d["v_loss"] = torch.stack([o["loss"] for o in outputs]).mean().item()
 
-        targets = torch.cat([o["targets"] for o in outputs]).cpu()#.numpy()
-        preds = torch.cat([o["preds"] for o in outputs]).cpu()#.numpy()
-        if self.cfg.metric is None:
+        targets = torch.cat([o["targets"] for o in outputs]).cpu()#.numpy()  # 將所有 targets 串接後移到 CPU
+        preds = torch.cat([o["preds"] for o in outputs]).cpu()#.numpy()  # 將所有 preds 串接後移到 CPU
+        
+        if self.cfg.metric is None:  # 若沒有指定 metric，則用負平均損失作為評分。
             score = -d['v_loss']
-        elif len(np.unique(targets)) == 1:
+        elif len(np.unique(targets)) == 1:  # 若數據不具變化（所有標籤相同），則評分設為 0。
             score = 0
-        else:
+        else:  # 否則，利用指定的 metric 函數計算評分。
             # st()
             # score = self.cfg.metric(targets, preds)
             score = self.cfg.metric(targets, preds)
-
 
         d["val_metric"] = score
         if self.cfg.save_every_epoch_val_preds:
@@ -236,6 +240,7 @@ class MyLightningModule(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = get_optimizer(self.cfg)
+        
         if self.cfg.awp:
             self.awp.optimizer = optimizer  # Assign optimizer to AWP
 

@@ -1,3 +1,4 @@
+# src/lighting/data_modules/classification.py
 import numpy as np
 import pandas as pd
 import json
@@ -33,6 +34,7 @@ def sigmoid(x):
 import pdb
 import sys
 # ForkedPdb().set_trace()
+
 class ForkedPdb(pdb.Pdb):
     """A Pdb subclass that may be used
     from a forked multiprocessing child
@@ -49,7 +51,7 @@ class ClassificationDataset(Dataset):
     def __init__(self, df, transforms, cfg, phase, current_epoch=None):
         self.transforms = transforms
         self.paths = df.path.values
-#        self.paths = df.origin_path.values
+        # self.paths = df.origin_path.values
         self.cfg = cfg
         self.phase = phase
         self.current_epoch = current_epoch
@@ -71,13 +73,13 @@ class ClassificationDataset(Dataset):
             y_pad = (box[3] - box[1])//2 * self.cfg.box_crop_y_ratio
             x_min = np.max([box[0]-x_pad, 0])
             y_min = np.max([box[1]-y_pad, 0])
-            if hasattr(self.cfg, 'box_crop_y_upper_ratio'):
+            if hasattr(self.cfg, 'box_crop_y_upper_ratio'):  # 如果 cfg 中定義了 box_crop_y_upper_ratio
                 y_upper_pad = (box[3] - box[1])//2 * self.cfg.box_crop_y_upper_ratio
                 y_min = np.max([box[1]-y_upper_pad, 0])
             x_max = np.min([box[2]+x_pad, image.shape[1]])
             y_max = np.min([box[3]+y_pad, image.shape[0]])
             s = image.shape
-            image = image[int(y_min):int(y_max), int(x_min):int(x_max), :]
+            image = image[int(y_min):int(y_max), int(x_min):int(x_max), :]  # : 表示所有通道 (例如 RGB 的 3 個通道)
 
         if self.transforms:
             image = self.transforms(image=image)['image']
@@ -112,6 +114,7 @@ import random
 import time
 import numpy as np
 from torch.utils.data import Sampler
+
 class InterleavedMaskClassBatchSampler(Sampler):
     def __init__(self, df, cfg):
         self.df = df
@@ -136,7 +139,6 @@ class InterleavedMaskClassBatchSampler(Sampler):
 
 class InterleavedMaskClassBatchSampler(Sampler):
     def __init__(self, df, cfg):
-
         df['tmp_for_batch_sampler'] = list(range(len(df)))
         self.batch_size = cfg.batch_size
         self.df = df
@@ -326,6 +328,7 @@ def my_collate_fn(batch):
     images = torch.stack(images, dim=0)
     labels = torch.stack(labels, dim=0)
     return images, labels
+
 def my_collate_fn(batch):
     images = [item[0] for item in batch]
     images = torch.stack(images, dim=0)
@@ -348,7 +351,6 @@ class MyDataModule(pl.LightningDataModule):
 
     def setup(self, stage):
         pass
-
 
     def train_dataloader(self):
         if self.cfg.train_by_all_data:

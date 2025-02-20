@@ -52,10 +52,9 @@ if __name__ == "__main__":
         from src.gnn_configs import *
 
     try:
-        cfg = eval(args.config)(args.fold)  # 執行一種 config\fold 建立一種形式的 cfg，建立 
+        cfg = eval(args.config)(args.fold)  # 執行一種 config\fold 建立一個 cfg 的形式，引用 configs.py 中的 class rsna_sagittal_level_cl_spinal_v1() 包含 cfg.model 等
     except Exception as e:
         cfg = eval(args.config)()
-
 
     if args.gpu != 'nochange': cfg.gpu = args.gpu
     if cfg.gpu == 'big':
@@ -178,7 +177,12 @@ if __name__ == "__main__":
     )
     model = MyLightningModule(cfg)
     datamodule = MyDataModule(cfg)
-
+    # LightningModule：將模型、前向傳播、訓練步驟、驗證步驟等封裝到一個 LightningModule 中
+    # DataModule：定義了 train_dataloader()、val_dataloader()、test_dataloader() 等方法，這些方法返回相應的 DataLoader
+    # Trainer 是 Lightning 框架提供的訓練控制器，它接收一個 LightningModule 以及一個 DataModule（或直接接收 DataLoader），
+    #   然後自動處理以下部分：訓練循環（迭代 DataLoader、調用 training_step）、驗證循環（調用 validation_step）、測試循環（調用 test_step）、分布式訓練、混合精度訓練、梯度累積、早停、回調函數、日誌記錄等
+    # Trainer 內部是怎麼執行的？
+    
     print('start training.')
     trainer.fit(model, datamodule=datamodule)
     # os.system(f'ls {OUTPUT_PATH}/')

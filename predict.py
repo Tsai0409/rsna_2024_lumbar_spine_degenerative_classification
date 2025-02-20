@@ -78,11 +78,14 @@ if __name__ == "__main__":
         if type(cfg.image_size) == int:
             cfg.image_size = (cfg.image_size, cfg.image_size)
         cfg.transform = cfg.transform(cfg.image_size)
+
     seed_everything()
+
     if getattr(cfg, 'force_use_model_path_config_when_inf', False):
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{cfg.force_use_model_path_config_when_inf}'
     else:
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'
+        
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
     OUTPUT_PATH = '/kaggle/working/ckpt/{args.config}'  # rsna_sagittal_cl
     os.system(f'mkdir -p {OUTPUT_PATH}')
