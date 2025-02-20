@@ -191,4 +191,4 @@ if __name__ == "__main__":
     # if args.fold == 3:
     if args.fold == 1: # 現在只要執行 fold 0.1
         cfg.train_df.to_csv(f'{OUTPUT_PATH}/train.csv', index=False)
-    os.system(f'rm {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')
+    os.system(f'rm -f {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')  #  刪除某些 .ckpt 檔案，讓訓練結果目錄保持整潔

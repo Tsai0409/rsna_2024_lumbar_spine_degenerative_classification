@@ -1093,6 +1093,7 @@ class RsnaGru(nn.Module):
         x = x.reshape(bs, -1) # -> 2, 2560
         x = self.fc(x)
         return x
+    
 class RsnaGruDebug(nn.Module):
     def __init__(
         self,
