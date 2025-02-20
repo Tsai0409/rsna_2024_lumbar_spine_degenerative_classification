@@ -63,7 +63,7 @@ if __name__ == "__main__":
         exit()
 
     # RESULTS_PATH_BASE = f'results'
-    RESULTS_PATH_BASE = '/kaggle/working/ckpt'
+    RESULTS_PATH_BASE = '/kaggle/working/duplicate/ckpt'
 
     from src.utils.predict_funcs import classification_predict as predict
     from src.utils.dataloader_factory import prepare_classification_loader as prepare_loader
@@ -85,9 +85,9 @@ if __name__ == "__main__":
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{cfg.force_use_model_path_config_when_inf}'
     else:
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'
-        
+
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
-    OUTPUT_PATH = '/kaggle/working/ckpt/{args.config}'  # rsna_sagittal_cl
+    OUTPUT_PATH = '/kaggle/working/ckpt/{args.config}'
     os.system(f'mkdir -p {OUTPUT_PATH}')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

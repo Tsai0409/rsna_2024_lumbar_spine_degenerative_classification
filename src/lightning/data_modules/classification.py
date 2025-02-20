@@ -157,7 +157,6 @@ class InterleavedMaskClassBatchSampler(Sampler):
 
         self.batch_indices_list = random.sample(chunks, len(chunks))
 
-
     def __iter__(self):
         for batch_indices in self.batch_indices_list:
             for idx in batch_indices:
