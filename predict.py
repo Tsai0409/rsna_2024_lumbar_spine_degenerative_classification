@@ -85,10 +85,10 @@ if __name__ == "__main__":
     if getattr(cfg, 'force_use_model_path_config_when_inf', False):
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{cfg.force_use_model_path_config_when_inf}'
     else:
-        load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'
+        load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'  # load_model_config_dir = /kaggle/working/duplicate/ckpted/rsna_sagittal_level_cl_spinal_v1
 
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
-    OUTPUT_PATH = '/kaggle/working/ckpted/{args.config}'
+    OUTPUT_PATH = f'/kaggle/working/ckpted/{args.config}'  # OUTPUT_PATH = /kaggle/working/ckpted/rsna_sagittal_level_cl_spinal_v1
     os.system(f'mkdir -p {OUTPUT_PATH}')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         file_name_base = 'last_fold'
     else:
         file_name_base = 'fold_'
-    state_dict_path = f'{load_model_config_dir}/{file_name_base}{args.fold}.ckpt'
+    state_dict_path = f'{load_model_config_dir}/{file_name_base}{args.fold}.ckpt'  # state_dict_path = /kaggle/working/duplicate/ckpted/rsna_sagittal_level_cl_spinal_v1/fold_0.ckpt
 
     if not getattr(cfg, 'no_trained_model_when_inf', False):
         try:
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         preds = predict(cfg, val_loader)
         pred_cols = [f'pred_{c}' for c in cfg.label_features]
         val[pred_cols] = preds[0]
-        val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)
+        val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpted/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
         print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
 
     if cfg.predict_test:
@@ -153,5 +153,5 @@ if __name__ == "__main__":
                 test[pred_cols] = preds[preds_n]
                 preds_n += 1
 
-        test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)
+        test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpted/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
         print(f'test save to {OUTPUT_PATH}/test_fold{args.fold}.csv')

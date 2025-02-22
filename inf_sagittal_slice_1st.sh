@@ -53,4 +53,4 @@ do
     done
 done
 
-echo "All tasks completed successfully!"
+echo "inf_sagittal_slice_1st.sh completed successfully!"

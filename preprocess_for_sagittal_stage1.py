@@ -33,24 +33,24 @@ cood.loc[(cood.level=='L2/L3') & (cood.condition == 'Right Neural Foraminal Narr
 cood.loc[(cood.level=='L3/L4') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l3_right_neural'
 cood.loc[(cood.level=='L4/L5') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l4_right_neural'
 cood.loc[(cood.level=='L5/S1') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l5_right_neural'
+
 #train = pd.read_csv('input/train_with_fold.csv')
-#train = pd.read_csv('train_with_fold.csv')
 train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 df = train[train.series_description_x!='Axial T2']
 df[['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']] = 0
 dfs = []
-cs = []
+cs = []  # not use
 for id, idf in tqdm(df.groupby('series_id')):
     cdf = cood[cood.series_id == id]
     if sorted(cdf.target_level.values) != ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']:
-        continue
-    for level in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']:
+        continue  # 接著檢查 cdf 中所有 target_level 欄位的值是否完整，如果不完整，則用 continue 跳過這個系列，不進行後續標籤更新
+    for level in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']:  # 如果 target_level 欄位有完整
         for condition in ['Spinal Canal Stenosis']:
             udf = cdf[(cdf.level== level) & (cdf.condition == condition)]
             if len(udf)!=0:
                 n = udf.instance_number
-                idf.loc[idf.instance_number.isin(n), udf.target_level.values[0]] = 1
+                idf.loc[idf.instance_number.isin(n), udf.target_level.values[0]] = 1  # idf.instance_number.isin(n) = True -> udf.target_level.values[0] = 1
     dfs.append(idf)
 
 df = pd.concat(dfs)
@@ -76,18 +76,18 @@ cood.loc[(cood.level=='L2/L3') & (cood.condition == 'Right Neural Foraminal Narr
 cood.loc[(cood.level=='L3/L4') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l3_right_neural'
 cood.loc[(cood.level=='L4/L5') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l4_right_neural'
 cood.loc[(cood.level=='L5/S1') & (cood.condition == 'Right Neural Foraminal Narrowing'), 'target_level'] = 'l5_right_neural'
+
 #train = pd.read_csv('input/train_with_fold.csv')
-#train = pd.read_csv('train_with_fold.csv')
 train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 df = train[train.series_description_x!='Axial T2']
 df[['l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']] = 0
 dfs = []
-cs = []
+cs = []  # not use
 for id, idf in tqdm(df.groupby('series_id')):
     cdf = cood[cood.series_id == id]
     if ['l1_left_neural', 'l1_right_neural', 'l2_left_neural', 'l2_right_neural', 'l3_left_neural', 'l3_right_neural', 'l4_left_neural', 'l4_right_neural', 'l5_left_neural', 'l5_right_neural'] != sorted(cdf.target_level.values):
-        continue
+        continue  # 直接執行下一次的迭代
     for level in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']:
         for condition in ['Left Neural Foraminal Narrowing', 'Right Neural Foraminal Narrowing']:
             udf = cdf[(cdf.level== level) & (cdf.condition == condition)]

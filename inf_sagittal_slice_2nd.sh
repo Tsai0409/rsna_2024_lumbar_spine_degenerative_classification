@@ -10,7 +10,8 @@ PREDICT_SCRIPT="$WORKING_DIR/predict.py"
 
 # 配置名稱和摺疊數
 configs=("rsna_sagittal_cl")
-folds=(0 1 2 3 4)
+# folds=(0 1 2 3 4)
+folds=(0 1)
 
 # 確保需要的腳本存在
 if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT || ! -f $PREDICT_SCRIPT ]]; then
@@ -51,4 +52,4 @@ do
     done
 done
 
-echo "All tasks completed successfully!"
+echo "inf_sagittal_slice_2nd.sh completed successfully!"
