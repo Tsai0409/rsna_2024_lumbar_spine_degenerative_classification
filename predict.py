@@ -83,7 +83,8 @@ if __name__ == "__main__":
     seed_everything()
 
     if getattr(cfg, 'force_use_model_path_config_when_inf', False):
-        load_model_config_dir = f'{RESULTS_PATH_BASE}/{cfg.force_use_model_path_config_when_inf}'
+        load_model_config_dir = f'{RESULTS_PATH_BASE}/{cfg.force_use_model_path_config_when_inf}'  
+        # cfg.force_use_model_path_config_when_inf = None
     else:
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'  # load_model_config_dir = /kaggle/working/duplicate/ckpted/rsna_sagittal_level_cl_spinal_v1
 
@@ -92,10 +93,12 @@ if __name__ == "__main__":
     os.system(f'mkdir -p {OUTPUT_PATH}')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    if getattr(cfg, 'use_last_ckpt_when_inference', False):
+    if getattr(cfg, 'use_last_ckpt_when_inference', False):  
         file_name_base = 'last_fold'
+        # cfg.use_last_ckpt_when_inference = True
     else:
         file_name_base = 'fold_'
+    
     state_dict_path = f'{load_model_config_dir}/{file_name_base}{args.fold}.ckpt'  # state_dict_path = /kaggle/working/duplicate/ckpted/rsna_sagittal_level_cl_spinal_v1/fold_0.ckpt
 
     if not getattr(cfg, 'no_trained_model_when_inf', False):
@@ -103,6 +106,7 @@ if __name__ == "__main__":
             state_dict = torch.load(state_dict_path)['state_dict']
         except:
             state_dict = torch.load(state_dict_path)
+            # cfg.no_trained_model_when_inf = False
 
         torch_state_dict = {}
         delete_model_model = True
@@ -122,6 +126,7 @@ if __name__ == "__main__":
                 torch_state_dict[k] = v
 
         print(f'load model weight from checkpoint: {state_dict_path}')
+        
     if not getattr(cfg, 'no_trained_model_when_inf', False):
         cfg.model.load_state_dict(torch_state_dict)
     cfg.model.to(device)

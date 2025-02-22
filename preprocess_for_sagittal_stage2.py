@@ -16,7 +16,7 @@ for fold in range(5):
     preds = []
     for config in configs:
         # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
-        test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/test_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/ckpted/{config}/test_fold{fold}.csv')
         preds.append(test[pred_cols].values)
     test[pred_cols] = np.mean(preds, 0)
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)
@@ -31,7 +31,7 @@ for fold in range(5):
     preds = []
     for config in configs:
         # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
-        test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/test_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/ckpted/{config}/test_fold{fold}.csv')
         preds.append(test[pred_cols].values)
     test[pred_cols] = np.mean(preds, 0)
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)

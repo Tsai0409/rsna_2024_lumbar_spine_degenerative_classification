@@ -29,6 +29,7 @@ def prepare_classification_loader(cfg, split='val'):
         df = cfg.test_df
     else:
         raise
+    
     claz = get_dataset_class(cfg)
     ds = claz(
         df=df,
@@ -36,8 +37,6 @@ def prepare_classification_loader(cfg, split='val'):
         cfg=cfg,
         phase='test'
     )
-
-
     return df, DataLoader(ds, batch_size=cfg.batch_size, shuffle=False, drop_last=False,
                       num_workers=cfg.n_cpu, worker_init_fn=worker_init_fn)
 
@@ -56,7 +55,6 @@ def prepare_mlp_loader(cfg, split='val'):
         cfg=cfg,
         phase='test'
     )
-
     return df, DataLoader(ds, batch_size=cfg.batch_size, shuffle=False, drop_last=False,
                       num_workers=cfg.n_cpu, worker_init_fn=worker_init_fn)
 
@@ -75,7 +73,6 @@ def prepare_gnn_loader(cfg, split='val'):
             cfg=cfg,
             phase='test'
         )
-
     return df, GeometricDataLoader(ds, batch_size=cfg.batch_size, shuffle=False, drop_last=False,
                       num_workers=cfg.n_cpu, worker_init_fn=worker_init_fn)
 
