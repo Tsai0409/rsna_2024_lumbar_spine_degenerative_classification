@@ -7,7 +7,8 @@ WORKING_DIR="/kaggle/working/duplicate"  # 我加
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
-for fold in range(5):
+# for fold in range(5):
+for fold in range(2):
     targets = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
     pred_cols = [f'pred_{c}' for c in targets]
     configs = [
