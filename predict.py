@@ -89,7 +89,7 @@ if __name__ == "__main__":
         load_model_config_dir = f'{RESULTS_PATH_BASE}/{args.config}'  # load_model_config_dir = /kaggle/working/duplicate/ckpted/rsna_sagittal_level_cl_spinal_v1
 
 #    OUTPUT_PATH = f'{RESULTS_PATH_BASE}/{args.config}'
-    OUTPUT_PATH = f'/kaggle/working/ckpted/{args.config}'  # OUTPUT_PATH = /kaggle/working/ckpted/rsna_sagittal_level_cl_spinal_v1
+    OUTPUT_PATH = f'/kaggle/working/ckpt/{args.config}'  # OUTPUT_PATH = /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1
     os.system(f'mkdir -p {OUTPUT_PATH}')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                 torch_state_dict[k] = v
 
         print(f'load model weight from checkpoint: {state_dict_path}')
-        
+
     if not getattr(cfg, 'no_trained_model_when_inf', False):
         cfg.model.load_state_dict(torch_state_dict)
     cfg.model.to(device)
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         preds = predict(cfg, val_loader)
         pred_cols = [f'pred_{c}' for c in cfg.label_features]
         val[pred_cols] = preds[0]
-        val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpted/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
+        val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
         print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
 
     if cfg.predict_test:
@@ -158,5 +158,7 @@ if __name__ == "__main__":
                 test[pred_cols] = preds[preds_n]
                 preds_n += 1
 
-        test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpted/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
+        test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
         print(f'test save to {OUTPUT_PATH}/test_fold{args.fold}.csv')
+
+print('predict.py finish')

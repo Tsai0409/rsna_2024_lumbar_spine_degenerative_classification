@@ -43,3 +43,4 @@ for fold in range(2):
     # df.merge(fold_df, on='study_id').to_csv(f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
     df.merge(fold_df, on='study_id').to_csv(f'{WORKING_DIR}/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
     
+print('preprocess_for_sagittal_stage2.py finish')
