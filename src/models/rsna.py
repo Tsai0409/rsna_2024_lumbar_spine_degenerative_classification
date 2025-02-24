@@ -8,8 +8,6 @@ from pdb import set_trace as st
 import torch.nn.functional as F
 import math
 
-pretrain_true = False  # 我加 手動下載權重檔
-
 class RsnaModel(nn.Module):
     def __init__(self, model_name, pretrained=True, num_classes=1, meta_cols_num=1):
         super(RsnaModel, self).__init__()
@@ -144,6 +142,7 @@ class RSNAStage2(nn.Module):
 
 
 class SEModule(nn.Module):
+
     def __init__(self, channels, reduction):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool1d(1)
@@ -306,6 +305,8 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[: x.size(0), :]
         return self.dropout(x)
+
+
 
 class DeconvFeatureModel(nn.Module):
     def __init__(self, num_feature, num_classes, backbone, dropout_rate=0.3):
@@ -633,7 +634,7 @@ class Timm1BoneModel(nn.Module):
         self.num_classes = num_classes
 
         if backbone == 'se_resnext50_32x4d':
-            self.encoder = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
+            self.encoder = senet_mod(se_resnext50_32x4d, pretrained=True)
         else:
             self.encoder = timm.create_model(
                 backbone,
@@ -951,7 +952,6 @@ class RSNA2024ModelV3(nn.Module):
         
         x = torch.nan_to_num(x, 0, 0, 0)
         return x
-        
 class RSNA2024ModelV4(nn.Module):
     def __init__(self, base_model, n_instance=5, num_classes=75, in_features=1024,
         drop_rate=0, drop_rate_last=0.3):
@@ -1023,18 +1023,14 @@ class RSNA2ndModel(nn.Module):
     def __init__(
         self,
         num_classes=1,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg',
         swin=False,
     ):
         super().__init__()
         self.swin = swin
         self.criterion = nn.CrossEntropyLoss()
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        self.model_name = self.base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-        
+        self.model_name = base_model.__class__.__name__
         self.encoder, nc = drop_fc(base_model)
         self.head = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1060,21 +1056,15 @@ class RSNA2ndModel(nn.Module):
 
         x = self.head(x)
         return x
-        
 class RsnaGru(nn.Module):
     def __init__(
         self,
         num_classes=1,
         n_instance=5,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1093,21 +1083,15 @@ class RsnaGru(nn.Module):
         x = x.reshape(bs, -1) # -> 2, 2560
         x = self.fc(x)
         return x
-    
 class RsnaGruDebug(nn.Module):
     def __init__(
         self,
         num_classes=1,
         n_instance=5,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1131,15 +1115,10 @@ class RsnaLstm(nn.Module):
         self,
         num_classes=1,
         n_instance=5,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1163,15 +1142,10 @@ class RsnaLstm2(nn.Module):
         self,
         num_classes=1,
         n_instance=5,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = AdaptiveConcatPool2d()
         # self.pool = nn.AdaptiveAvgPool2d((1,1))
@@ -1202,15 +1176,10 @@ class RsnaGru2(nn.Module):
         self,
         num_classes=1,
         n_instance=5,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = AdaptiveConcatPool2d()
         # self.pool = nn.AdaptiveAvgPool2d((1,1))
@@ -1243,18 +1212,13 @@ class RSNA2ndModel2(nn.Module):
         self,
         num_classes=1,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg'
     ):
         super().__init__()
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-                
         self.encoder, nc = drop_fc(base_model)
         if pool == 'avg':
             self.pool = nn.AdaptiveAvgPool2d((1,1))
@@ -1292,18 +1256,13 @@ class RSNA2ndModelXcit(nn.Module):
         self,
         num_classes=1,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg'
     ):
         super().__init__()
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
-                
         self.encoder, nc = drop_fc(base_model)
         if pool == 'avg':
             self.pool = nn.AdaptiveAvgPool2d((1,1))
@@ -1340,22 +1299,14 @@ class Rsna2boxel(nn.Module):
         self,
         num_classes=1,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-#        base_model2=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model2, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
+        base_model2=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg'
     ):
         super().__init__()
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        self.base_model2 = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
         self.model_name = base_model.__class__.__name__
-        nitialize_pretrained_model(self.base_model, num_classes, settings)
-        initialize_pretrained_model(self.base_model2, num_classes, settings)
-        
         self.encoder, nc = drop_fc(base_model)
         # self.encoder2, nc = drop_fc(base_model2)
         if pool == 'avg':
@@ -1404,22 +1355,14 @@ class RSNA2ndModel2backbone(nn.Module):
         self,
         num_classes=1,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-#        base_model2=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model2, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
+        base_model2=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg'
     ):
         super().__init__()
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        self.base_model2 = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
         self.model_name = base_model.__class__.__name__
-        nitialize_pretrained_model(self.base_model, num_classes, settings)
-        initialize_pretrained_model(self.base_model2, num_classes, settings)
-        
         self.encoder, nc = drop_fc(base_model)
         self.encoder2, nc2 = drop_fc(base_model2)
         if pool == 'avg':
@@ -1468,17 +1411,12 @@ class RSNA2ndModel3(nn.Module):
     def __init__(
         self,
         num_classes=1,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg'
     ):
         super().__init__()
         self.criterion = nn.CrossEntropyLoss()
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         if pool == 'avg':
             self.pool = nn.AdaptiveAvgPool2d((1,1))
@@ -1519,18 +1457,13 @@ class RsnaLstmXcit(nn.Module):
         num_classes=1,
         n_instance=5,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true, in_channel=3),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True, in_channel=3),
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1553,15 +1486,10 @@ class RsnaLstm4classes(nn.Module):
         self,
         num_classes=1,
         n_instance=45,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true, in_channel=3),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True, in_channel=3),
     ):
         super().__init__()
         self.criterion = nn.CrossEntropyLoss()
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1592,19 +1520,13 @@ class MIL4classes(nn.Module):
         num_classes=1,
         n_instance=45,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.liver = nn.Sequential(
                 AdaptiveConcatPool2d(),
@@ -1658,18 +1580,13 @@ class MIL4classes3(nn.Module):
         num_classes=1,
         n_instance=45,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.liver = nn.Sequential(
                 AdaptiveConcatPool2d(),
@@ -1714,18 +1631,13 @@ class MIL4classes2(nn.Module):
         num_classes=1,
         n_instance=45,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder_liver, nc = drop_fc(base_model)
         self.encoder_spleen = copy.deepcopy(self.encoder_liver)
         self.encoder_kidney = copy.deepcopy(self.encoder_liver)
@@ -1819,8 +1731,7 @@ class RsnaLstmWithMetaCols(nn.Module):
         num_classes=1,
         n_instance=5,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true, in_channel=3),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True, in_channel=3),
         meta_col_n=2,
         dropout_ratio = 0.3,
     ):
@@ -1828,11 +1739,7 @@ class RsnaLstmWithMetaCols(nn.Module):
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1874,18 +1781,13 @@ class Rsna1dcnn(nn.Module):
         num_classes=1,
         n_instance=5,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-
         self.encoder, nc = drop_fc(base_model)
         self.pool = nn.Sequential(
             AdaptiveConcatPool2d(),
@@ -1913,18 +1815,13 @@ class MultiInstanceCNNModelRetrainExptPool(nn.Module):
         num_classes=1,
         n_instance=5,
         center_loss_feat_dim=512,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
         self.center_loss_feat_dim = center_loss_feat_dim
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.head = nn.Sequential(
             nn.Linear(2 * nc, self.center_loss_feat_dim),
@@ -1958,18 +1855,13 @@ class HMSModel1(nn.Module):
         self,
         num_classes=1,
         n_instance=5,
-#        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
-#        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
+        base_model=senet_mod(se_resnext50_32x4d, pretrained=True),
         pool='avg',
     ):
         super().__init__()
         self.n_instance = n_instance
         self.criterion = nn.CrossEntropyLoss()
-        
-        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         self.model_name = base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings),  # 本地檔案初始化預訓練模型
-        
         self.encoder, nc = drop_fc(base_model)
         self.head = nn.Sequential(
             AdaptiveConcatPool2d(),

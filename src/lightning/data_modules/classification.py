@@ -314,6 +314,7 @@ class SagittalMILDataset(Dataset):
 
 def worker_init_fn(worker_id):
     np.random.seed(np.random.get_state()[1][0] + worker_id)
+    
 def get_dataset_class(cfg):
     if ((hasattr(cfg, 'use_sagittal_mil_dataset')) and (cfg.use_sagittal_mil_dataset)):
         claz = SagittalMILDataset
@@ -353,10 +354,11 @@ class MyDataModule(pl.LightningDataModule):
 
     def train_dataloader(self):
         if self.cfg.train_by_all_data:
-            tr = self.cfg.train_df
-        else:
-            tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]
+            tr = self.cfg.train_df  # tr train input
+        else:  # train_by_all_data = False
+            tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇其中一個 fold 作為訓練資料
         self.tr = tr
+
         if self.cfg.upsample is not None:
             assert type(self.cfg.upsample) == int
             origin_len = len(tr)

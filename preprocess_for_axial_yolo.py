@@ -4,7 +4,14 @@ from tqdm import tqdm
 import cv2
 import matplotlib.pyplot as plt
 
-train = pd.read_csv('input/train_with_fold.csv')
+# kaggle input
+DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+
+# 設定環境變數
+WORKING_DIR="/kaggle/working/duplicate"
+
+# train = pd.read_csv('input/train_with_fold.csv')
+train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 train = train[train.series_description=='Axial T2']
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 
@@ -15,7 +22,8 @@ for id, idf in train.groupby('series_id'):
     dfs.append(idf)
 train = pd.concat(dfs)
 
-cood = pd.read_csv('input/train_label_coordinates.csv')
+# cood = pd.read_csv('input/train_label_coordinates.csv')
+cood = pd.read_csv(f'{DATA_KAGGLE_DIR}/train_label_coordinates.csv')
 cood = cood.sort_values(['series_id', 'instance_number'])
 train = train.merge(cood, on=['study_id', 'series_id','instance_number'])
 
@@ -53,4 +61,5 @@ train['y_min'] = np.round(train['y'].values-train['image_height'].values/30).ast
 train['x_max'] = np.round(train['x'].values+train['image_width'].values/30).astype(int)
 train['y_max'] = np.round(train['y'].values+train['image_height'].values/30).astype(int)
 
-train.to_csv('input/train_axial_for_yolo_all_image_v1.csv', index=False)
+# train.to_csv('input/train_axial_for_yolo_all_image_v1.csv', index=False)
+train.to_csv('train_axial_for_yolo_all_image_v1.csv', index=False)
