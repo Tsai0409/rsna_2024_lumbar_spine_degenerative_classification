@@ -92,7 +92,6 @@ pretrained_settings = {
 
 
 class SEModule(nn.Module):
-
     def __init__(self, channels, reduction):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
@@ -139,7 +138,6 @@ class Bottleneck(nn.Module):
         out = self.relu(out)
 
         return out
-
 
 class SEBottleneck(Bottleneck):
     """
@@ -189,7 +187,6 @@ class SEResNetBottleneck(Bottleneck):
         self.downsample = downsample
         self.stride = stride
 
-
 class SEResNeXtBottleneck(Bottleneck):
     """
     ResNeXt bottleneck type C with a Squeeze-and-Excitation module.
@@ -215,7 +212,6 @@ class SEResNeXtBottleneck(Bottleneck):
 
 
 class SENet(nn.Module):
-
     def __init__(self, block, layers, groups, reduction, dropout_p=0.2,
                  inplanes=128, input_3x3=True, downsample_kernel_size=3,
                  downsample_padding=1, num_classes=1000):
