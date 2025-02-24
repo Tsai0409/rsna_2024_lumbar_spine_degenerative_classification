@@ -17,10 +17,14 @@ import warnings
 warnings.simplefilter('ignore')
 
 import argparse
-import ssl
 
-# 禁用 SSL 驗證
-ssl._create_default_https_context = ssl._create_unverified_context
+# 關閉 SSL 驗證
+import ssl
+import urllib3
+
+ssl._create_default_https_context = ssl._create_unverified_context  
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+# 關閉 SSL 驗證
 
 def parse_args():
     parser = argparse.ArgumentParser()
