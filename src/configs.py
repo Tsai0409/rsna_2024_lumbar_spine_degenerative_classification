@@ -137,7 +137,7 @@ class rsna_v1(Baseline):
         self.grad_accumulations = 2
         self.p_rand_order_v1 = 0
 
-class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
+class rsna_sagittal_level_cl_spinal_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
     def __init__(self, fold=0):
         super().__init__()
         self.fold = fold  # 如果你要在這裡使用 fold，我加
@@ -165,7 +165,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):
         self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
         self.predict_test = True
 
-class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
+class rsna_sagittal_level_cl_nfn_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
     def __init__(self, fold=0):
         super().__init__()
         self.fold = fold  # 我加
@@ -193,7 +193,7 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):
         self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
         self.predict_test = True
 
-class rsna_sagittal_cl(rsna_v1):
+class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
     def __init__(self, fold=0):
         super().__init__()
         self.fold = fold  # 我加
