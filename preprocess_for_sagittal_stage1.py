@@ -47,7 +47,7 @@ for id, idf in tqdm(df.groupby('series_id')):  # 對 train_with_fold.csv 做 gro
         continue  # 接著檢查 cdf 中所有 target_level 欄位的值是否完整，如果不完整，則用 continue 跳過這個系列，不進行後續標籤更新
     for level in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']:  # 如果 target_level 欄位有完整
         for condition in ['Spinal Canal Stenosis']:
-            udf = cdf[(cdf.level== level) & (cdf.condition == condition)]  # 舉例：Spinal Canal Stenosis、L1/L2
+            udf = cdf[(cdf.level== level) & (cdf.condition == condition)]  # 找出 train_label_coordinates.csv 符合條件的；舉例：Spinal Canal Stenosis、L1/L2
             if len(udf)!=0:
                 n = udf.instance_number
                 idf.loc[idf.instance_number.isin(n), udf.target_level.values[0]] = 1  # idf.instance_number.isin(n) = True -> udf.target_level.values[0] = 1
@@ -57,6 +57,7 @@ df = pd.concat(dfs)
 #df.to_csv('input/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv', index=False)
 df.to_csv('train_for_sagittal_level_cl_v1_for_train_spinal_only.csv', index=False)
 print('train_for_sagittal_level_cl_v1_for_train_spinal_only.csv finish')
+
 
 #cood = pd.read_csv('input/train_label_coordinates.csv')
 cood = pd.read_csv(f'{DATA_KAGGLE_DIR}/train_label_coordinates.csv')

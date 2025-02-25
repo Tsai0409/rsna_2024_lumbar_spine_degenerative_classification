@@ -12,7 +12,7 @@ WORKING_DIR="/kaggle/working/duplicate"
 
 # train = pd.read_csv('input/train_with_fold.csv')
 train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
-train = train[train.series_description=='Axial T2']
+train = train[train.series_description_x=='Axial T2']
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 
 dfs = []
