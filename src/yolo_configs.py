@@ -64,8 +64,10 @@ class Baseline:
 
 ################
 class rsna_axial_all_images_left_yolox_x(Baseline):
-    def __init__(self):
+#     def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
+        self.fold = fold  # 我加
         self.compe = 'rsna_2024'
         self.update_json = False
         self.no_aug_epochs = 15
@@ -74,7 +76,8 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
-        self.train_df_path = 'input/train_axial_for_yolo_all_image_v1.csv'
+        # self.train_df_path = 'input/train_axial_for_yolo_all_image_v1.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df = self.train_df[self.train_df.condition == 'Left Subarticular Stenosis']
         self.train_df['class_id'] = 0
@@ -86,7 +89,7 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.train_df = pd.concat([self.train_df, val])
         
 #        self.test_df_path = 'input/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
@@ -98,8 +101,10 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.test_df = self.test_df.merge(ldf[['series_id', 'instance_number', 'pred_level', 'dis']], on=['series_id', 'instance_number'])
 
 class rsna_axial_all_images_right_yolox_x(Baseline):
-    def __init__(self):
+#     def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
+        self.fold = fold  # 我加
         self.compe = 'rsna_2024'
         self.update_json = False
         self.no_aug_epochs = 15
@@ -108,7 +113,8 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
-        self.train_df_path = 'input/train_axial_for_yolo_all_image_v1.csv'
+        # self.train_df_path = 'input/train_axial_for_yolo_all_image_v1.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df = self.train_df[self.train_df.condition != 'Left Subarticular Stenosis']
         self.train_df['class_id'] = 0
@@ -120,7 +126,7 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         self.train_df = pd.concat([self.train_df, val])
         
 #        self.test_df_path = 'input/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
@@ -144,7 +150,7 @@ class rsna_10classes_yolox_x(Baseline):
         self.predict_valid = True
         self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
 #        self.test_df_path = 'input/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.test_df = pd.read_csv(self.test_df_path)
         oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
@@ -158,4 +164,3 @@ class rsna_10classes_yolox_x(Baseline):
         self.predict_test = True
         self.epochs = 40
         self.inference_only = True
-

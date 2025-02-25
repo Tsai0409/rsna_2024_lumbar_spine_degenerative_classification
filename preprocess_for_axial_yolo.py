@@ -1,3 +1,4 @@
+# preprocess_for_axial_yolo.py
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -63,3 +64,4 @@ train['y_max'] = np.round(train['y'].values+train['image_height'].values/30).ast
 
 # train.to_csv('input/train_axial_for_yolo_all_image_v1.csv', index=False)
 train.to_csv('train_axial_for_yolo_all_image_v1.csv', index=False)
+print('train_axial_for_yolo_all_image_v1.csv finish')

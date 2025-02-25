@@ -87,16 +87,11 @@ def dataset2coco(df):
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", '-c', type=str, default='Test',
-                    help="config name in configs.py")
-parser.add_argument("--gpu", '-g', type=str, default='nochange',
-                    help="config name in configs.py")
-parser.add_argument("--fold", type=int, default=0,
-                    help="fold num")
-parser.add_argument("--use_row", type=int, default=2,
-                    help="google spread sheet row")
-parser.add_argument("--make_labels", action='store_true',
-                    help="make_labels")
+parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")
+parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in configs.py")
+parser.add_argument("--fold", type=int, default=0, help="fold num")
+parser.add_argument("--use_row", type=int, default=2, help="google spread sheet row")
+parser.add_argument("--make_labels", action='store_true', help="make_labels")
 
 args = parser.parse_args()
 print(args)
