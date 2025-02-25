@@ -1,3 +1,4 @@
+# yolox_train_one_fold.py
 import warnings
 warnings.filterwarnings("ignore")
 import os
@@ -250,7 +251,7 @@ if cfg.inference_only:
 else:
     print('train start...')
     # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
-    train_str = f'python /kaggle/working/duplicate/src/YOLOX/tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
+    train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
 
     if cfg.resume:  # resume = False
         train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
