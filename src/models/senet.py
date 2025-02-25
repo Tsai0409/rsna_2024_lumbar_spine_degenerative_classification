@@ -1,22 +1,21 @@
+# import ssl
+# import urllib3
+
+# 關閉 SSL 驗證
+# ssl._create_default_https_context = ssl._create_unverified_context  
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # 明天再試 可以不用手動下載權重檔
+
 """
 https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 """
 from __future__ import print_function, division, absolute_import
 from collections import OrderedDict
 import math
-
-import torch.nn as nn
-from torch.utils import model_zoo
 import os  # 我加
 import torch  # 我加
 
-# 關閉 SSL 驗證
-import ssl
-import urllib3
-
-ssl._create_default_https_context = ssl._create_unverified_context  
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # 明天再試 可以不用手動下載權重檔
-# 關閉 SSL 驗證
+import torch.nn as nn
+from torch.utils import model_zoo
 
 __all__ = ['SENet', 'senet154', 'se_resnet50', 'se_resnet101', 'se_resnet152',
            'se_resnext50_32x4d', 'se_resnext101_32x4d']
@@ -92,7 +91,6 @@ pretrained_settings = {
 
 
 class SEModule(nn.Module):
-
     def __init__(self, channels, reduction):
         super(SEModule, self).__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
@@ -381,7 +379,18 @@ def initialize_pretrained_model(model, num_classes, settings):
     assert num_classes == settings['num_classes'], \
         'num_classes should be {}, but is {}'.format(
             settings['num_classes'], num_classes)
-    model.load_state_dict(model_zoo.load_url(settings['url']))
+#    model.load_state_dict(model_zoo.load_url(settings['url']))
+#    local_weight_path = "/kaggle/working/se_resnext50_32x4d-a260b3a4.pth"
+#    state_dict = torch.load(local_weight_path)
+#    model.load_state_dict(state_dict)  # 這三行 手動下載在 kaggle
+    pretrained_weights_path = "/kaggle/input/pretrain-2/se_resnext50_32x4d-a260b3a4-2.pth"  # 修改為你的本地路徑
+
+    if os.path.exists(pretrained_weights_path):
+        model.load_state_dict(torch.load(pretrained_weights_path))
+        print(f"成功從本地檔案載入預訓練權重：{pretrained_weights_path}")
+    else:
+        raise FileNotFoundError(f"未找到預訓練權重檔案：{pretrained_weights_path}")
+
     model.input_space = settings['input_space']
     model.input_size = settings['input_size']
     model.input_range = settings['input_range']

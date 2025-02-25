@@ -47,7 +47,7 @@ for id, idf in tqdm(df.groupby('series_id')):  # 對 train_with_fold.csv 做 gro
         continue  # 接著檢查 cdf 中所有 target_level 欄位的值是否完整，如果不完整，則用 continue 跳過這個系列，不進行後續標籤更新
     for level in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']:  # 如果 target_level 欄位有完整
         for condition in ['Spinal Canal Stenosis']:
-            udf = cdf[(cdf.level== level) & (cdf.condition == condition)]
+            udf = cdf[(cdf.level== level) & (cdf.condition == condition)]  # 舉例：Spinal Canal Stenosis、L1/L2
             if len(udf)!=0:
                 n = udf.instance_number
                 idf.loc[idf.instance_number.isin(n), udf.target_level.values[0]] = 1  # idf.instance_number.isin(n) = True -> udf.target_level.values[0] = 1
