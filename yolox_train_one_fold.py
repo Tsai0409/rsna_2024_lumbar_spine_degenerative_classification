@@ -249,10 +249,10 @@ if cfg.inference_only:
     print('inference_only.')
 else:
     print('train start...')
-    train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
+    # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
+    train_str = f'python /kaggle/working/duplicate/src/YOLOX/tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
 
-
-    if cfg.resume:
+    if cfg.resume:  # resume = False
         train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
 
     print('train_str:', train_str)
