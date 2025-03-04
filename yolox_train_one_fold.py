@@ -2,6 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 import os
+import sys  # 我加
 import json
 import pandas as pd
 import numpy as np
@@ -113,6 +114,7 @@ if 'y_min' not in list(cfg.train_df):
 if 'y_max' not in list(cfg.train_df):
     cfg.train_df['y_max'] = cfg.train_df['image_height'] * (cfg.train_df['y_center_scaled']+cfg.train_df['height_scaled']/2)
 
+sys.path.append("/kaggle/working/duplicate/src/YOLOX")  # 我加
 # os.chdir('src/YOLOX')
 os.chdir('/kaggle/working/duplicate/src/YOLOX')
 
@@ -170,7 +172,7 @@ config_file_template = f'''
 
 import os
 
-from yolox.exp import Exp as MyExp
+from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
 
 class Exp(MyExp):
     def __init__(self):
