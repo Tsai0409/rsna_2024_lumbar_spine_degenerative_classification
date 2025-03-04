@@ -104,7 +104,7 @@ fold = args.fold
 config = args.config
 cfg = eval(args.config)()
 # absolute_path = /kaggle/working
-print(cfg.absolute_path)
+print('absolute_path = '+cfg.absolute_path)
 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path  # train 照片路徑；ex:/kaggle/temp/axial_all_images/2767326159___223384___5.png
 cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
 

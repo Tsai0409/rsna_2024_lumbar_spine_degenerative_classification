@@ -45,7 +45,8 @@ class Baseline:
         self.no_aug_epochs = 15
         self.warmup_epochs = 5
         self.nmsthre = 0.45
-        self.absolute_path = os.getcwd()
+        # self.absolute_path = os.getcwd()
+        self.absolute_path = '/kaggle/working/duplicate'
 ### required columns ###
 ## train
 # path
