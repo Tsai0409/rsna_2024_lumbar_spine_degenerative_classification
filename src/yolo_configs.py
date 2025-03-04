@@ -7,6 +7,9 @@ import os
 from pdb import set_trace as st
 import copy
 
+# kaggle input
+DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+
 # 設定環境變數
 WORKING_DIR="/kaggle/working/duplicate"
 
@@ -73,7 +76,8 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.update_json = False
         self.no_aug_epochs = 15
         self.warmup_epochs = 5
-        self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+        # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+        self.pretrained_path = f'{DATA_KAGGLE_DIR}/pretrain-2/yolox_x.pth'
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
@@ -110,7 +114,8 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         self.update_json = False
         self.no_aug_epochs = 15
         self.warmup_epochs = 5
-        self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+        # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+        self.pretrained_path = f'{DATA_KAGGLE_DIR}/pretrain-2/yolox_x.pth'
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
@@ -145,7 +150,8 @@ class rsna_10classes_yolox_x(Baseline):
         self.update_json = False
         self.no_aug_epochs = 15
         self.warmup_epochs = 5
-        self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+        # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+        self.pretrained_path = f'{DATA_KAGGLE_DIR}/pretrain-2/yolox_x.pth'
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
