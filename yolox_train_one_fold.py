@@ -178,7 +178,8 @@ import os
 import sys
 sys.path.append("/kaggle/working/duplicate/src/YOLOX")  # 我加
 os.chdir('/kaggle/working/duplicate/src/YOLOX')  # 我加
-train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
+# train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
+os.environ["PYTHONPATH"] = "/kaggle/working/duplicate/src/YOLOX:" + os.environ.get("PYTHONPATH", "")
 from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
 
 class Exp(MyExp):
