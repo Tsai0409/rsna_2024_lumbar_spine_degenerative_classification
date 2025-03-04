@@ -175,6 +175,7 @@ config_file_template = f'''
 # Copyright (c) Megvii, Inc. and its affiliates.
 
 import os
+import sys
 sys.path.append("/kaggle/working/duplicate/src/YOLOX")  # 我加
 os.chdir('/kaggle/working/duplicate/src/YOLOX')  # 我加
 from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
