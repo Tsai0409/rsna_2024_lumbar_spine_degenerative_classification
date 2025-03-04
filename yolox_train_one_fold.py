@@ -104,7 +104,7 @@ fold = args.fold
 config = args.config
 cfg = eval(args.config)()
 # absolute_path = /kaggle/working
-cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path
+cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path  # train 照片路徑；ex:/kaggle/temp/axial_all_images/2767326159___223384___5.png
 cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
 
 cfg.train_df.class_id = cfg.train_df.class_id.astype(int)
@@ -174,7 +174,8 @@ config_file_template = f'''
 # Copyright (c) Megvii, Inc. and its affiliates.
 
 import os
-
+sys.path.append("/kaggle/working/duplicate/src/YOLOX")  # 我加
+os.chdir('/kaggle/working/duplicate/src/YOLOX')  # 我加
 from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
 
 class Exp(MyExp):
