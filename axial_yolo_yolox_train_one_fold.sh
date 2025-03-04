@@ -9,7 +9,8 @@ TRAIN_SCRIPT="$WORKING_DIR/yolox_train_one_fold.py"
 
 # 配置名稱與摺疊數
 configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
-folds=(0 1 2 3 4)
+# folds=(0 1 2 3 4)
+folds=(0)
 
 # 檢查所需的腳本是否存在
 if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT ]]; then

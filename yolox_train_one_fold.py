@@ -89,8 +89,10 @@ def dataset2coco(df):
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")
-parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in configs.py")
+# parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")
+parser.add_argument("--config", '-c', type=str, default='Test', help="config name in yolo_configs.py")
+# parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in configs.py")
+parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in yolo_configs.py")
 # parser.add_argument("--fold", type=int, default=0, help="fold num")
 parser.add_argument("--fold", '-f', type=int, default=0, help="fold num")
 parser.add_argument("--use_row", type=int, default=2, help="google spread sheet row")
@@ -101,6 +103,7 @@ print(args)
 fold = args.fold
 config = args.config
 cfg = eval(args.config)()
+# absolute_path = /kaggle/working
 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path
 cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
 
