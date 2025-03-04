@@ -7,6 +7,9 @@ WORKING_DIR="/kaggle/working/duplicate"
 PREPROCESS_SCRIPT="$WORKING_DIR/preprocess_for_axial_yolo.py"
 TRAIN_SCRIPT="$WORKING_DIR/yolox_train_one_fold.py"
 
+# 設定 YOLOX 路徑
+export PYTHONPATH=/kaggle/working/duplicate/src/YOLOX:$PYTHONPATH  # 新增 
+
 # 配置名稱與摺疊數
 configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
 # folds=(0 1 2 3 4)
