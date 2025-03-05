@@ -22,7 +22,7 @@ import argparse
 import ssl
 import urllib3
 
-ssl._create_default_https_context = ssl._create_unverified_context  
+ssl._create_default_https_context = ssl._create_unverified_context
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # 關閉 SSL 驗證
 
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     start = time.time()
     args = parse_args()
     print(f"Starting training for config: {args.config}, fold: {args.fold}")  # 我加
+
     if args.type == 'classification':  # args.type 如果沒有定義 default='classification'
         from src.configs import *  #  cfg 參數的初始定義是從 configs.py 的 class Baseline 來的
     elif args.type == 'seg':
@@ -55,7 +56,7 @@ if __name__ == "__main__":
     elif args.type == 'gnn':
         from src.gnn_configs import *
 
-    try:
+    try:  # dfg 的資料來源是 configs.py
         cfg = eval(args.config)(args.fold)  # 執行一種 config\fold 建立一個 cfg 的形式，引用 configs.py 中的 class rsna_sagittal_level_cl_spinal_v1() 包含 cfg.model 等
     except Exception as e:
         cfg = eval(args.config)()
@@ -116,7 +117,7 @@ if __name__ == "__main__":
         n_gpu = 1
     else:
         n_gpu = torch.cuda.device_count()  # 獲取可用的 GPU 數量
-        cfg.n_cpu = n_gpu * np.min([cpu_count(), cfg.batch_size])  
+        cfg.n_cpu = n_gpu * np.min([cpu_count(), cfg.batch_size])
 
     n_gpu = 1
 

@@ -344,7 +344,7 @@ def my_collate_fn(batch):
         labels = torch.stack(labels, dim=0)
         return images, labels
 
-class MyDataModule(pl.LightningDataModule):
+class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDataModule 裡面的內容嗎？
     def __init__(self, cfg):
         super().__init__()
         self.cfg = cfg
@@ -353,17 +353,19 @@ class MyDataModule(pl.LightningDataModule):
         pass
 
     def train_dataloader(self):
+        # cfg.train_by_all_data = False
         if self.cfg.train_by_all_data:
             tr = self.cfg.train_df  # tr train input
-        else:  # train_by_all_data = False
+        else:  
             tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇其中一個 fold 作為訓練資料
         self.tr = tr
 
-        if self.cfg.upsample is not None:
+        # cfg.upsample = None
+        if self.cfg.upsample is not None:  # 數據集上採樣(upsampling)
             assert type(self.cfg.upsample) == int
             origin_len = len(tr)
             dfs = [tr]
-            for col in self.cfg.label_features:
+            for col in self.cfg.label_features:  # 按照 label_features = ['label1', 'label2'] 依序進行上採樣
                 for _ in range(self.cfg.upsample):
                     dfs.append(tr[tr[col]==1])
             tr = pd.concat(dfs)
