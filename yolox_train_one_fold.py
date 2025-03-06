@@ -33,7 +33,7 @@ image_id_n = 0
 def dataset2coco(df):
     global annotion_id
     global image_id_n
-    annotations_json = {
+    annotations_json = {  # 建立 annotations_json 字典
         "info": [],
         "licenses": [],
         "categories": categories,
@@ -43,7 +43,7 @@ def dataset2coco(df):
     info = {
         "year": "2023",
         "version": "1",
-        "description": f"{cfg.compe} dataset - COCO format",
+        "description": f"{cfg.compe} dataset - COCO format",  # cfg.compe = 'rsna_2024'
         "contributor": "yujiariyasu",
         "url": "https://kaggle.com",
         "date_created": "2023-04-10T15:01:26+00:00"
@@ -103,7 +103,7 @@ print(args)
 fold = args.fold
 config = args.config
 cfg = eval(args.config)()
-# absolute_path = /kaggle/working
+# absolute_path = /kaggle/working/duplicate
 print('absolute_path = '+cfg.absolute_path)
 # cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path  # train 照片路徑；ex:/kaggle/temp/axial_all_images/2767326159___223384___5.png
 cfg.train_df.path = cfg.train_df.path
@@ -133,7 +133,8 @@ for k, v in vars(cfg).items():
     config_str += f'{k}: {v}, '
 print(f'----------------------- Config -----------------------\n')
 
-
+# absolute_path = /kaggle/working/duplicate
+# configs = rsna_axial_all_images_left_yolox_x、rsna_axial_all_images_right_yolox_x
 config_path = f'configfile_{config}_fold{fold}.py'
 os.makedirs(f'{cfg.absolute_path}/results/{config}', exist_ok=True)
 
@@ -155,10 +156,13 @@ tr = cfg.train_df[cfg.train_df.fold != fold]
 val = cfg.train_df[cfg.train_df.fold == fold]
 
 print('len(train) / len(val):', len(tr), len(val))
-train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')
-train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'
+# self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
+train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')  # rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1
+train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'  # train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len .json
 valid_json_filename = f'valid_{train_df_filename}_fold{fold}_len{len(val)}.json'
 
+# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x 的 cfg.inference_only=False
+# class rsna_10classes_yolox_x 的 cfg.inference_only=True
 if not cfg.inference_only:
     if os.path.exists(f"{cfg.absolute_path}/input/annotations/{train_json_filename}") & os.path.exists(f"{cfg.absolute_path}/input/annotations/{valid_json_filename}") & (not cfg.update_json):
         print('make labels skip.')
