@@ -316,6 +316,7 @@ def worker_init_fn(worker_id):
     np.random.seed(np.random.get_state()[1][0] + worker_id)
     
 def get_dataset_class(cfg):
+    # cfg.use_sagittal_mil_dataset 在crop之前沒有出現
     if ((hasattr(cfg, 'use_sagittal_mil_dataset')) and (cfg.use_sagittal_mil_dataset)):
         claz = SagittalMILDataset
     else:
@@ -360,14 +361,14 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇其中一個 fold 作為訓練資料
         self.tr = tr
 
-        # cfg.upsample = None
+        # cfg.upsample = None；cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對少數類別的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
         if self.cfg.upsample is not None:  # 數據集上採樣(upsampling)
             assert type(self.cfg.upsample) == int
             origin_len = len(tr)
             dfs = [tr]
             for col in self.cfg.label_features:  # 按照 label_features = ['label1', 'label2'] 依序進行上採樣
                 for _ in range(self.cfg.upsample):
-                    dfs.append(tr[tr[col]==1])
+                    dfs.append(tr[tr[col]==1])  # 在第一個迭代時，選擇 label1 值為 1 的數據(通常表示1的即為數據不平衡的)
             tr = pd.concat(dfs)
             print(f'upsample, len: {origin_len} -> {len(tr)}')
 
@@ -375,7 +376,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
         claz = get_dataset_class(self.cfg)
         if getattr(self.cfg, 'use_custom_sampler', False):
             tr = tr.reset_index(drop=True)
-        train_ds = claz(
+        train_ds = claz(  # 這邊的閱讀順序是先定義要哪一個類別 claz = get_dataset_class(self.cfg)，然後在傳如參數？
             df=tr,
             transforms=self.cfg.transform['train'],
             cfg=self.cfg,
