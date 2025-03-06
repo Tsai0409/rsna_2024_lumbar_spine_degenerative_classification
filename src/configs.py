@@ -132,7 +132,7 @@ class rsna_v1(Baseline):
         self.predict_valid = True
         self.predict_test = False
         self.model_name = 'convnext_small.in12k_ft_in1k_384'
-        self.transform = medical_v3
+        self.transform = medical_v3  # 定義在：src/utils/augmentations/augmentation.py
         self.batch_size = 8
         self.lr = 1e-5
         self.grad_accumulations = 2
@@ -219,6 +219,8 @@ class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
         self.epochs = 15
         self.box_crop = None
         self.predict_test = False
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class rsna_axial_spinal_crop_base(rsna_v1):
     def __init__(self):

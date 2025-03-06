@@ -50,10 +50,10 @@ class ForkedPdb(pdb.Pdb):
 class ClassificationDataset(Dataset):
     def __init__(self, df, transforms, cfg, phase, current_epoch=None):
         self.transforms = transforms
-        self.paths = df.path.values
+        self.paths = df.path.values  # df = train_for_sagittal_level_cl_v1_for_train_spinal_only.csv
         # self.paths = df.origin_path.values
         self.cfg = cfg
-        self.phase = phase
+        self.phase = phase  # phase='train'
         self.current_epoch = current_epoch
         if phase != 'test':
             self.labels = df[cfg.label_features].values
@@ -320,7 +320,7 @@ def get_dataset_class(cfg):
     if ((hasattr(cfg, 'use_sagittal_mil_dataset')) and (cfg.use_sagittal_mil_dataset)):
         claz = SagittalMILDataset
     else:
-        claz = ClassificationDataset
+        claz = ClassificationDataset  # here
     return claz
 
 def my_collate_fn(batch):
@@ -358,7 +358,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
         if self.cfg.train_by_all_data:
             tr = self.cfg.train_df  # tr train input
         else:  
-            tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇其中一個 fold 作為訓練資料
+            tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 其中一個 fold 作為訓練資料
         self.tr = tr
 
         # cfg.upsample = None；cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對少數類別的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
@@ -374,21 +374,25 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
 
         print('len(train):', len(tr))
         claz = get_dataset_class(self.cfg)
+
+        # cfg.use_custom_sampler 沒有出現在 configs
         if getattr(self.cfg, 'use_custom_sampler', False):
             tr = tr.reset_index(drop=True)
+        
         train_ds = claz(  # 這邊的閱讀順序是先定義要哪一個類別 claz = get_dataset_class(self.cfg)，然後在傳如參數？
             df=tr,
-            transforms=self.cfg.transform['train'],
+            transforms=self.cfg.transform['train'],  # self.transform = medical_v3(configs);定義在：src/utils/augmentations/augmentation.py
             cfg=self.cfg,
             phase='train',
-            current_epoch=self.trainer.current_epoch,
+            current_epoch=self.trainer.current_epoch,  # self.trainer.current_epoch 要去哪邊找 -> src/pytorch-lightning/pytorch_lightning/trainer/trainer.py
         )
-        if getattr(self.cfg, 'use_custom_sampler', False):
+
+        # cfg.use_custom_sampler 沒有出現在 configs
+        if getattr(self.cfg, 'use_custom_sampler', False):  # get attribute 看看是否有這個屬性；預設為False
             return DataLoader(train_ds, batch_size=self.cfg.batch_size,
                 num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn,
                 sampler=InterleavedMaskClassBatchSampler(tr, self.cfg))
-
-        else:
+        else:  # here
             return DataLoader(train_ds, batch_size=self.cfg.batch_size, pin_memory=True, shuffle=True, drop_last=True,
                 num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn, collate_fn=my_collate_fn)
 
@@ -408,3 +412,40 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
 
         return DataLoader(valid_ds, batch_size=self.cfg.batch_size, pin_memory=True, shuffle=False, drop_last=False,
                           num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn, collate_fn=my_collate_fn)
+    
+'''
+def medical_v3(size):
+    return {
+        'train': A.Compose([
+             A.Resize(size[0], size[1]),
+             # A.HorizontalFlip(p=0.5),
+             A.VerticalFlip(p=0.5),
+             A.ShiftScaleRotate(p=0.5),
+             A.HueSaturationValue(hue_shift_limit=10, sat_shift_limit=10, val_shift_limit=10, p=0.7),
+             A.RandomBrightnessContrast(brightness_limit=(-0.2,0.2), contrast_limit=(-0.2, 0.2), p=0.7),
+             A.CLAHE(clip_limit=(1,4), p=0.5),
+             A.OneOf([
+                 A.OpticalDistortion(distort_limit=1.0),
+                 A.GridDistortion(num_steps=5, distort_limit=1.),
+                 A.ElasticTransform(alpha=3),
+             ], p=0.2),
+             A.OneOf([
+                 A.GaussNoise(var_limit=[10, 50]),
+                 A.GaussianBlur(),
+                 A.MotionBlur(),
+                 A.MedianBlur(),
+             ], p=0.2),
+             A.PiecewiseAffine(p=0.2),
+             A.Sharpen(p=0.2),
+             # A.Cutout(max_h_size=int(size[0] * 0.1), max_w_size=int(size[1] * 0.1), num_holes=5, p=0.5),
+             A.CoarseDropout(max_height=int(size[0]*0.1), max_width=int(size[1]*0.1), max_holes=5, p=0.5),
+             A.Normalize(),
+             ToTensorV2(),
+        ]),
+        'val': A.Compose([
+            A.Resize(size[0], size[1]),
+            A.Normalize(),
+            ToTensorV2(),
+        ]),
+    }
+'''

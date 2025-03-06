@@ -217,7 +217,7 @@ class Exp(MyExp):
         self.max_epoch = {cfg.epochs}
         self.train_ann = "{cfg.absolute_path}/input/annotations/{train_json_filename}"
         self.val_ann = "{cfg.absolute_path}/input/annotations/{valid_json_filename}"
-        self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"
+        self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"  # absolute_path = /kaggle/working/duplicate
         self.input_size = {cfg.image_size}
         self.test_size = {cfg.image_size}
         self.no_aug_epochs = {cfg.no_aug_epochs} # 15
@@ -267,24 +267,27 @@ from pycocotools.coco import COCO
 from random import sample
 import importlib
 
+# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x 的 cfg.inference_only=False
+# class rsna_10classes_yolox_x 的 cfg.inference_only=True
 if cfg.inference_only:
     print('inference_only.')
-else:
+else:  # here
     print('train start...')
     # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
     train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
 
-    if cfg.resume:  # resume = False
+    # class Baseline: cfg.resume = False
+    if cfg.resume:  # no here
         train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
 
-    print('train_str:', train_str)
+    print('train_str:', train_str)  # train_str: python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth
     os.system(train_str)
 
 ### inference ###
 from torch.utils.data import Dataset, DataLoader
 from multiprocessing import cpu_count
 # sys.path.append('')
-sys.path.append(f'{cfg.absolute_path}/src/YOLOX')
+sys.path.append(f'{cfg.absolute_path}/src/YOLOX')  # /kaggle/working/duplicate/src/YOLOX
 
 from yolox.utils import postprocess
 from yolox.data.data_augment import ValTransform

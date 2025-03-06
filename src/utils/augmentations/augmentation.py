@@ -269,6 +269,7 @@ def medical_v3(size):
             ToTensorV2(),
         ]),
     }
+
 def medical_v4(size):
     return {
         'train': A.Compose([
