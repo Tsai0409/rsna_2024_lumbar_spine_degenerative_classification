@@ -55,8 +55,11 @@ class ClassificationDataset(Dataset):
         self.cfg = cfg
         self.phase = phase  # phase='train'
         self.current_epoch = current_epoch
+        # phase='train'
         if phase != 'test':
-            self.labels = df[cfg.label_features].values
+            self.labels = df[cfg.label_features].values  # 按照 label_features = ['label1', 'label2'...]
+        
+        # cfg.box_crop = None
         if (self.cfg.box_crop is not None) and (self.cfg.box_crop):
             self.boxes = df[['x_min', 'y_min', 'x_max', 'y_max']].astype(int).values
 
@@ -64,9 +67,10 @@ class ClassificationDataset(Dataset):
         return len(self.paths)
 
     def __getitem__(self, idx):
-        path = self.paths[idx]
+        path = self.paths[idx]  # image path(including temp)
         image = cv2.imread(path)[:,:,::-1]  # [:,:,::-1] 對圖片進行反轉
 
+        # cfg.box_crop = None
         if self.cfg.box_crop:
             box = self.boxes[idx]
             x_pad = (box[2] - box[0])//2 * self.cfg.box_crop_x_ratio
@@ -81,15 +85,17 @@ class ClassificationDataset(Dataset):
             s = image.shape
             image = image[int(y_min):int(y_max), int(x_min):int(x_max), :]  # : 表示所有通道 (例如 RGB 的 3 個通道)
 
-        if self.transforms:
-            image = self.transforms(image=image)['image']
+        # transforms=self.cfg.transform['train'] -> self.transforms = True
+        if self.transforms:  # here
+            image = self.transforms(image=image)['image']  
+            # 使用 Albumentations(A) 的轉換管道時，輸出結果中的 image 是一個 numpy array(numpy.ndarray)，其形狀通常是(height, width, channels)
+            # 最後經過 ToTensorV2()，輸出的 image 就會是 torch.Tensor
 
         if self.phase == 'test':
             return image
 
         label = self.labels[idx]
-
-        return image, torch.FloatTensor(label)
+        return image, torch.FloatTensor(label)  # 看起來是拿 全部的圖片 找對應的 ['label1', 'label2'...] 作為 model 的 input
 
 import math
 
@@ -309,10 +315,9 @@ class SagittalMILDataset(Dataset):
             return images
 
         label = self.labels[idx]
-
         return images, torch.FloatTensor(label)
 
-def worker_init_fn(worker_id):
+def worker_init_fn(worker_id):  # worker_id 是由 DataLoader 在啟動每個子進程時自動提供的
     np.random.seed(np.random.get_state()[1][0] + worker_id)
     
 def get_dataset_class(cfg):
@@ -330,11 +335,11 @@ def my_collate_fn(batch):
     labels = torch.stack(labels, dim=0)
     return images, labels
 
-def my_collate_fn(batch):
+def my_collate_fn(batch):  # 遇到名稱相同的執行後者；拿 class ClassificationDataset 的輸出結果 return image, torch.FloatTensor(label) 作為 batch
     images = [item[0] for item in batch]
-    images = torch.stack(images, dim=0)
+    images = torch.stack(images, dim=0)  # 把所有影像堆疊成一個 tensor，產生的張量形狀一般為(batch_size, channels, height, width)
 
-    if isinstance(batch[0][1], tuple):
+    if isinstance(batch[0][1], tuple):  # 檢查第一筆資料的第二個元素(即 label)是否為 tuple；如果是 tuple，代表每筆資料的 label 內包含多個元素(例如可能包含標籤和 mask)
         labels = [item[1][0] for item in batch]
         masks = [item[1][1] for item in batch]
         labels = torch.stack(labels, dim=0)
@@ -366,7 +371,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             assert type(self.cfg.upsample) == int
             origin_len = len(tr)
             dfs = [tr]
-            for col in self.cfg.label_features:  # 按照 label_features = ['label1', 'label2'] 依序進行上採樣
+            for col in self.cfg.label_features:  # 按照 label_features = ['label1', 'label2'...] 依序進行上採樣
                 for _ in range(self.cfg.upsample):
                     dfs.append(tr[tr[col]==1])  # 在第一個迭代時，選擇 label1 值為 1 的數據(通常表示1的即為數據不平衡的)
             tr = pd.concat(dfs)
