@@ -12,8 +12,6 @@ from multiprocessing import cpu_count
 from pdb import set_trace as st
 from src.utils.google_spread_sheet_editor import GoogleSpreadSheetEditor
 
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     arg = parser.add_argument
@@ -120,7 +118,8 @@ if __name__ == "__main__":
         torch_state_dict = {}
         delete_model_model = True
         delete_model = True
-        for k, v in state_dict.items():
+
+        for k, v in state_dict.items():  # (key, value)
             if not k.startswith('model.model.'):
                 delete_model_model = False
             if not k.startswith('model.'):
@@ -128,7 +127,7 @@ if __name__ == "__main__":
 
         for k, v in state_dict.items():
             if delete_model_model:
-                torch_state_dict[k[12:]] = v
+                torch_state_dict[k[12:]] = v  # 如果 key 是以 model.model. 開頭的樣式來存放，將 k[0:11] 的部分刪除；並以 (key, value) 存放在 torch_state_dict 字典中
             elif delete_model:
                 torch_state_dict[k[6:]] = v
             else:
@@ -137,19 +136,21 @@ if __name__ == "__main__":
         print(f'load model weight from checkpoint: {state_dict_path}')
 
     # self.no_trained_model_when_inf = False
-    if not getattr(cfg, 'no_trained_model_when_inf', False):  # 進入 if 迴圈
-        cfg.model.load_state_dict(torch_state_dict)
+    if not getattr(cfg, 'no_trained_model_when_inf', False):  # 進入 if 迴圈；在推論時不使用訓練好的模型(在推論時不會進來)
+        cfg.model.load_state_dict(torch_state_dict)  # 載入模型權重
     cfg.model.to(device)
 
     # self.predict_valid = True
-    if cfg.predict_valid:
-        val, val_loader = prepare_loader(cfg, split='val')
+    if cfg.predict_valid:  # 驗證集的預測
+        val, val_loader = prepare_loader(cfg, split='val')  # val：通常是一個 DataFrame，包含驗證集的原始資料（例如 ID、標籤等）；val_loader：是一個資料載入器（DataLoader），可以依批次讀取驗證集的資料，方便後續推論使用。
         preds = predict(cfg, val_loader)
-        pred_cols = [f'pred_{c}' for c in cfg.label_features]
+        pred_cols = [f'pred_{c}' for c in cfg.label_features]  # self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
         val[pred_cols] = preds[0]
         val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
         print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
 
+    # class rsna_sagittal_level_cl_spinal_v1、class rsna_sagittal_level_cl_nfn_v1 -> self.predict_test = True
+    # class rsna_sagittal_cl -> self.predict_test = False
     if cfg.predict_test:
         test, test_loader = prepare_loader(cfg, split='test')
         preds = predict(cfg, test_loader)

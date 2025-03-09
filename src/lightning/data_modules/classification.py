@@ -403,7 +403,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
                 num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn, collate_fn=my_collate_fn)
 
     def val_dataloader(self):
-        val = get_val(self.cfg)
+        val = get_val(self.cfg)  # get_val 可以在 src/lightning/data_modules/util.py 中找到
         self.val = val
 
         print('len(valid):', len(val))
