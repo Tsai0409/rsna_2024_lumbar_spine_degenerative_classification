@@ -27,7 +27,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # 關閉 SSL 驗證
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()  # 建立一個 ArgumentParser 物件
     parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")  # 呼叫 configs.py
     # 如何知道是要選擇 class rsna_sagittal_level_cl_spinal_v1 及 class rsna_sagittal_level_cl_nfn_v1 -> 在 inf_sagittal_slice_1st.sh 有寫出
     parser.add_argument("--type", '-t', type=str, default='classification')
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     print(f"Starting training for config: {args.config}, fold: {args.fold}")  # 我加
 
     if args.type == 'classification':  # args.type 如果沒有定義 default='classification'
-        from src.configs import *  #  cfg 參數的初始定義是從 configs.py 的 class Baseline 來的
+        from src.configs import *  # cfg 參數的初始定義是從 configs.py 的 class Baseline 來的
     elif args.type == 'seg':
         from src.seg_configs import *
     elif args.type == 'effdet':
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         devices = 8
     elif cfg.gpu == 'small':
         devices = 1
-    elif cfg.gpu == 'v100':
+    elif cfg.gpu == 'v100':  # self.gpu = 'v100'(class Baseline)
         devices = 4
     else:
         raise
@@ -189,17 +189,21 @@ if __name__ == "__main__":
     # Trainer 內部是怎麼執行的？
     
     print('start training.')
-    trainer.fit(model, datamodule=datamodule)
+    trainer.fit(model, datamodule=datamodule)  # 訓練模型
     # os.system(f'ls {OUTPUT_PATH}/')
     os.system('ls -R /kaggle/working/ckpt/')  # 遞歸列出所有目錄
-    torch.save(model.model.state_dict(), f'{OUTPUT_PATH}/last_fold{args.fold}.ckpt')
+    torch.save(model.model.state_dict(), f'{OUTPUT_PATH}/last_fold{args.fold}.ckpt')  # OUTPUT_PATH = f'/kaggle/working/ckpt/{args.config}';保存最後一次訓練結果的模型權重
     print(f"{OUTPUT_PATH}/last_fold{args.fold}.ckpt create completed.")  # 我加
-    best_model_path = checkpoint_callback.best_model_path
-    best_model = model.load_from_checkpoint(cfg=cfg, checkpoint_path=best_model_path)
+    best_model_path = checkpoint_callback.best_model_path  # 取得最佳模型檔案「路徑」
+    best_model = model.load_from_checkpoint(cfg=cfg, checkpoint_path=best_model_path)  # 取得最佳模型檔案
     torch.save(best_model.model.state_dict(), f'{OUTPUT_PATH}/fold_{args.fold}.ckpt')
+    # 假設執行 10 epoch(5 epoch 時表現最好)，在 fold 0 時
+    # last_fold0.ckpt 會存 epoch 10 的執行結果
+    # fold_0.ckpt 會存 epoch 5 的執行結果
+
     # if args.fold == 3:
     if args.fold == 1: # 現在只要執行 fold 0.1
         cfg.train_df.to_csv(f'{OUTPUT_PATH}/train.csv', index=False)
-    os.system(f'rm -f {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')  #  刪除某些 .ckpt 檔案，讓訓練結果目錄保持整潔
+    os.system(f'rm -f {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')  #  刪除檔名像 fold_0-v1.ckpt、fold_0-v2.ckpt 的檔案
 
 print('train_one_fold.py finish')

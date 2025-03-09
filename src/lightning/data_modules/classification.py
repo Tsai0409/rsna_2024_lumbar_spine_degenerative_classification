@@ -85,7 +85,7 @@ class ClassificationDataset(Dataset):
             s = image.shape
             image = image[int(y_min):int(y_max), int(x_min):int(x_max), :]  # : 表示所有通道 (例如 RGB 的 3 個通道)
 
-        # transforms=self.cfg.transform['train'] -> self.transforms = True
+        # self.transforms = True -> transforms=self.cfg.transform['train']
         if self.transforms:  # here
             image = self.transforms(image=image)['image']  
             # 使用 Albumentations(A) 的轉換管道時，輸出結果中的 image 是一個 numpy array(numpy.ndarray)，其形狀通常是(height, width, channels)
@@ -328,7 +328,7 @@ def get_dataset_class(cfg):
         claz = ClassificationDataset  # here
     return claz
 
-def my_collate_fn(batch):
+def my_collate_fn(batch):  # 不執行
     images = [item[0] for item in batch]
     labels = [item[1] for item in batch]
     images = torch.stack(images, dim=0)
@@ -336,7 +336,7 @@ def my_collate_fn(batch):
     return images, labels
 
 def my_collate_fn(batch):  # 遇到名稱相同的執行後者；拿 class ClassificationDataset 的輸出結果 return image, torch.FloatTensor(label) 作為 batch
-    images = [item[0] for item in batch]
+    images = [item[0] for item in batch]  # (image, label)
     images = torch.stack(images, dim=0)  # 把所有影像堆疊成一個 tensor，產生的張量形狀一般為(batch_size, channels, height, width)
 
     if isinstance(batch[0][1], tuple):  # 檢查第一筆資料的第二個元素(即 label)是否為 tuple；如果是 tuple，代表每筆資料的 label 內包含多個元素(例如可能包含標籤和 mask)
@@ -366,7 +366,8 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 其中一個 fold 作為訓練資料
         self.tr = tr
 
-        # cfg.upsample = None；cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對少數類別的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
+        # cfg.upsample = None
+        # cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對少數類別的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
         if self.cfg.upsample is not None:  # 數據集上採樣(upsampling)
             assert type(self.cfg.upsample) == int
             origin_len = len(tr)
