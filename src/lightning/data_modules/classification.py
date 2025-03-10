@@ -91,7 +91,7 @@ class ClassificationDataset(Dataset):
             # 使用 Albumentations(A) 的轉換管道時，輸出結果中的 image 是一個 numpy array(numpy.ndarray)，其形狀通常是(height, width, channels)
             # 最後經過 ToTensorV2()，輸出的 image 就會是 torch.Tensor
 
-        if self.phase == 'test':
+        if self.phase == 'test':  # 如果 test 的話，會傳 image 而已，沒有 label
             return image
 
         label = self.labels[idx]
@@ -362,7 +362,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
         # cfg.train_by_all_data = False
         if self.cfg.train_by_all_data:
             tr = self.cfg.train_df  # tr train input
-        else:  
+        else:  # here
             tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 其中一個 fold 作為訓練資料
         self.tr = tr
 
@@ -411,14 +411,27 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
 
         valid_ds = claz(
             df=val,
-            transforms=self.cfg.transform['val'],
+            transforms=self.cfg.transform['val'],  # self.transform = medical_v3
             cfg=self.cfg,
             phase='valid'
         )
 
         return DataLoader(valid_ds, batch_size=self.cfg.batch_size, pin_memory=True, shuffle=False, drop_last=False,
                           num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn, collate_fn=my_collate_fn)
-    
+        # 總共有 5 fold，假設現在 fold=0，會以 fold0-4 作為 train data，而 fold0 作為 vaild data 嗎？
+        # (Train Data) 會取 fold1 到 fold4(不飽和 fold0 的部分) 被用作訓練集；前提是如果沒有啟用 train_by_all_data（也就是預設情況下）
+        # (Valid Data) 會取出 cfg.train_df 中 fold0 的部分作爲驗證集
+         
+'''
+ # cfg.valid_df = None
+def get_val(cfg):
+    if cfg.valid_df is None: 
+        val = cfg.train_df[cfg.train_df.fold == cfg.fold] # 假設現在 fold=0 -> fold0 就是驗證資料
+    else:
+        val = cfg.valid_df[cfg.valid_df.fold == cfg.fold]
+    return val
+    # cfg.train_df.fold 這個 fold 是指在 train_df 中的 fold 欄位
+'''
 '''
 def medical_v3(size):
     return {

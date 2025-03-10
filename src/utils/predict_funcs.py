@@ -17,24 +17,32 @@ def pickle_dump(data, path):
 
 def classification_predict(cfg, loader):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    cfg.model.eval()
-    tta_predictions = [[] for _ in range(len(cfg.add_imsizes_when_inference)*cfg.tta)]
-    assert cfg.tta <= 8
-    for images_n, images in enumerate(tqdm(loader)):
-        with torch.no_grad():
+    cfg.model.eval()  # evaluation mode
+    
+    # Test Time Augmentation(TTA) 是一種在模型推論(測試)時應用資料增強技術的做法，目的是讓模型在面對不同角度或變化的輸入時能夠產生更穩定、更準確的預測結果
+    # self.add_imsizes_when_inference = [(0, 0)]
+    # self.tta = 1
+    tta_predictions = [[] for _ in range(len(cfg.add_imsizes_when_inference)*cfg.tta)]  # 初始化 TTA 預測結果的存儲結構
+    assert cfg.tta <= 8  # if cfg.tta > 8 -> error
+
+    for images_n, images in enumerate(tqdm(loader)):  # 這邊的 loader 只有 return image(no label)
+        with torch.no_grad():  # 停用梯度計算
             tta_n = 0
+            # 沒出現 self.multi_image_4classes 
             if getattr(cfg, 'multi_image_4classes', False):
                 images = [i.to(device) for i in images]
+            # self.meta_cols = []
             elif len(cfg.meta_cols) != 0:
                 images, meta = images
                 images, meta = images.to(device), meta.to(device)
-            else:
+            else:  # here
                 try:
                     images = images.to(device)
                 except:
                     images = [i.to(device) for i in images]
 
-            for add_imsize in cfg.add_imsizes_when_inference:
+            # self.add_imsizes_when_inference = [(0, 0)]
+            for add_imsize in cfg.add_imsizes_when_inference:  # 進行不同額外影像尺寸與 TTA 的推論
                 predictions = []
                 features_list = []
                 if (add_imsize[0] != 0) | (add_imsize[1] != 0):
@@ -44,31 +52,45 @@ def classification_predict(cfg, loader):
                         print('images.size():', images.size())
                     except:
                         pass
-                for flip_tta_n in range(cfg.tta):
-                    if flip_tta_n % 2 == 1:
+            
+                # self.tta = 1
+                for flip_tta_n in range(cfg.tta):  # 內部 TTA 迴圈：針對不同的翻轉或轉置操作；產生了不同視角的影像，用以提升預測穩定性
+                    if flip_tta_n % 2 == 1:  # 當 flip_tta_n 為奇數時，沿著最後一個維度（通常是水平翻轉）進行翻轉
                         images = torch.flip(images, (3,))
-                    if flip_tta_n in [2, 6]:
+                    if flip_tta_n in [2, 6]:  # 當 flip_tta_n 為 2 或 6 時，沿著第二個空間維度（垂直翻轉）進行翻轉
                         images = torch.flip(images, (2,))
-                    if flip_tta_n == 4:
+                    if flip_tta_n == 4:  # 當 flip_tta_n 為 4 時，對影像進行轉置操作（交換高度與寬度）
                         images = torch.transpose(images, 2,3)
 
-                    input_ = images if len(cfg.meta_cols) == 0 else (images, meta)
+                    input_ = images if len(cfg.meta_cols) == 0 else (images, meta)  # 模型推論 -> input_ = images
                     with torch.cuda.amp.autocast(enabled=cfg.inf_fp16):
+                        # self.output_features = False
                         if cfg.output_features:
                             pred, features = cfg.model.extract_with_features(input_)
-                        else:
-                            pred = cfg.model(input_)
+                        else:  # here
+                            pred = cfg.model(input_)  # pred 回傳的資料型態是 PyTorch Tensor 形狀為 (batch_size, self.num_classes)，模型對 image 的預測結果
                             if isinstance(pred, tuple):
-                                pred = pred[0]
+                                pred = pred[0]  # pred 如果是 tuple 回傳的形狀為 (predictions, features)
+                        # self.output_features = False
                         if cfg.output_features:
                             features_list.append(features.detach())
-                    tta_predictions[tta_n] += pred.detach().cpu().numpy().tolist()
+
+                    tta_predictions[tta_n] += pred.detach().cpu().numpy().tolist()  # 將特徵 detach 後存入 features_list
                     # tta_predictions[tta_n].append(torch.cat(predictions))
                     tta_n += 1
+
+    # self.output_features = False
     if cfg.output_features:
-        return tta_predictions, torch.cat(features_list).cpu().numpy()
-    else:
-        return tta_predictions
+        return tta_predictions, torch.cat(features_list).cpu().numpy()  
+    else:  # here
+        return tta_predictions  # 資料型態為 PyTorch List
+
+'''
+# tta_predictions[1] 就代表第二組 TTA（或第二個多尺度/翻轉組合）的預測結果。具體來說，它包含了所有輸入樣本在第二組 TTA 處理下的預測數值。
+# 如果你用的是單一尺寸設定且 cfg.tta 設為 2，那麼：
+#   tta_predictions[0] 可能是原始（未翻轉）的預測結果;
+#   tta_predictions[1] 則可能是經過一次翻轉或其他幾何變換後得到的預測結果
+'''
 
 def mlp_with_nlp_predict(cfg, loader):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -128,6 +150,7 @@ def mlp_predict(cfg, loader):
 #             )
 #         preds.append(topk_node_idx)
 #     return torch.cat(preds)
+
 def gnn_predict(cfg, loader, output_path, split):
     os.system(f'mkdir -p {output_path}/{split}')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
