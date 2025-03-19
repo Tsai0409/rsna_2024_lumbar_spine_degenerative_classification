@@ -20,7 +20,6 @@ legacy/
 input/
 /*.job.o*
 *.ipynb
-results/
 tb_logs/
 yolov5_bk/
 *.npy
