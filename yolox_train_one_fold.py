@@ -2,7 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 import os
-import sys  # 我加
+import sys
 import json
 import pandas as pd
 import numpy as np
@@ -12,7 +12,6 @@ from pdb import set_trace as st
 from tqdm.notebook import tqdm
 tqdm.pandas()
 from sklearn.model_selection import GroupKFold
-import sys
 from src.yolo_configs import *
 
 class NumpyEncoder(json.JSONEncoder):
@@ -30,7 +29,7 @@ def save_annot_json(json_annotation, filename):
 
 annotion_id = 0
 image_id_n = 0
-def dataset2coco(df):
+def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包含了圖片、標註（bounding boxes）、類別等資訊；從資料框 df 中提取資料，並格式化為 COCO 所需的結構
     global annotion_id
     global image_id_n
     annotations_json = {  # 建立 annotations_json 字典
@@ -40,6 +39,7 @@ def dataset2coco(df):
         "images": [],
         "annotations": []
     }
+
     info = {
         "year": "2023",
         "version": "1",
@@ -49,12 +49,14 @@ def dataset2coco(df):
         "date_created": "2023-04-10T15:01:26+00:00"
     }
     annotations_json["info"].append(info)
+
     lic = {
             "id": 1,
             "url": "",
             "name": "Unknown"
         }
     annotations_json["licenses"].append(lic)
+    
     for id_n, (path, idf) in enumerate(df.groupby('path')):
         images = {
             "id": image_id_n,
@@ -90,7 +92,7 @@ def dataset2coco(df):
 import argparse
 parser = argparse.ArgumentParser()
 # parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")
-parser.add_argument("--config", '-c', type=str, default='Test', help="config name in yolo_configs.py")
+parser.add_argument("--config", '-c', type=str, default='Test', help="config name in yolo_configs.py")  # configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
 # parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in configs.py")
 parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in yolo_configs.py")
 # parser.add_argument("--fold", type=int, default=0, help="fold num")
@@ -103,6 +105,11 @@ print(args)
 fold = args.fold
 config = args.config
 cfg = eval(args.config)()
+
+# DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+# self.train_df = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
+# self.test_df = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
+
 # absolute_path = /kaggle/working/duplicate
 print('absolute_path = '+cfg.absolute_path)
 # cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path  # train 照片路徑；ex:/kaggle/temp/axial_all_images/2767326159___223384___5.png
@@ -110,8 +117,9 @@ cfg.train_df.path = cfg.train_df.path
 # cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
 cfg.test_df.path = cfg.test_df.path
 
-cfg.train_df.class_id = cfg.train_df.class_id.astype(int)
-if 'x_min' not in list(cfg.train_df):
+cfg.train_df.class_id = cfg.train_df.class_id.astype(int)  # 確保為 int 型態
+# 這段應該不會執行到：
+if 'x_min' not in list(cfg.train_df):  
     cfg.train_df['x_min'] = cfg.train_df['image_width'] * (cfg.train_df['x_center_scaled']-cfg.train_df['width_scaled']/2)
 if 'x_max' not in list(cfg.train_df):
     cfg.train_df['x_max'] = cfg.train_df['image_width'] * (cfg.train_df['x_center_scaled']+cfg.train_df['width_scaled']/2)
@@ -122,7 +130,9 @@ if 'y_max' not in list(cfg.train_df):
 
 sys.path.append("/kaggle/working/duplicate/src/YOLOX")  # 我加
 # os.chdir('src/YOLOX')
-os.chdir('/kaggle/working/duplicate/src/YOLOX')
+os.chdir('/kaggle/working/duplicate/src/YOLOX')  # os.chdir() 是一個 Python 函式，用來改變當前的工作目錄
+# sys.path.append() 並不會改變當前工作目錄，僅僅是告訴 Python 去某個目錄尋找模組。這對檔案操作不會有影響
+# os.chdir() 會更改當前的工作目錄，這會影響檔案操作，但它不會改變 Python 模組的搜尋路徑；差異？
 
 print(f'\n----------------------- Config -----------------------')
 config_str = ''
@@ -134,40 +144,49 @@ for k, v in vars(cfg).items():
 print(f'----------------------- Config -----------------------\n')
 
 # absolute_path = /kaggle/working/duplicate
-# configs = rsna_axial_all_images_left_yolox_x、rsna_axial_all_images_right_yolox_x
-config_path = f'configfile_{config}_fold{fold}.py'
-os.makedirs(f'{cfg.absolute_path}/results/{config}', exist_ok=True)
+# configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
+config_path = f'configfile_{config}_fold{fold}.py'  # 創立新的配置檔案 configfile_rsna_axial_all_images_left_yolox_x_fold0.py
+os.makedirs(f'{cfg.absolute_path}/results/{config}', exist_ok=True)  # 創立一個目錄 /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x
 
+# self.model_name_for_yolox 沒有出現(all condition)
 if hasattr(cfg, 'model_name_for_yolox'):
     model_name = cfg.model_name_for_yolox
-else:
-    model_name = cfg.pretrained_path.split('/')[-1].replace('.pth', '')
+else:  # here
+    # self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'
+    model_name = cfg.pretrained_path.split('/')[-1].replace('.pth', '')  # model_name = yolox
+
 categories = []
 class_id_name_map = {}
 
+# class_id = [0, 1, 2, 3, 4]
+# class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1]
 for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.unique(), cfg.train_df.sort_values('class_id').class_id.unique())):
-    classes = {'supercategory': 'none'}
-    classes['id'] = id
-    classes['name'] = c
-    categories.append(classes)
-    class_id_name_map[id] = c
-print('class_id_name_map:', class_id_name_map)
-tr = cfg.train_df[cfg.train_df.fold != fold]
+    classes = {'supercategory': 'none'}  # 創建了一個名為 classes 的字典
+    classes['id'] = id  # 以 (key, value) pair 的形式存放
+    classes['name'] = c  # 以 (key, value) pair 的形式存放
+    categories.append(classes)  # 將 classes 的字典存到 catagories 的 list 中；這邊有 5 個 class_id 所以有 5 個字典
+    class_id_name_map[id] =class_name
+print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
+tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
 val = cfg.train_df[cfg.train_df.fold == fold]
 
 print('len(train) / len(val):', len(tr), len(val))
+# class_id_name_map: {0: 'left'} -> len(train) / len(val): 9602 1924
+# class_id_name_map: {0: 'right'} -> len(train) / len(val): 9611 1924
+
 # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
 train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')  # rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1
-train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'  # train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len .json
-valid_json_filename = f'valid_{train_df_filename}_fold{fold}_len{len(val)}.json'
+train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'  # train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len9602.json
+valid_json_filename = f'valid_{train_df_filename}_fold{fold}_len{len(val)}.json'  # vaild_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len1924.json
 
-# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x 的 cfg.inference_only=False
-# class rsna_10classes_yolox_x 的 cfg.inference_only=True
-if not cfg.inference_only:
+# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x -> cfg.inference_only=False
+# class rsna_10classes_yolox_x -> cfg.inference_only=True
+if not cfg.inference_only:  # configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
+    # self.update_json = False (all condition)
     if os.path.exists(f"{cfg.absolute_path}/input/annotations/{train_json_filename}") & os.path.exists(f"{cfg.absolute_path}/input/annotations/{valid_json_filename}") & (not cfg.update_json):
         print('make labels skip.')
     else:
-        print('make labels start...')
+        print('make labels start...')  # here
         train_annot_json = dataset2coco(tr)  # 會用到 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path；可能有錯？
         valid_annot_json = dataset2coco(val)
         os.system(f'mkdir -p {cfg.absolute_path}/input/annotations/')

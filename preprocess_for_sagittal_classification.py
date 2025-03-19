@@ -93,7 +93,7 @@ for level, idf in df.groupby('level'):
         idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Moderate', f'{col}_moderate'] = 1
         idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Severe', f'{col}_severe'] = 1
     dfs.append(idf)
-df = pd.concat(dfs)    
+df = pd.concat(dfs)
 p = f'input/sagittal_spinal_range2_rolling5.csv'
 df.to_csv(p, index=False)
 print(p)

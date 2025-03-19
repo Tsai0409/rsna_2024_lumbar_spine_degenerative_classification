@@ -1,4 +1,4 @@
-# utils/dataloader_factory.py
+# src/utils/dataloader_factory.py
 from torch.utils.data import Dataset
 from torch_geometric.loader import DataLoader as GeometricDataLoader
 from torch.utils.data import DataLoader
@@ -30,12 +30,12 @@ def get_val(cfg):
         val = cfg.valid_df[cfg.valid_df.fold == cfg.fold]
     return val
 '''
-
+# vaild test 時使用
 def prepare_classification_loader(cfg, split='val'):
     if split == 'train':
         df = cfg.train_df[cfg.train_df.fold != cfg.fold]
     elif split == 'val':  # here
-        df = get_val(cfg)  # return Dataframe
+        df = get_val(cfg)  # return Dataframe (above)
     elif split == 'test':
         df = cfg.test_df
     else:
@@ -49,7 +49,7 @@ def prepare_classification_loader(cfg, split='val'):
         phase='test'  # only return image(no label)
     )
     return df, DataLoader(ds, batch_size=cfg.batch_size, shuffle=False, drop_last=False,
-                      num_workers=cfg.n_cpu, worker_init_fn=worker_init_fn)  # 如果是 train/valid，return:(image, label)
+                      num_workers=cfg.n_cpu, worker_init_fn=worker_init_fn)  # 如果是 train:(image, label)
 
 def prepare_mlp_loader(cfg, split='val'):
     if split == 'train':

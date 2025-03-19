@@ -66,11 +66,14 @@ if __name__ == "__main__":
         devices = 8
     elif cfg.gpu == 'small':
         devices = 1
-    elif cfg.gpu == 'v100':  # self.gpu = 'v100'(class Baseline)
+    # self.gpu = 'v100'(all condition)
+    elif cfg.gpu == 'v100':  # here
         devices = 4
     else:
         raise
-    if cfg.gpu == 'v100':
+
+    # self.gpu = 'v100'(all condition)
+    if cfg.gpu == 'v100': # here
         if cfg.batch_size >= 4:
             cfg.batch_size = cfg.batch_size // 4
             cfg.grad_accumulations *= 4
@@ -78,11 +81,14 @@ if __name__ == "__main__":
             cfg.grad_accumulations *= cfg.batch_size
             cfg.batch_size = 1
 
+    # self.inference_only = False (all condition)
     if cfg.inference_only:
         exit()
+    # self.inference_only = False (all condition)
     if cfg.train_by_all_data & (args.fold != 0):
         exit()
     cfg.fold = args.fold
+    # self.seed = 2023 (all condition)
     if cfg.seed is None:  # 通常會設定 固定的 seed 值，確保每次執行程式時，隨機過程的結果是一樣的
         now = datetime.datetime.now()
         cfg.seed = int(now.strftime('%s'))
@@ -174,7 +180,7 @@ if __name__ == "__main__":
         logger=[logger],
         sync_batchnorm=cfg.sync_batchnorm,
         enable_progress_bar=False,
-        resume_from_checkpoint=f'{OUTPUT_PATH}/fold_{args.fold}.ckpt' if cfg.resume else None,
+        resume_from_checkpoint=f'{OUTPUT_PATH}/fold_{args.fold}.ckpt' if cfg.resume else None,  # self.resume = False (all condition)
         accelerator='gpu' if torch.cuda.is_available() else 'cpu',
         devices=devices if torch.cuda.is_available() else None,
         reload_dataloaders_every_n_epochs=getattr(cfg, 'reload_dataloaders_every_n_epochs', 0),
@@ -198,12 +204,17 @@ if __name__ == "__main__":
     best_model = model.load_from_checkpoint(cfg=cfg, checkpoint_path=best_model_path)  # 取得最佳模型檔案
     torch.save(best_model.model.state_dict(), f'{OUTPUT_PATH}/fold_{args.fold}.ckpt')
     # 假設執行 10 epoch(5 epoch 時表現最好)，在 fold 0 時
-    # last_fold0.ckpt 會存 epoch 10 的執行結果
-    # fold_0.ckpt 會存 epoch 5 的執行結果
+    # last_fold0.ckpt 會存 epoch 10 的執行結果 (存最後的結果)
+    # fold_0.ckpt 會存 epoch 5 的執行結果 (存最好的結果)
 
     # if args.fold == 3:
     if args.fold == 1: # 現在只要執行 fold 0.1
-        cfg.train_df.to_csv(f'{OUTPUT_PATH}/train.csv', index=False)
-    os.system(f'rm -f {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')  #  刪除檔名像 fold_0-v1.ckpt、fold_0-v2.ckpt 的檔案
+        cfg.train_df.to_csv(f'{OUTPUT_PATH}/train.csv', index=False)  # 把當前使用的檔案存下來
+    os.system(f'rm -f {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')  # 刪除檔名像 fold_0-v1.ckpt、fold_0-v2.ckpt 的檔案
 
 print('train_one_fold.py finish')
+
+# 整份檔案產生：
+# last_fold0.ckpt
+# fold_0.ckpt
+# train.csv

@@ -50,7 +50,7 @@ if __name__ == "__main__":
         from src.gnn_configs import *
 
     try:
-        cfg = eval(args.config)(args.fold)
+        cfg = eval(args.config)(args.fold)  # here
     except:
         cfg = eval(args.config)()
 
@@ -96,16 +96,16 @@ if __name__ == "__main__":
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
-    # self.use_last_ckpt_when_inference = True
-    if getattr(cfg, 'use_last_ckpt_when_inference', False):  
-        file_name_base = 'last_fold'
+    # self.use_last_ckpt_when_inference = True (all condition)
+    if getattr(cfg, 'use_last_ckpt_when_inference', False):  # here
+        file_name_base = 'last_fold'  # 載入 epoch 最後執行的權重檔
     else:
         file_name_base = 'fold_'
     
-    state_dict_path = f'{load_model_config_dir}/{file_name_base}{args.fold}.ckpt'  
+    state_dict_path = f'{load_model_config_dir}/{file_name_base}{args.fold}.ckpt'
     # state_dict_path = /kaggle/working/duplicate/ckpted/rsna_sagittal_level_cl_spinal_v1/last_fold0.ckpt
 
-    # self.no_trained_model_when_inf = False
+    # self.no_trained_model_when_inf = False (all condition)
     if not getattr(cfg, 'no_trained_model_when_inf', False):  # cfg 中的 'no_trained_model_when_inf' 這個屬性為 False，if not 所以 False 成立，進入 if 迴圈
         try:
             state_dict = torch.load(state_dict_path)['state_dict']  # 如果 checkpoint 檔案儲存的是一個字典，裡面有一個 col 叫做 'state_dict'
@@ -119,13 +119,13 @@ if __name__ == "__main__":
         delete_model_model = True
         delete_model = True
 
-        for k, v in state_dict.items():  # (key, value)
+        for k, v in state_dict.items():  # (key, value) (not use)
             if not k.startswith('model.model.'):
                 delete_model_model = False
             if not k.startswith('model.'):
                 delete_model = False
 
-        for k, v in state_dict.items():
+        for k, v in state_dict.items():  # (not use)
             if delete_model_model:
                 torch_state_dict[k[12:]] = v  # 如果 key 是以 model.model. 開頭的樣式來存放，將 k[0:11] 的部分刪除；並以 (key, value) 存放在 torch_state_dict 字典中
             elif delete_model:
@@ -135,31 +135,31 @@ if __name__ == "__main__":
 
         print(f'load model weight from checkpoint: {state_dict_path}')
 
-    # self.no_trained_model_when_inf = False
+    # self.no_trained_model_when_inf = False (all condition)
     if not getattr(cfg, 'no_trained_model_when_inf', False):  # 進入 if 迴圈；在推論時不使用訓練好的模型(在推論時不會進來)
         cfg.model.load_state_dict(torch_state_dict)  # 載入模型權重
     cfg.model.to(device)
 
-    # self.predict_valid = True
+    # self.predict_valid = True (all condition)
     if cfg.predict_valid:  # 驗證集的預測；val_dataloader 定義在 data_module/classificaiton.py 中；val_loader 是以(image, label) 的資料型態回傳
         val, val_loader = prepare_loader(cfg, split='val')  # val：通常是一個 DataFrame，包含驗證集的原始資料（例如 ID、標籤等）；val_loader：是一個資料載入器（DataLoader），可以依批次讀取驗證集的資料，方便後續推論使用。
         preds = predict(cfg, val_loader)
         pred_cols = [f'pred_{c}' for c in cfg.label_features]  # self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
         val[pred_cols] = preds[0]
-        val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
+        val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/fold0.csv
         print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
 
     # class rsna_sagittal_level_cl_spinal_v1、class rsna_sagittal_level_cl_nfn_v1 -> self.predict_test = True
     # class rsna_sagittal_cl -> self.predict_test = False
     if cfg.predict_test:
         test, test_loader = prepare_loader(cfg, split='test')  # 只有一個 fold 的 (DataFrame, DataLoader)
-        preds = predict(cfg, test_loader)
+        preds = predict(cfg, test_loader)  # test_loader(images, labels)
         preds_n = 0
 
         # self.add_imsizes_when_inference = [(0, 0)] -> add_imsizes_n = 0
         for add_imsizes_n, add_imsizes in enumerate(cfg.add_imsizes_when_inference):
-            # self.tta = 1
-            for tta_n in range(cfg.tta):  # 處理 TTA 次數；TTA 通常只在「推論」時使用？
+            # self.tta = 1 (all condition)
+            for tta_n in range(cfg.tta):  # 處理 TTA 次數；TTA 通常只在「推論」時使用 -> 對
                 if add_imsizes_n == 0:  # here
                     suffix = ''  # 動態生成欄位名稱後綴(suffix)
                 else:
@@ -207,3 +207,6 @@ print('predict.py finish')
 # 測試集的部分：
 #   使用多尺度和 TTA 產生多組預測結果，動態生成欄位名稱後將這些結果存入 DataFrame，以便最終聚合處理，從而提升預測的穩定性與準確性。
 '''
+
+# 最後 class rsna_sagittal_cl 出來的結果會去哪邊使用呢？
+# 找出來的 silce 是以什麼角度為主？(Subarticular Stenosis\Neural Foraminal Narrowing\Spinal Canal Stenosis)

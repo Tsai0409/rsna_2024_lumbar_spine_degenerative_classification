@@ -213,10 +213,10 @@ def get_scheduler(cfg, optimizer):
         # scheduler = CosineAnnealingLR(optimizer, T_max=cfg.t_max, eta_min=1e-7) # pao note
     elif cfg.scheduler == 'WarmupCosineAnnealingLR':
         scheduler = WarmupCosineAnnealingLR(optimizer, T_max=cfg.t_max, eta_min=cfg.eta_min, warmup_epochs=cfg.warmup_epochs, warmup_factor=0.1, resume_epoch=cfg.resume_epoch)
-    elif cfg.scheduler == 'CosineAnnealingWarmRestarts':
+    elif cfg.scheduler == 'CosineAnnealingWarmRestarts':  # self.scheduler = 'CosineAnnealingWarmRestarts' (all condition)
         # scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=cfg.t_max, T_mult=1, eta_min=cfg.eta_min)
         # scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=min(cfg.epochs, cfg.t_max), T_mult=1, eta_min=cfg.eta_min)
-        scheduler = CosineAnnealingWarmRestarts(optimizer, cfg.epochs, eta_min=cfg.eta_min)
+        scheduler = CosineAnnealingWarmRestarts(optimizer, cfg.epochs, eta_min=cfg.eta_min)  # self.eta_min = 5e-7 (all condition)
     elif cfg.scheduler == 'transformers_cosine':
         num_train_optimization_steps = int(cfg.len_train_loader * cfg.epochs)
         num_warmup_steps = int(num_train_optimization_steps * cfg.num_warmup_steps_rate)

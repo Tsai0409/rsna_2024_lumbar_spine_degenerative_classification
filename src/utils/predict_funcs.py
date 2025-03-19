@@ -1,3 +1,4 @@
+# src/utils/predict_funcs.py
 from scipy.special import softmax
 import torch
 from tqdm import tqdm
@@ -28,10 +29,10 @@ def classification_predict(cfg, loader):
     for images_n, images in enumerate(tqdm(loader)):  # 這邊的 loader 只有 return image(no label)
         with torch.no_grad():  # 停用梯度計算
             tta_n = 0
-            # 沒出現 self.multi_image_4classes 
+            # 沒出現 self.multi_image_4classes -> False
             if getattr(cfg, 'multi_image_4classes', False):
                 images = [i.to(device) for i in images]
-            # self.meta_cols = []
+            # self.meta_cols = [] -> False
             elif len(cfg.meta_cols) != 0:
                 images, meta = images
                 images, meta = images.to(device), meta.to(device)
@@ -53,7 +54,7 @@ def classification_predict(cfg, loader):
                     except:
                         pass
             
-                # self.tta = 1
+                # self.tta = 1 (all condition)
                 for flip_tta_n in range(cfg.tta):  # 內部 TTA 迴圈：針對不同的翻轉或轉置操作；產生了不同視角的影像，用以提升預測穩定性
                     if flip_tta_n % 2 == 1:  # 當 flip_tta_n 為奇數時，沿著最後一個維度（通常是水平翻轉）進行翻轉
                         images = torch.flip(images, (3,))

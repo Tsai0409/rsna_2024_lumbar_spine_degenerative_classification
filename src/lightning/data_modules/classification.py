@@ -6,7 +6,7 @@ from pathlib import Path
 import pickle
 from glob import glob
 import cv2
-from PIL import Image
+from PIL import Im
 import random
 import albumentations as A
 
@@ -51,9 +51,8 @@ class ClassificationDataset(Dataset):
     def __init__(self, df, transforms, cfg, phase, current_epoch=None):
         self.transforms = transforms
         self.paths = df.path.values  # df = train_for_sagittal_level_cl_v1_for_train_spinal_only.csv
-        # self.paths = df.origin_path.values
         self.cfg = cfg
-        self.phase = phase  # phase='train'
+        self.phase = phase  # phase='train' (defined below)
         self.current_epoch = current_epoch
         # phase='train'
         if phase != 'test':
@@ -359,15 +358,15 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
         pass
 
     def train_dataloader(self):
-        # cfg.train_by_all_data = False
+        # self.train_by_all_data = False (all condition)
         if self.cfg.train_by_all_data:
             tr = self.cfg.train_df  # tr train input
         else:  # here
-            tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 其中一個 fold 作為訓練資料
+            tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 除了當前 fold 作為訓練資料
         self.tr = tr
 
         # cfg.upsample = None
-        # cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對少數類別的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
+        # cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對「少數類別」的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
         if self.cfg.upsample is not None:  # 數據集上採樣(upsampling)
             assert type(self.cfg.upsample) == int
             origin_len = len(tr)
@@ -381,11 +380,11 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
         print('len(train):', len(tr))
         claz = get_dataset_class(self.cfg)
 
-        # cfg.use_custom_sampler 沒有出現在 configs
+        # cfg.use_custom_sampler 沒有出現在 configs -> 預設為 False
         if getattr(self.cfg, 'use_custom_sampler', False):
             tr = tr.reset_index(drop=True)
         
-        train_ds = claz(  # 這邊的閱讀順序是先定義要哪一個類別 claz = get_dataset_class(self.cfg)，然後在傳如參數？
+        train_ds = claz(  # 這邊的閱讀順序是先定義要哪一個類別 claz = get_dataset_class(self.cfg)，然後在傳如參數 -> 對
             df=tr,
             transforms=self.cfg.transform['train'],  # self.transform = medical_v3(configs);定義在：src/utils/augmentations/augmentation.py
             cfg=self.cfg,
@@ -403,7 +402,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
                 num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn, collate_fn=my_collate_fn)
 
     def val_dataloader(self):
-        val = get_val(self.cfg)  # get_val 可以在 src/lightning/data_modules/util.py 中找到
+        val = get_val(self.cfg)  # get_val 可以在 src/lightning/data_modules/util.py 中找到 (below)
         self.val = val
 
         print('len(valid):', len(val))
@@ -418,8 +417,8 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
 
         return DataLoader(valid_ds, batch_size=self.cfg.batch_size, pin_memory=True, shuffle=False, drop_last=False,
                           num_workers=self.cfg.n_cpu, worker_init_fn=worker_init_fn, collate_fn=my_collate_fn)
-        # 總共有 5 fold，假設現在 fold=0，會以 fold0-4 作為 train data，而 fold0 作為 vaild data 嗎？
-        # (Train Data) 會取 fold1 到 fold4(不飽和 fold0 的部分) 被用作訓練集；前提是如果沒有啟用 train_by_all_data（也就是預設情況下）
+        # 總共有 5 fold，假設現在 fold=0，會以 fold0-4 作為 train data，而 fold0 作為 vaild data 嗎 ->
+        # (Train Data) 會取 fold1 到 fold4(不包含 fold0 的部分) 被用作訓練集；前提是如果沒有啟用 train_by_all_data（也就是預設情況下）
         # (Valid Data) 會取出 cfg.train_df 中 fold0 的部分作爲驗證集
          
 '''
