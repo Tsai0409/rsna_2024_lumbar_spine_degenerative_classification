@@ -3,10 +3,17 @@ import numpy as np
 from tqdm import tqdm
 import cv2
 from multiprocessing import Pool, cpu_count
+
+# kaggle input
+DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+
+# 設定環境變數
+WORKING_DIR="/kaggle/working/duplicate"
+
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
-df = pd.read_csv('input/train_with_fold.csv')
+df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 df['instance_number'] = df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 dfs = []
 for id, idf in df.groupby('series_id'):

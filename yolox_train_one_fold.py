@@ -14,7 +14,7 @@ tqdm.pandas()
 from sklearn.model_selection import GroupKFold
 from src.yolo_configs import *
 
-class NumpyEncoder(json.JSONEncoder):
+class NumpyEncoder(json.JSONEncoder):  # json.JSONEncoder 的自定義編碼器 NumpyEncoder，用來處理 NumPy 特有的資料類型。這樣可以確保在將 NumPy 物件轉換為 JSON 格式時不會出現錯誤
     def default(self, obj):
         if isinstance(obj, np.integer):
             return int(obj)
@@ -24,8 +24,10 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
-def save_annot_json(json_annotation, filename):
-    json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
+# save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
+# filename = '/kaggle/working/duplicate/input/annotations/train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len9602.json'
+def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
+    json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)  # json.dump() 是 Python 的 json 模組中用來將 Python 物件寫入 JSON 檔案的函數；open(filename, 'w') 打開指定的檔案（這裡是 filename）以進行寫入模式
 
 annotion_id = 0
 image_id_n = 0
@@ -56,19 +58,22 @@ def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包�
             "name": "Unknown"
         }
     annotations_json["licenses"].append(lic)
-    
-    for id_n, (path, idf) in enumerate(df.groupby('path')):
+
+    for id_n, (path, idf) in enumerate(df.groupby('path')):  # enumerate() 會返回一個可迭代的對象，每次迭代會返回一個元組 (index, value)；以一張 image 為單位(group)
         images = {
-            "id": image_id_n,
+            "id": image_id_n,  # 每處理一張圖片時，image_id_n 的值會自動 +1
             "license": 1,
-            "file_name": path,
+            "file_name": path,  # /kaggle/temp/axial_all_images/2767326159___223384___5.png
             "height": idf.image_height.values[0],
             "width": idf.image_width.values[0],
             "date_captured": "2023-04-10T15:01:26+00:00"
         }
-
         annotations_json["images"].append(images)
-        for _, row in idf.iterrows():
+        
+        for _, row in idf.iterrows():  # iterrows() 會返回每一行的索引(用 _ 忽略這個索引)和該行的資料(row)
+            # 如果每張圖片只有一個標註資料，那麼 for _, row in idf.iterrows(): 會執行一次
+            # 如果每張圖片有多個標註資料，則 for _, row in idf.iterrows(): 會執行多次，每次處理一個標註資料
+            # Axial T2 -> Subarticular Stenosis(有左右邊的(x, y) 的標註點，而 path 有可能一樣) 
             bbox = row[['x_min', 'y_min', 'x_max', 'y_max']].values
             b_width = bbox[2]-bbox[0]
             b_height = bbox[3]-bbox[1]
@@ -76,15 +81,15 @@ def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包�
             image_annotations = {
                 "id": annotion_id,
                 "image_id": image_id_n,
-                "category_id": row.class_id,
-                "bbox": [bbox[0], bbox[1], b_width, b_height],
+                "category_id": row.class_id,  # class_id = [0, 1, 2, 3, 4]
+                "bbox": [bbox[0], bbox[1], b_width, b_height],  # bbox: [x_min, y_min, b_width, b_height],
                 "area": b_width * b_height,
                 "segmentation": [],
                 "iscrowd": 0
             }
-
             annotion_id += 1
             annotations_json["annotations"].append(image_annotations)
+
         image_id_n += 1
     print(f"len(df): {len(df)}")
     return annotations_json
@@ -165,7 +170,7 @@ for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.
     classes['id'] = id  # 以 (key, value) pair 的形式存放
     classes['name'] = c  # 以 (key, value) pair 的形式存放
     categories.append(classes)  # 將 classes 的字典存到 catagories 的 list 中；這邊有 5 個 class_id 所以有 5 個字典
-    class_id_name_map[id] =class_name
+    class_id_name_map[id] = c
 print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
 tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
 val = cfg.train_df[cfg.train_df.fold == fold]
@@ -189,7 +194,7 @@ if not cfg.inference_only:  # configs=("rsna_axial_all_images_left_yolox_x" "rsn
         print('make labels start...')  # here
         train_annot_json = dataset2coco(tr)  # 會用到 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path；可能有錯？
         valid_annot_json = dataset2coco(val)
-        os.system(f'mkdir -p {cfg.absolute_path}/input/annotations/')
+        os.system(f'mkdir -p {cfg.absolute_path}/input/annotations/')  # 創建 annotations 的目錄；/kaggle/working/duplicate/input/annotations/
         save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
         save_annot_json(valid_annot_json, f"{cfg.absolute_path}/input/annotations/{valid_json_filename}")
 
@@ -203,18 +208,19 @@ import os
 import sys
 
 # 設定 PYTHONPATH 確保能夠找到 yolox 模組 我加
-sys.path.append("/kaggle/working/duplicate/src/YOLOX")
-os.chdir('/kaggle/working/duplicate/src/YOLOX')
-os.environ["PYTHONPATH"] = "/kaggle/working/duplicate/src/YOLOX:" + os.environ.get("PYTHONPATH", "")
+# sys.path.append("/kaggle/working/duplicate/src/YOLOX")
+# os.chdir('/kaggle/working/duplicate/src/YOLOX')
+# os.environ["PYTHONPATH"] = "/kaggle/working/duplicate/src/YOLOX:" + os.environ.get("PYTHONPATH", "")
 
 # 設定訓練命令 我加
-train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
+# train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
 
 from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
 
 class Exp(MyExp):
     def __init__(self):
         super(Exp, self).__init__()
+        # self.model_name= 'yolov5m'
         if '{model_name}' == 'yolox_s':
             self.depth = 0.33
             self.width = 0.50
@@ -227,20 +233,20 @@ class Exp(MyExp):
         elif '{model_name}' == 'yolox_x':
             self.depth = 1.33
             self.width = 1.25
-        else:
+        else:  
             raise
         self.exp_name = '{config}'
         self.data_dir = ""
 
         ### need change ###
-        self.max_epoch = {cfg.epochs}
-        self.train_ann = "{cfg.absolute_path}/input/annotations/{train_json_filename}"
+        self.max_epoch = {cfg.epochs}  # self.epochs = 20 (original 40)
+        self.train_ann = "{cfg.absolute_path}/input/annotations/{train_json_filename}"  # self.train_ann = '/kaggle/working/duplicate/input/annotations/train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len9602.json'
         self.val_ann = "{cfg.absolute_path}/input/annotations/{valid_json_filename}"
-        self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"  # absolute_path = /kaggle/working/duplicate
-        self.input_size = {cfg.image_size}
+        self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"  # absolute_path = '/kaggle/working/duplicate/results/train_rsna_axial_all_images_left_yolox_x/fold0'
+        self.input_size = {cfg.image_size}  # self.image_size = (512, 512)(all condition)
         self.test_size = {cfg.image_size}
-        self.no_aug_epochs = {cfg.no_aug_epochs} # 15
-        self.warmup_epochs = {cfg.warmup_epochs} # 5
+        self.no_aug_epochs = {cfg.no_aug_epochs} # self.no_aug_epochs = 15
+        self.warmup_epochs = {cfg.warmup_epochs} # self.warmup_epochs = 5
         self.num_classes = {cfg.train_df.class_name.nunique()}
         self.categories = {categories}
         self.class_id_name_map = {class_id_name_map}

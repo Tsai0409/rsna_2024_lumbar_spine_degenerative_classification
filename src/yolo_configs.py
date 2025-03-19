@@ -43,7 +43,7 @@ class Baseline:
         self.hub = None
         self.gpu = 'v100'
         self.make_labels = False
-        self.heavy_aug = False # yolox
+        self.heavy_aug = False  # yolox
         self.update_json = True
         self.no_aug_epochs = 15
         self.warmup_epochs = 5

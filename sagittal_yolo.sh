@@ -3,7 +3,8 @@
 set +e  # 允許遇到錯誤時繼續執行，但我們會手動檢查每一步的返回值
 
 # 下載與解壓縮資料集
-INPUT_DIR="./input"
+# INPUT_DIR="./input"
+INPUT_DIR="/kaggle/working/duplicate"
 if [[ ! -d "$INPUT_DIR" ]]; then
     echo "Error: 找不到 input 資料夾"
     exit 1
