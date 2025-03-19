@@ -4,30 +4,30 @@ set +e  # 允許遇到錯誤時繼續執行，但我們會手動檢查每一步�
 
 # 下載與解壓縮資料集
 # INPUT_DIR="./input"
-INPUT_DIR="/kaggle/working/duplicate"
-if [[ ! -d "$INPUT_DIR" ]]; then
-    echo "Error: 找不到 input 資料夾"
-    exit 1
-fi
+# INPUT_DIR="/kaggle/working/duplicate"
+# if [[ ! -d "$INPUT_DIR" ]]; then
+#     echo "Error: 找不到 input 資料夾"
+#     exit 1
+# fi
 
-cd "$INPUT_DIR"
-cmd="kaggle datasets download -d yujiariyasu/bartley-coords-rsna-improved-csv"
-echo "Executing: $cmd"
-if ! eval $cmd; then
-    echo "Error: 資料集下載失敗。"
-    exit 1
-fi
+# cd "$INPUT_DIR"
+# cmd="kaggle datasets download -d yujiariyasu/bartley-coords-rsna-improved-csv"
+# echo "Executing: $cmd"
+# if ! eval $cmd; then
+#     echo "Error: 資料集下載失敗。"
+#     exit 1
+# fi
 
-cmd="unzip bartley-coords-rsna-improved-csv.zip"
-echo "Executing: $cmd"
-if ! eval $cmd; then
-    echo "Error: 解壓縮資料集失敗。"
-    exit 1
-fi
-cd ..
+# cmd="unzip bartley-coords-rsna-improved-csv.zip"
+# echo "Executing: $cmd"
+# if ! eval $cmd; then
+#     echo "Error: 解壓縮資料集失敗。"
+#     exit 1
+# fi
+# cd ..
 
 # 設定工作目錄與必要腳本路徑
-WORKING_DIR="."  # 根目錄或依需求調整
+WORKING_DIR="/kaggle/working/duplicate"
 PREPROCESS_SCRIPT="$WORKING_DIR/preprocess_for_sagittal_yolo.py"
 TRAIN_SCRIPT="$WORKING_DIR/yolox_train_one_fold.py"
 

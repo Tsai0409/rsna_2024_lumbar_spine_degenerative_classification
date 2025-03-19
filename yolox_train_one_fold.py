@@ -150,7 +150,7 @@ print(f'----------------------- Config -----------------------\n')
 
 # absolute_path = /kaggle/working/duplicate
 # configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
-config_path = f'configfile_{config}_fold{fold}.py'  # 創立新的配置檔案 configfile_rsna_axial_all_images_left_yolox_x_fold0.py
+config_path = f'configfile_{config}_fold{fold}.py'  # 創立新的配置檔案 config_path = configfile_rsna_axial_all_images_left_yolox_x_fold0.py
 os.makedirs(f'{cfg.absolute_path}/results/{config}', exist_ok=True)  # 創立一個目錄 /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x
 
 # self.model_name_for_yolox 沒有出現(all condition)
@@ -220,7 +220,7 @@ from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
 class Exp(MyExp):
     def __init__(self):
         super(Exp, self).__init__()
-        # self.model_name= 'yolov5m'
+        # self.model_name= 'yolov5m' (all confdition)
         if '{model_name}' == 'yolox_s':
             self.depth = 0.33
             self.width = 0.50
@@ -247,13 +247,13 @@ class Exp(MyExp):
         self.test_size = {cfg.image_size}
         self.no_aug_epochs = {cfg.no_aug_epochs} # self.no_aug_epochs = 15
         self.warmup_epochs = {cfg.warmup_epochs} # self.warmup_epochs = 5
-        self.num_classes = {cfg.train_df.class_name.nunique()}
+        self.num_classes = {cfg.train_df.class_name.nunique()}  # # class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1];self.num_classes = 5
         self.categories = {categories}
         self.class_id_name_map = {class_id_name_map}
         ### need change ###
 
         ### fyi ###
-        self.data_num_workers = {cfg.batch_size}
+        self.data_num_workers = {cfg.batch_size}  # self.batch_size = 8 (all condition)
         self.eval_interval = 1
         self.seed = 42
         self.print_interval = 100
@@ -276,17 +276,19 @@ class Exp(MyExp):
         self.weight_decay = 0.0005
         self.momentum = 0.9
         self.test_conf = 0.01
-        self.nmsthre = {cfg.nmsthre}
+        self.nmsthre = {cfg.nmsthre}  # self.nmsthre = 0.45
         ### fyi ###
 
+        # self.heavy_aug = False (all condition)
         if {cfg.heavy_aug}:
             self.scale = (0.1, 2)
             self.mosaic_scale = (0.8, 1.6)
             self.perspective = 0.0
 '''
 
+# config_path = configfile_rsna_axial_all_images_left_yolox_x_fold0.py
 with open(config_path, 'w') as f:
-    f.write(config_file_template)
+    f.write(config_file_template)  # 把上面的參數寫到.py 裡面
 
 from pycocotools.coco import COCO
 from random import sample
@@ -350,7 +352,6 @@ class MyDataset(Dataset):
         return img, path, ratio
 
 # get YOLOX experiment
-
 current_exp = importlib.import_module(config_path.replace('.py', ''))
 exp = current_exp.Exp()
 
