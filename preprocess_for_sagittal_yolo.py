@@ -1,3 +1,4 @@
+# preprocess_for_sagittal_yolo.py
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -76,3 +77,4 @@ oof['pred_right_neural'] = oof[[c for c in pred_cols if 'right_neural' in c]].me
 oof['pred_left_neural'] = oof[[c for c in pred_cols if 'left_neural' in c]].mean(1)
 # oof.to_csv('results/rsna_sagittal_cl/oof.csv', index=False)
 oof.to_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/oof.csv', index=False)
+print('preprocess_for_sagittal_yolo.py finish')
