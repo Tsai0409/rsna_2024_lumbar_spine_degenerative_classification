@@ -176,4 +176,5 @@ class rsna_10classes_yolox_x(Baseline):
         self.predict_test = True
         # self.epochs = 40
         self.epochs = 20
-        self.inference_only = True
+        # self.inference_only = True
+        self.inference_only = False
