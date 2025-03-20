@@ -158,7 +158,8 @@ class rsna_10classes_yolox_x(Baseline):
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
-        self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
+        # self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_for_yolo_10level_v1.csv'
 #        self.test_df_path = 'input/train_with_fold.csv'
         self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.train_df = pd.read_csv(self.train_df_path)

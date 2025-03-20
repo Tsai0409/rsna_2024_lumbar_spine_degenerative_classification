@@ -37,17 +37,18 @@ if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT ]]; then
     exit 1
 fi
 
-# 執行預處理
-cmd="python $PREPROCESS_SCRIPT"
-echo "Executing: $cmd"
-if ! eval $cmd; then
-    echo "Error: 預處理失敗。"
-    exit 1
-fi
+# 執行預處理 (finish)
+# cmd="python $PREPROCESS_SCRIPT"
+# echo "Executing: $cmd"
+# if ! eval $cmd; then
+#     echo "Error: 預處理失敗。"
+#     exit 1
+# fi
 
 # 配置與摺疊設定
 configs=("rsna_10classes_yolox_x")
-folds=(0 1 2 3 4)
+# folds=(0 1 2 3 4)
+folds=(0 1)
 
 # 遍歷每個配置與摺疊進行訓練
 for config in "${configs[@]}"; do
