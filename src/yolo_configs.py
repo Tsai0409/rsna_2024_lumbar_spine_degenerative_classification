@@ -164,6 +164,7 @@ class rsna_10classes_yolox_x(Baseline):
         self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.test_df = pd.read_csv(self.test_df_path)
+        # oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
         oof = pd.read_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/oof.csv')
         dfs = []
         for id, idf in oof.groupby('series_id'):
