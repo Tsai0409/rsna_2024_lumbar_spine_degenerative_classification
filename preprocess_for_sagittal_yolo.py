@@ -60,7 +60,7 @@ label_encoder = preprocessing.LabelEncoder()
 col = 'class_name'
 df['class_id'] = label_encoder.fit_transform(df[col])
 df = df.sort_values(['series_id', 'class_id'])
-df = df[df.series_description == "Sagittal T2/STIR"]
+df = df[df.series_description_y == "Sagittal T2/STIR"]
 # df.to_csv('input/train_for_yolo_10level_v1.csv', index=False)
 df.to_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_for_yolo_10level_v1.csv', index=False)
 

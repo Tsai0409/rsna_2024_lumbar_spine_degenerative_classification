@@ -294,30 +294,32 @@ from pycocotools.coco import COCO
 from random import sample
 import importlib
 
-# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x 的 cfg.inference_only=False
-# class rsna_10classes_yolox_x 的 cfg.inference_only=True
+# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x -> cfg.inference_only=False
+# class rsna_10classes_yolox_x -> cfg.inference_only=True
 if cfg.inference_only:
     print('inference_only.')
 else:  # here
     print('train start...')
     # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
-    train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
+    train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} -fp16 -o -c {cfg.pretrained_path}'  # self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth' (all condition)
 
-    # class Baseline: cfg.resume = False
+    # self.resume = False (all condition)
     if cfg.resume:  # no here
         train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
 
-    print('train_str:', train_str)  # train_str: python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth
-    os.system(train_str)
+    print('train_str:', train_str)
+    # train_str: python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth
+    os.system(train_str)  # tomorrow
 
 ### inference ###
 from torch.utils.data import Dataset, DataLoader
 from multiprocessing import cpu_count
 # sys.path.append('')
-sys.path.append(f'{cfg.absolute_path}/src/YOLOX')  # /kaggle/working/duplicate/src/YOLOX
+sys.path.append(f'{cfg.absolute_path}/src/YOLOX')  # sys.path.append() 加入到 Python 模組的搜尋路徑中；/kaggle/working/duplicate/src/YOLOX
 
 from yolox.utils import postprocess
 from yolox.data.data_augment import ValTransform
+
 def worker_init_fn(worker_id):
     np.random.seed(np.random.get_state()[1][0] + worker_id)
 
@@ -327,7 +329,7 @@ class MyDataset(Dataset):
         self.cfg = cfg
         self.preproc = ValTransform(legacy = False)
 
-    def __len__(self):
+    def __len__(self): 
         return len(self.paths)
 
     def _read_image(self, path):
@@ -343,7 +345,7 @@ class MyDataset(Dataset):
         path = self.paths[idx]
         img = self._read_image(path)
         ratio = min(cfg.image_size[0] / img.shape[0], cfg.image_size[1] / img.shape[1])
-#         ratio = min(512 / img.shape[0], 512 / img.shape[1])
+        # ratio = min(512 / img.shape[0], 512 / img.shape[1])
 
         img, _ = self.preproc(img, None, cfg.image_size)
         img = torch.from_numpy(img).float()
@@ -352,12 +354,12 @@ class MyDataset(Dataset):
         return img, path, ratio
 
 # get YOLOX experiment
-current_exp = importlib.import_module(config_path.replace('.py', ''))
+current_exp = importlib.import_module(config_path.replace('.py', ''))  # config_path = configfile_rsna_axial_all_images_left_yolox_x_fold0.py (紀錄訓練 model 的參數)
 exp = current_exp.Exp()
 
 # set inference parameters
 confthre = 0.0001
-nmsthre = cfg.nmsthre
+nmsthre = cfg.nmsthre  # self.nmsthre = 0.45 (all condition)
 
 # get YOLOX model
 model = exp.get_model()
@@ -367,16 +369,15 @@ model.head.training=False
 model.training=False
 
 # get custom trained checkpoint
-ckpt_file = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"
+ckpt_file = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"  # ckpt_file = "/kaggle/working/duplicate/results/train_rsna_axial_all_images_left_yolox_x/fold0/train_rsna_axial_all_images_left_yolox_x/best_ckpt.pth"
 ckpt = torch.load(ckpt_file, map_location="cpu")
 model.load_state_dict(ckpt["model"])
-for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):
+for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):  # (vaild, test)
     if ((mode == 'oof') & (not cfg.predict_valid) or ((mode == 'test') & (not cfg.predict_test))):
         continue
     print('inference', mode, 'len(df):', len(df.drop_duplicates('path')))
     ds = MyDataset(cfg, df)
-    loader = DataLoader(ds, batch_size=cfg.batch_size*2, shuffle=False, drop_last=False,
-                      num_workers=cpu_count(), worker_init_fn=worker_init_fn)
+    loader = DataLoader(ds, batch_size=cfg.batch_size*2, shuffle=False, drop_last=False, num_workers=cpu_count(), worker_init_fn=worker_init_fn)
 
     preds = []
     all_paths = []
@@ -389,8 +390,7 @@ for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):
             images = images.cuda()
             outputs = model(images)
             outputs = postprocess(
-                        outputs, len(categories), confthre,
-                        nmsthre, class_agnostic=True
+                        outputs, len(categories), confthre, nmsthre, class_agnostic=True
                     )
             preds += outputs
             all_paths += list(paths)
@@ -427,6 +427,11 @@ for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):
     df[['x_min', 'y_min', 'x_max', 'y_max']] = np.round(df[['x_min', 'y_min', 'x_max', 'y_max']]).astype(int)
     df.to_csv(f'{cfg.absolute_path}/results/{config}/{mode}_fold{fold}.csv', index = False)
     print('save to', f'{cfg.absolute_path}/results/{config}/{mode}_fold{fold}.csv, len:', len(df))
+    # inference oof len(df): 1924 -> save to /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x/oof_fold0.csv, len: 4612
+    # inference test len(df): 10598 -> save to /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x/test_fold0.csv, len: 26727
+    # inference oof len(df): 1924 -> save to /kaggle/working/duplicate/results/rsna_axial_all_images_right_yolox_x/oof_fold0.csv, len: 6003
+    # inference test len(df): 10598 -> save to /kaggle/working/duplicate/results/rsna_axial_all_images_right_yolox_x/test_fold0.csv, len: 34149
+
     del df, dfs, all_boxes
     gc.collect()
 print(f'command: mv {config_path} {cfg.absolute_path}/results/{args.config}/')
