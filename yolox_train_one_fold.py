@@ -163,18 +163,20 @@ else:  # here
 categories = []
 class_id_name_map = {}
 
-# class_id = [0, 1, 2, 3, 4]
-# class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1]
+# class_id = [0, 1, 2, 3, 4] -- wrong
+# class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1] -- wrong
+# class_id = [0, 0] 但我不知道為什麼是這樣？
+# class_name = [left, right]
 for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.unique(), cfg.train_df.sort_values('class_id').class_id.unique())):
     classes = {'supercategory': 'none'}  # 創建了一個名為 classes 的字典
     classes['id'] = id  # 以 (key, value) pair 的形式存放
     classes['name'] = c  # 以 (key, value) pair 的形式存放
-    categories.append(classes)  # 將 classes 的字典存到 catagories 的 list 中；這邊有 5 個 class_id 所以有 5 個字典
+    categories.append(classes)  # 將 classes 的字典存到 catagories 的 list 中；這邊有 5 個 class_id 所以有 5 個字典？
     class_id_name_map[id] = c
 print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
+
 tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
 val = cfg.train_df[cfg.train_df.fold == fold]
-
 print('len(train) / len(val):', len(tr), len(val))
 # class_id_name_map: {0: 'left'} -> len(train) / len(val): 9602 1924
 # class_id_name_map: {0: 'right'} -> len(train) / len(val): 9611 1924
@@ -321,8 +323,9 @@ from yolox.utils import postprocess
 from yolox.data.data_augment import ValTransform
 
 def worker_init_fn(worker_id):
-    np.random.seed(np.random.get_state()[1][0] + worker_id)
+    np.random.seed(np.random.get_state()[1][0] + worker_id)  # 確保在多 worker 環境下，每個 worker 的隨機數生成器都有獨立且不同的初始狀態，從而避免各個 worker 產生相同的隨機數序列
 
+# ds = MyDataset(cfg, val)
 class MyDataset(Dataset):
     def __init__(self, cfg, df):
         self.paths = df.path.unique()
@@ -333,22 +336,22 @@ class MyDataset(Dataset):
         return len(self.paths)
 
     def _read_image(self, path):
-        if '.npy' in path:
+        if '.npy' in path:  # .npy，代表該檔案是以 NumPy 格式存儲的圖片
             image = np.load(path)
             image = np.array([image, image, image]).transpose((1,2,0))
         else:
             image = cv2.imread(path)
-
+        
         return image
 
     def __getitem__(self, idx):
         path = self.paths[idx]
         img = self._read_image(path)
-        ratio = min(cfg.image_size[0] / img.shape[0], cfg.image_size[1] / img.shape[1])
+        ratio = min(cfg.image_size[0] / img.shape[0], cfg.image_size[1] / img.shape[1])  # 計算了一個縮放比例 ratio(確保縮放時不會超過目標尺寸)
         # ratio = min(512 / img.shape[0], 512 / img.shape[1])
 
-        img, _ = self.preproc(img, None, cfg.image_size)
-        img = torch.from_numpy(img).float()
+        img, _ = self.preproc(img, None, cfg.image_size)  # 圖像預處理
+        img = torch.from_numpy(img).float()  # 轉換成 PyTorch Tensor
         img = img.float()
 
         return img, path, ratio
@@ -372,11 +375,12 @@ model.training=False
 ckpt_file = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"  # ckpt_file = "/kaggle/working/duplicate/results/train_rsna_axial_all_images_left_yolox_x/fold0/train_rsna_axial_all_images_left_yolox_x/best_ckpt.pth"
 ckpt = torch.load(ckpt_file, map_location="cpu")
 model.load_state_dict(ckpt["model"])
-for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):  # (vaild, test)
+for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):  # (vaild, test) -> first (oof, val), second (test, cfg.test_df)
+    # self.predict_valid = True
     if ((mode == 'oof') & (not cfg.predict_valid) or ((mode == 'test') & (not cfg.predict_test))):
         continue
     print('inference', mode, 'len(df):', len(df.drop_duplicates('path')))
-    ds = MyDataset(cfg, df)
+    ds = MyDataset(cfg, df)  # return img, path, ratio
     loader = DataLoader(ds, batch_size=cfg.batch_size*2, shuffle=False, drop_last=False, num_workers=cpu_count(), worker_init_fn=worker_init_fn)
 
     preds = []
@@ -392,7 +396,7 @@ for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):  # (vaild, test)
             outputs = postprocess(
                         outputs, len(categories), confthre, nmsthre, class_agnostic=True
                     )
-            preds += outputs
+            preds += outputs  # output 的資料型態是什麼？(為什麼能 return 是 ['x_min', 'y_min', 'x_max', 'y_max'] 呢？)
             all_paths += list(paths)
             all_ratios += list(ratios)
 
@@ -402,29 +406,29 @@ for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):  # (vaild, test)
     all_scores = []
     for n, (predictions, path, ratio)  in enumerate(zip(preds, all_paths, all_ratios)):
         if predictions is None:
-            continue
+            continue  # 直接進入下一次迭代
         predictions = predictions.cpu().numpy()
 
-        bboxes = predictions[:, 0:4]
+        bboxes = predictions[:, 0:4]  # predictions 以二維陣列的方式回傳；predictions[:, 0:4] 取出所有 row 的前四個 col
 
         bboxes /= ratio
         bboxes = bboxes.tolist()
-        bbclasses = predictions[:, 6]
-        scores = predictions[:, 4] * predictions[:, 5]
-        path_df = df[df.path == path].iloc[:1]
+        bbclasses = predictions[:, 6]  # 提取每個預測框的類別標籤
+        scores = predictions[:, 4] * predictions[:, 5]  # predictions[:, 4] 代表物體存在的置信度；predictions[:, 5] 代表分類概率
+        path_df = df[df.path == path].iloc[:1]  # .iloc[:1] 只取第一行
         for box, score, class_id in zip(bboxes, scores, bbclasses):
             all_boxes.append(box)
             all_scores.append(score)
             all_class_ids.append(class_id)
-            dfs.append(path_df)
+            dfs.append(path_df)  # dfs 是一個 Python 列表
 
-    df = pd.concat(dfs)
+    df = pd.concat(dfs)  # df 是一個 DataFrame
     df['class_id'] = all_class_ids
     df['class_id'] = df['class_id'].astype(int)
     df['class_name'] = df['class_id'].map(class_id_name_map)
     df['conf'] = all_scores
     df[['x_min', 'y_min', 'x_max', 'y_max']] = all_boxes
-    df[['x_min', 'y_min', 'x_max', 'y_max']] = np.round(df[['x_min', 'y_min', 'x_max', 'y_max']]).astype(int)
+    df[['x_min', 'y_min', 'x_max', 'y_max']] = np.round(df[['x_min', 'y_min', 'x_max', 'y_max']]).astype(int)  # 經過四捨五入並轉換成整數
     df.to_csv(f'{cfg.absolute_path}/results/{config}/{mode}_fold{fold}.csv', index = False)
     print('save to', f'{cfg.absolute_path}/results/{config}/{mode}_fold{fold}.csv, len:', len(df))
     # inference oof len(df): 1924 -> save to /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x/oof_fold0.csv, len: 4612
@@ -435,4 +439,7 @@ for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):  # (vaild, test)
     del df, dfs, all_boxes
     gc.collect()
 print(f'command: mv {config_path} {cfg.absolute_path}/results/{args.config}/')
+# command: mv rsna_axial_all_images_left_yolox_x /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x/
 os.system(f'mv {config_path} {cfg.absolute_path}/results/{args.config}/')
+
+# 如何辨別時 Left/Right 呢？
