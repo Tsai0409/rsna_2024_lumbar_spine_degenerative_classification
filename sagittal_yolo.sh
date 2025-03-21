@@ -26,6 +26,9 @@ set +e  # 允許遇到錯誤時繼續執行，但我們會手動檢查每一步�
 # fi
 # cd ..
 
+# 設定 YOLOX 路徑
+export PYTHONPATH=/kaggle/working/duplicate/src/YOLOX:$PYTHONPATH  # 新增 
+
 # 設定工作目錄與必要腳本路徑
 WORKING_DIR="/kaggle/working/duplicate"
 PREPROCESS_SCRIPT="$WORKING_DIR/preprocess_for_sagittal_yolo.py"

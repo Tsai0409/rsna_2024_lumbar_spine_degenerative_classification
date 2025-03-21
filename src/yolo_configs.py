@@ -176,5 +176,5 @@ class rsna_10classes_yolox_x(Baseline):
         self.predict_test = True
         # self.epochs = 40
         self.epochs = 20
-        # self.inference_only = True
+        # self.inference_only = True -> /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x/best_ckpt.pth 不會產生
         self.inference_only = False

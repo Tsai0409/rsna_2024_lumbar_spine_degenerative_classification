@@ -31,7 +31,7 @@ def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
 
 annotion_id = 0
 image_id_n = 0
-def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包含了圖片、標註（bounding boxes）、類別等資訊；從資料框 df 中提取資料，並格式化為 COCO 所需的結構
+def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包含了圖片、標註(bounding boxes）、類別等資訊；從資料框 df 中提取資料，並格式化為 COCO 所需的結構
     global annotion_id
     global image_id_n
     annotations_json = {  # 建立 annotations_json 字典
@@ -165,7 +165,7 @@ class_id_name_map = {}
 
 # class_id = [0, 1, 2, 3, 4] -- wrong
 # class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1] -- wrong
-# class_id = [0, 0] 但我不知道為什麼是這樣？
+# class_id = [0, 0] 但我不知道為什麼是這樣 -> 在 yolo.configs 中定義 class_id 及 class_name
 # class_name = [left, right]
 for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.unique(), cfg.train_df.sort_values('class_id').class_id.unique())):
     classes = {'supercategory': 'none'}  # 創建了一個名為 classes 的字典
@@ -173,7 +173,7 @@ for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.
     classes['name'] = c  # 以 (key, value) pair 的形式存放
     categories.append(classes)  # 將 classes 的字典存到 catagories 的 list 中；這邊有 5 個 class_id 所以有 5 個字典？
     class_id_name_map[id] = c
-print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
+print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'} -> yolo.configs
 
 tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
 val = cfg.train_df[cfg.train_df.fold == fold]
@@ -194,10 +194,10 @@ if not cfg.inference_only:  # configs=("rsna_axial_all_images_left_yolox_x" "rsn
         print('make labels skip.')
     else:
         print('make labels start...')  # here
-        train_annot_json = dataset2coco(tr)  # 會用到 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path；可能有錯？
+        train_annot_json = dataset2coco(tr)  # 會用到 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path；可能有錯 -> 已修正
         valid_annot_json = dataset2coco(val)
         os.system(f'mkdir -p {cfg.absolute_path}/input/annotations/')  # 創建 annotations 的目錄；/kaggle/working/duplicate/input/annotations/
-        save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
+        save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")  # 把 def dataset2coco(df): 的資料存到 json 裡面
         save_annot_json(valid_annot_json, f"{cfg.absolute_path}/input/annotations/{valid_json_filename}")
 
 config_file_template = f'''
@@ -247,9 +247,9 @@ class Exp(MyExp):
         self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"  # absolute_path = '/kaggle/working/duplicate/results/train_rsna_axial_all_images_left_yolox_x/fold0'
         self.input_size = {cfg.image_size}  # self.image_size = (512, 512)(all condition)
         self.test_size = {cfg.image_size}
-        self.no_aug_epochs = {cfg.no_aug_epochs} # self.no_aug_epochs = 15
-        self.warmup_epochs = {cfg.warmup_epochs} # self.warmup_epochs = 5
-        self.num_classes = {cfg.train_df.class_name.nunique()}  # # class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1];self.num_classes = 5
+        self.no_aug_epochs = {cfg.no_aug_epochs}  # self.no_aug_epochs = 15
+        self.warmup_epochs = {cfg.warmup_epochs}  # self.warmup_epochs = 5
+        self.num_classes = {cfg.train_df.class_name.nunique()}  # class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1];self.num_classes = 5
         self.categories = {categories}
         self.class_id_name_map = {class_id_name_map}
         ### need change ###
@@ -442,4 +442,4 @@ print(f'command: mv {config_path} {cfg.absolute_path}/results/{args.config}/')
 # command: mv rsna_axial_all_images_left_yolox_x /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x/
 os.system(f'mv {config_path} {cfg.absolute_path}/results/{args.config}/')
 
-# 如何辨別時 Left/Right 呢？
+# 如何辨別時 Left/Right 呢 -> yolo.configs 中在 trainning data 就分好了
