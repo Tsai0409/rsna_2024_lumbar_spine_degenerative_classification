@@ -303,7 +303,8 @@ if cfg.inference_only:
 else:  # here
     print('train start...')
     # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
-    train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} -fp16 -o -c {cfg.pretrained_path}'  # self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth' (all condition)
+    # train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} -fp16 -o -c {cfg.pretrained_path}'  # self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth' (all condition)
+    train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
 
     # self.resume = False (all condition)
     if cfg.resume:  # no here
