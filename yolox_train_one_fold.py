@@ -308,11 +308,12 @@ else:  # here
 
     # self.resume = False (all condition)
     if cfg.resume:  # no here
-        train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
+        train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
+
 
     print('train_str:', train_str)
     # train_str: python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth
-    os.system(train_str)  # tomorrow
+    os.system(train_str)
 
 ### inference ###
 from torch.utils.data import Dataset, DataLoader
