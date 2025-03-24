@@ -309,6 +309,7 @@ else:  # here
     # self.resume = False (all condition)
     if cfg.resume:  # no here
         train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
+        print('using cfg.resume')
 
 
     print('train_str:', train_str)
