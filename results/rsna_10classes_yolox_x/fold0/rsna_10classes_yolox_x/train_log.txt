@@ -1,0 +1,1778 @@
+2025-03-22 15:46:13.565 | INFO     | yolox.core.trainer:before_train:130 - args: Namespace(experiment_name='rsna_10classes_yolox_x', name=None, dist_backend='nccl', dist_url=None, batch_size=8, devices=1, exp_file='configfile_rsna_10classes_yolox_x_fold0.py', resume=False, ckpt='/kaggle/input/pretrain-7/yolox_x.pth', start_epoch=None, num_machines=1, machine_rank=0, fp16=True, cache=None, occupy=True, logger='tensorboard', opts=[])
+2025-03-22 15:46:13.578 | INFO     | yolox.core.trainer:before_train:131 - exp value:
+╒═══════════════════╤════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╕
+│ keys              │ values                                                                                                                     │
+╞═══════════════════╪════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╡
+│ seed              │ 42                                                                                                                         │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ output_dir        │ '/kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0'                                                           │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ print_interval    │ 100                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ eval_interval     │ 1                                                                                                                          │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ dataset           │ None                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ num_classes       │ 10                                                                                                                         │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ depth             │ 1.33                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ width             │ 1.25                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ act               │ 'silu'                                                                                                                     │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ data_num_workers  │ 8                                                                                                                          │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ input_size        │ (512, 512)                                                                                                                 │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ multiscale_range  │ 5                                                                                                                          │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ data_dir          │ ''                                                                                                                         │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ train_ann         │ '/kaggle/working/duplicate/input/annotations/train_rsna_10classes_yolox_x___train_for_yolo_10level_v1_fold0_len15785.json' │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ val_ann           │ '/kaggle/working/duplicate/input/annotations/valid_rsna_10classes_yolox_x___train_for_yolo_10level_v1_fold0_len3935.json'  │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ test_ann          │ 'instances_test2017.json'                                                                                                  │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ mosaic_prob       │ 1.0                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ mixup_prob        │ 1.0                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ hsv_prob          │ 1.0                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ flip_prob         │ 0.5                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ degrees           │ 10.0                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ translate         │ 0.1                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ mosaic_scale      │ (0.1, 2)                                                                                                                   │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ enable_mixup      │ True                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ mixup_scale       │ (0.5, 1.5)                                                                                                                 │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ shear             │ 2.0                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ warmup_epochs     │ 5                                                                                                                          │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ max_epoch         │ 20                                                                                                                         │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ warmup_lr         │ 0                                                                                                                          │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ min_lr_ratio      │ 0.05                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ basic_lr_per_img  │ 0.00015625                                                                                                                 │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ scheduler         │ 'yoloxwarmcos'                                                                                                             │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ no_aug_epochs     │ 15                                                                                                                         │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ ema               │ True                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ weight_decay      │ 0.0005                                                                                                                     │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ momentum          │ 0.9                                                                                                                        │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ save_history_ckpt │ False                                                                                                                      │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ exp_name          │ 'rsna_10classes_yolox_x'                                                                                                   │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ test_size         │ (512, 512)                                                                                                                 │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ test_conf         │ 0.01                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ nmsthre           │ 0.45                                                                                                                       │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ categories        │ [{'id': 0, 'name': 'L1/L2_L', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 1, 'name': 'L1/L2_R', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 2, 'name': 'L2/L3_L', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 3, 'name': 'L2/L3_R', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 4, 'name': 'L3/L4_L', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 5, 'name': 'L3/L4_R', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 6, 'name': 'L4/L5_L', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 7, 'name': 'L4/L5_R', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 8, 'name': 'L5/S1_L', 'supercategory': 'none'},                                                                    │
+│                   │  {'id': 9, 'name': 'L5/S1_R', 'supercategory': 'none'}]                                                                    │
+├───────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ class_id_name_map │ {0: 'L1/L2_L',                                                                                                             │
+│                   │  1: 'L1/L2_R',                                                                                                             │
+│                   │  2: 'L2/L3_L',                                                                                                             │
+│                   │  3: 'L2/L3_R',                                                                                                             │
+│                   │  4: 'L3/L4_L',                                                                                                             │
+│                   │  5: 'L3/L4_R',                                                                                                             │
+│                   │  6: 'L4/L5_L',                                                                                                             │
+│                   │  7: 'L4/L5_R',                                                                                                             │
+│                   │  8: 'L5/S1_L',                                                                                                             │
+│                   │  9: 'L5/S1_R'}                                                                                                             │
+╘═══════════════════╧════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╛
+2025-03-22 15:46:15.210 | INFO     | yolox.core.trainer:before_train:136 - Model Summary: Params: 99.00M, Gflops: 180.53
+2025-03-22 15:46:15.481 | INFO     | yolox.core.trainer:resume_train:313 - loading checkpoint for fine tuning
+2025-03-22 15:46:20.841 | WARNING  | yolox.utils.checkpoint:load_ckpt:24 - Shape of head.cls_preds.0.weight in checkpoint is torch.Size([80, 320, 1, 1]), while shape of head.cls_preds.0.weight in model is torch.Size([10, 320, 1, 1]).
+2025-03-22 15:46:20.841 | WARNING  | yolox.utils.checkpoint:load_ckpt:24 - Shape of head.cls_preds.0.bias in checkpoint is torch.Size([80]), while shape of head.cls_preds.0.bias in model is torch.Size([10]).
+2025-03-22 15:46:20.842 | WARNING  | yolox.utils.checkpoint:load_ckpt:24 - Shape of head.cls_preds.1.weight in checkpoint is torch.Size([80, 320, 1, 1]), while shape of head.cls_preds.1.weight in model is torch.Size([10, 320, 1, 1]).
+2025-03-22 15:46:20.842 | WARNING  | yolox.utils.checkpoint:load_ckpt:24 - Shape of head.cls_preds.1.bias in checkpoint is torch.Size([80]), while shape of head.cls_preds.1.bias in model is torch.Size([10]).
+2025-03-22 15:46:20.842 | WARNING  | yolox.utils.checkpoint:load_ckpt:24 - Shape of head.cls_preds.2.weight in checkpoint is torch.Size([80, 320, 1, 1]), while shape of head.cls_preds.2.weight in model is torch.Size([10, 320, 1, 1]).
+2025-03-22 15:46:20.843 | WARNING  | yolox.utils.checkpoint:load_ckpt:24 - Shape of head.cls_preds.2.bias in checkpoint is torch.Size([80]), while shape of head.cls_preds.2.bias in model is torch.Size([10]).
+2025-03-22 15:46:20.868 | INFO     | yolox.data.datasets.coco:__init__:63 - loading annotations into memory...
+2025-03-22 15:46:20.917 | INFO     | yolox.data.datasets.coco:__init__:63 - Done (t=0.05s)
+2025-03-22 15:46:20.918 | INFO     | pycocotools.coco:__init__:86 - creating index...
+2025-03-22 15:46:20.926 | INFO     | pycocotools.coco:__init__:86 - index created!
+2025-03-22 15:46:21.451 | INFO     | yolox.core.trainer:before_train:155 - init prefetcher, this might take one minute or less...
+2025-03-22 15:46:29.209 | INFO     | yolox.data.datasets.coco:__init__:63 - loading annotations into memory...
+2025-03-22 15:46:29.224 | INFO     | yolox.data.datasets.coco:__init__:63 - Done (t=0.01s)
+2025-03-22 15:46:29.225 | INFO     | pycocotools.coco:__init__:86 - creating index...
+2025-03-22 15:46:29.228 | INFO     | pycocotools.coco:__init__:86 - index created!
+2025-03-22 15:46:29.363 | INFO     | yolox.core.trainer:before_train:191 - Training start...
+2025-03-22 15:46:29.369 | INFO     | yolox.core.trainer:before_train:192 - 
+YOLOX(
+  (backbone): YOLOPAFPN(
+    (backbone): CSPDarknet(
+      (stem): Focus(
+        (conv): BaseConv(
+          (conv): Conv2d(12, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+      )
+      (dark2): Sequential(
+        (0): BaseConv(
+          (conv): Conv2d(80, 160, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+        (1): CSPLayer(
+          (conv1): BaseConv(
+            (conv): Conv2d(160, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(160, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv3): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (m): Sequential(
+            (0): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (1): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (2): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (3): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(80, 80, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(80, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+          )
+        )
+      )
+      (dark3): Sequential(
+        (0): BaseConv(
+          (conv): Conv2d(160, 320, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+        (1): CSPLayer(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv3): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (m): Sequential(
+            (0): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (1): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (2): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (3): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (4): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (5): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (6): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (7): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (8): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (9): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (10): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (11): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+          )
+        )
+      )
+      (dark4): Sequential(
+        (0): BaseConv(
+          (conv): Conv2d(320, 640, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+        (1): CSPLayer(
+          (conv1): BaseConv(
+            (conv): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv3): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (m): Sequential(
+            (0): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (1): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (2): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (3): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (4): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (5): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (6): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (7): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (8): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (9): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (10): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (11): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+          )
+        )
+      )
+      (dark5): Sequential(
+        (0): BaseConv(
+          (conv): Conv2d(640, 1280, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(1280, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+        (1): SPPBottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(1280, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (m): ModuleList(
+            (0): MaxPool2d(kernel_size=5, stride=1, padding=2, dilation=1, ceil_mode=False)
+            (1): MaxPool2d(kernel_size=9, stride=1, padding=4, dilation=1, ceil_mode=False)
+            (2): MaxPool2d(kernel_size=13, stride=1, padding=6, dilation=1, ceil_mode=False)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(2560, 1280, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(1280, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (2): CSPLayer(
+          (conv1): BaseConv(
+            (conv): Conv2d(1280, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(1280, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv3): BaseConv(
+            (conv): Conv2d(1280, 1280, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(1280, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (m): Sequential(
+            (0): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (1): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (2): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+            (3): Bottleneck(
+              (conv1): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+              (conv2): BaseConv(
+                (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+                (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+                (act): SiLU(inplace=True)
+              )
+            )
+          )
+        )
+      )
+    )
+    (upsample): Upsample(scale_factor=2.0, mode='nearest')
+    (lateral_conv0): BaseConv(
+      (conv): Conv2d(1280, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+      (act): SiLU(inplace=True)
+    )
+    (C3_p4): CSPLayer(
+      (conv1): BaseConv(
+        (conv): Conv2d(1280, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv2): BaseConv(
+        (conv): Conv2d(1280, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv3): BaseConv(
+        (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (m): Sequential(
+        (0): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (2): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (3): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+      )
+    )
+    (reduce_conv1): BaseConv(
+      (conv): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+      (act): SiLU(inplace=True)
+    )
+    (C3_p3): CSPLayer(
+      (conv1): BaseConv(
+        (conv): Conv2d(640, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv2): BaseConv(
+        (conv): Conv2d(640, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv3): BaseConv(
+        (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (m): Sequential(
+        (0): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (2): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (3): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(160, 160, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(160, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+      )
+    )
+    (bu_conv2): BaseConv(
+      (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+      (act): SiLU(inplace=True)
+    )
+    (C3_n3): CSPLayer(
+      (conv1): BaseConv(
+        (conv): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv2): BaseConv(
+        (conv): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv3): BaseConv(
+        (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (m): Sequential(
+        (0): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (2): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (3): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+      )
+    )
+    (bu_conv1): BaseConv(
+      (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+      (act): SiLU(inplace=True)
+    )
+    (C3_n4): CSPLayer(
+      (conv1): BaseConv(
+        (conv): Conv2d(1280, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv2): BaseConv(
+        (conv): Conv2d(1280, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (conv3): BaseConv(
+        (conv): Conv2d(1280, 1280, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(1280, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (m): Sequential(
+        (0): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (1): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (2): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+        (3): Bottleneck(
+          (conv1): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(1, 1), stride=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+          (conv2): BaseConv(
+            (conv): Conv2d(640, 640, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+            (bn): BatchNorm2d(640, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+            (act): SiLU(inplace=True)
+          )
+        )
+      )
+    )
+  )
+  (head): YOLOXHead(
+    (cls_convs): ModuleList(
+      (0-2): 3 x Sequential(
+        (0): BaseConv(
+          (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+        (1): BaseConv(
+          (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+      )
+    )
+    (reg_convs): ModuleList(
+      (0-2): 3 x Sequential(
+        (0): BaseConv(
+          (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+        (1): BaseConv(
+          (conv): Conv2d(320, 320, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+          (act): SiLU(inplace=True)
+        )
+      )
+    )
+    (cls_preds): ModuleList(
+      (0-2): 3 x Conv2d(320, 10, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (reg_preds): ModuleList(
+      (0-2): 3 x Conv2d(320, 4, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (obj_preds): ModuleList(
+      (0-2): 3 x Conv2d(320, 1, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (stems): ModuleList(
+      (0): BaseConv(
+        (conv): Conv2d(320, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (1): BaseConv(
+        (conv): Conv2d(640, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+      (2): BaseConv(
+        (conv): Conv2d(1280, 320, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (bn): BatchNorm2d(320, eps=0.001, momentum=0.03, affine=True, track_running_stats=True)
+        (act): SiLU(inplace=True)
+      )
+    )
+    (l1_loss): L1Loss()
+    (bcewithlog_loss): BCEWithLogitsLoss()
+    (iou_loss): IOUloss()
+  )
+)
+2025-03-22 15:46:29.371 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch1
+2025-03-22 15:49:40.331 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 1/20, iter: 100/198, gpu mem: 13685Mb, mem: 4.4Gb, iter_time: 1.909s, data_time: 0.002s, total_loss: 11.3, iou_loss: 3.6, l1_loss: 0.0, conf_loss: 5.4, cls_loss: 2.3, lr: 1.275e-05, size: 672, ETA: 2:02:47
+2025-03-22 15:52:15.431 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 15:52:29.190 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 15:52:29.548 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 15:52:29.662 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.11s)
+2025-03-22 15:52:29.663 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 15:52:29.676 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 15:52:46.125 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 14.910s.
+2025-03-22 15:52:46.570 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 23.31 ms, Average NMS time: 0.87 ms, Average inference time: 24.18 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.029
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.111
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.003
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.034
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.029
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.066
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.155
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.158
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.153
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.165
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP    | class   | AP    | class   | AP    |
+|:--------|:------|:--------|:------|:--------|:------|
+| L1/L2_L | 0.269 | L1/L2_R | 3.202 | L2/L3_L | 0.228 |
+| L2/L3_R | 3.143 | L3/L4_L | 0.362 | L3/L4_R | 4.723 |
+| L4/L5_L | 0.357 | L4/L5_R | 6.640 | L5/S1_L | 2.754 |
+| L5/S1_R | 7.266 |         |       |         |       |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 3.664  | L1/L2_R | 19.746 | L2/L3_L | 3.817  |
+| L2/L3_R | 21.041 | L3/L4_L | 7.405  | L3/L4_R | 21.802 |
+| L4/L5_L | 5.216  | L4/L5_R | 28.706 | L5/S1_L | 15.344 |
+| L5/S1_R | 30.914 |         |        |         |        |
+
+2025-03-22 15:52:46.571 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 15:52:48.341 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch2
+2025-03-22 15:54:31.233 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 2/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 1.028s, data_time: 0.002s, total_loss: 7.0, iou_loss: 2.7, l1_loss: 0.0, conf_loss: 2.7, cls_loss: 1.7, lr: 1.133e-04, size: 640, ETA: 1:31:53
+2025-03-22 15:55:23.446 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 15:55:35.484 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 15:55:35.712 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 15:55:35.823 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.11s)
+2025-03-22 15:55:35.824 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 15:55:35.840 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 15:55:35.843 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 15:55:36.337 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.14 ms, Average NMS time: 0.87 ms, Average inference time: 20.01 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.245
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.661
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.112
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.237
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.270
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.331
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.429
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.429
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.433
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.424
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 13.910 | L1/L2_R | 23.714 | L2/L3_L | 16.447 |
+| L2/L3_R | 37.023 | L3/L4_L | 15.244 | L3/L4_R | 40.483 |
+| L4/L5_L | 17.492 | L4/L5_R | 35.147 | L5/S1_L | 16.180 |
+| L5/S1_R | 29.255 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 37.684 | L1/L2_R | 51.904 | L2/L3_L | 36.667 |
+| L2/L3_R | 50.584 | L3/L4_L | 33.155 | L3/L4_R | 52.970 |
+| L4/L5_L | 34.835 | L4/L5_R | 48.477 | L5/S1_L | 38.321 |
+| L5/S1_R | 44.898 |         |        |         |        |
+
+2025-03-22 15:55:36.338 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 15:55:39.975 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch3
+2025-03-22 15:56:38.449 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 3/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.584s, data_time: 0.002s, total_loss: 5.9, iou_loss: 2.5, l1_loss: 0.0, conf_loss: 2.0, cls_loss: 1.3, lr: 3.138e-04, size: 608, ETA: 1:05:05
+2025-03-22 15:57:46.063 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 15:57:57.554 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 15:57:57.671 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 15:57:57.706 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.03s)
+2025-03-22 15:57:57.706 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 15:57:57.710 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 15:57:57.713 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 15:57:57.998 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.17 ms, Average NMS time: 0.91 ms, Average inference time: 20.07 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.293
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.829
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.087
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.284
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.319
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.379
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.411
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.411
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.422
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.395
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 15.861 | L1/L2_R | 35.743 | L2/L3_L | 21.017 |
+| L2/L3_R | 37.003 | L3/L4_L | 22.189 | L3/L4_R | 37.005 |
+| L4/L5_L | 27.157 | L4/L5_R | 36.699 | L5/S1_L | 26.066 |
+| L5/S1_R | 33.928 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 32.697 | L1/L2_R | 47.462 | L2/L3_L | 34.580 |
+| L2/L3_R | 46.142 | L3/L4_L | 35.420 | L3/L4_R | 45.812 |
+| L4/L5_L | 40.153 | L4/L5_R | 46.091 | L5/S1_L | 38.270 |
+| L5/S1_R | 44.695 |         |        |         |        |
+
+2025-03-22 15:57:57.999 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 15:58:01.729 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch4
+2025-03-22 15:58:55.443 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 4/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.536s, data_time: 0.002s, total_loss: 4.4, iou_loss: 2.3, l1_loss: 0.0, conf_loss: 1.2, cls_loss: 0.8, lr: 6.143e-04, size: 480, ETA: 0:53:21
+2025-03-22 16:00:00.638 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:00:11.899 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:00:12.004 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:00:12.037 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.03s)
+2025-03-22 16:00:12.037 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:00:12.041 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:00:12.043 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:00:12.499 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.34 ms, Average NMS time: 0.93 ms, Average inference time: 20.28 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.346
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.884
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.148
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.361
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.338
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.422
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.442
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.442
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.431
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.458
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 27.768 | L1/L2_R | 43.233 | L2/L3_L | 28.604 |
+| L2/L3_R | 40.561 | L3/L4_L | 25.015 | L3/L4_R | 41.889 |
+| L4/L5_L | 29.195 | L4/L5_R | 42.730 | L5/S1_L | 24.306 |
+| L5/S1_R | 42.804 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 37.939 | L1/L2_R | 52.183 | L2/L3_L | 36.336 |
+| L2/L3_R | 50.127 | L3/L4_L | 36.997 | L3/L4_R | 52.310 |
+| L4/L5_L | 39.567 | L4/L5_R | 50.660 | L5/S1_L | 34.046 |
+| L5/S1_R | 51.650 |         |        |         |        |
+
+2025-03-22 16:00:12.500 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:00:16.087 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch5
+2025-03-22 16:00:16.087 | INFO     | yolox.core.trainer:before_epoch:206 - --->No mosaic aug now!
+2025-03-22 16:00:16.088 | INFO     | yolox.core.trainer:before_epoch:208 - --->Add additional L1 loss now!
+2025-03-22 16:00:16.088 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:01:28.477 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 5/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.712s, data_time: 0.002s, total_loss: 4.0, iou_loss: 1.9, l1_loss: 0.6, conf_loss: 0.9, cls_loss: 0.6, lr: 1.015e-03, size: 544, ETA: 0:46:48
+2025-03-22 16:02:29.793 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:02:41.470 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:02:41.573 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:02:41.927 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.35s)
+2025-03-22 16:02:41.928 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:02:41.932 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:02:41.934 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:02:42.212 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.21 ms, Average NMS time: 0.87 ms, Average inference time: 20.08 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.080
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.566
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.062
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.122
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.110
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.120
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.120
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.107
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.138
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 4.217  | L1/L2_R | 11.198 | L2/L3_L | 3.431  |
+| L2/L3_R | 13.635 | L3/L4_L | 2.860  | L3/L4_R | 12.135 |
+| L4/L5_L | 4.685  | L4/L5_R | 11.542 | L5/S1_L | 3.657  |
+| L5/S1_R | 12.458 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 8.092  | L1/L2_R | 15.178 | L2/L3_L | 6.590  |
+| L2/L3_R | 16.751 | L3/L4_L | 6.387  | L3/L4_R | 15.711 |
+| L4/L5_L | 9.720  | L4/L5_R | 15.152 | L5/S1_L | 9.567  |
+| L5/S1_R | 16.497 |         |        |         |        |
+
+2025-03-22 16:02:42.213 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:02:44.440 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch6
+2025-03-22 16:03:47.745 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 6/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.632s, data_time: 0.002s, total_loss: 4.3, iou_loss: 2.1, l1_loss: 0.7, conf_loss: 0.9, cls_loss: 0.6, lr: 6.250e-05, size: 576, ETA: 0:41:17
+2025-03-22 16:04:51.882 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:05:03.118 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:05:03.183 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:05:03.530 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.35s)
+2025-03-22 16:05:03.530 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:05:03.533 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:05:03.535 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:05:03.817 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.33 ms, Average NMS time: 0.89 ms, Average inference time: 20.22 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.425
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.918
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.309
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.435
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.423
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.516
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.522
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.522
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.520
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.526
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 34.091 | L1/L2_R | 52.115 | L2/L3_L | 34.619 |
+| L2/L3_R | 51.883 | L3/L4_L | 34.094 | L3/L4_R | 50.846 |
+| L4/L5_L | 34.270 | L4/L5_R | 51.360 | L5/S1_L | 32.267 |
+| L5/S1_R | 49.328 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 45.115 | L1/L2_R | 60.152 | L2/L3_L | 44.758 |
+| L2/L3_R | 59.442 | L3/L4_L | 45.674 | L3/L4_R | 59.365 |
+| L4/L5_L | 46.412 | L4/L5_R | 60.102 | L5/S1_L | 43.690 |
+| L5/S1_R | 57.462 |         |        |         |        |
+
+2025-03-22 16:05:03.818 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:05:07.657 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch7
+2025-03-22 16:06:13.818 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 7/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.661s, data_time: 0.002s, total_loss: 4.8, iou_loss: 2.7, l1_loss: 0.8, conf_loss: 0.7, cls_loss: 0.7, lr: 6.250e-05, size: 384, ETA: 0:37:02
+2025-03-22 16:07:14.051 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:07:25.376 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:07:25.451 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:07:25.813 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.36s)
+2025-03-22 16:07:25.813 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:07:25.816 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:07:25.818 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:07:26.073 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.14 ms, Average NMS time: 0.90 ms, Average inference time: 20.04 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.411
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.915
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.292
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.401
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.437
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.512
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.520
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.520
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.516
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.525
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 33.743 | L1/L2_R | 50.780 | L2/L3_L | 33.811 |
+| L2/L3_R | 49.765 | L3/L4_L | 33.529 | L3/L4_R | 48.739 |
+| L4/L5_L | 34.830 | L4/L5_R | 48.043 | L5/S1_L | 31.759 |
+| L5/S1_R | 45.991 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 45.344 | L1/L2_R | 60.685 | L2/L3_L | 46.183 |
+| L2/L3_R | 59.239 | L3/L4_L | 45.471 | L3/L4_R | 58.401 |
+| L4/L5_L | 47.074 | L4/L5_R | 58.122 | L5/S1_L | 43.868 |
+| L5/S1_R | 55.355 |         |        |         |        |
+
+2025-03-22 16:07:26.073 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:07:28.284 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch8
+2025-03-22 16:08:38.664 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 8/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.703s, data_time: 0.002s, total_loss: 4.5, iou_loss: 2.1, l1_loss: 0.8, conf_loss: 1.1, cls_loss: 0.6, lr: 6.250e-05, size: 672, ETA: 0:33:20
+2025-03-22 16:09:41.182 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:09:52.486 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:09:52.549 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:09:52.568 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:09:52.568 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:09:52.571 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:09:52.573 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:09:53.482 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.16 ms, Average NMS time: 0.86 ms, Average inference time: 20.02 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.427
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.913
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.326
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.428
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.436
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.526
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.530
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.530
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.527
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.536
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 33.626 | L1/L2_R | 51.271 | L2/L3_L | 34.375 |
+| L2/L3_R | 51.920 | L3/L4_L | 34.562 | L3/L4_R | 53.241 |
+| L4/L5_L | 34.949 | L4/L5_R | 51.750 | L5/S1_L | 31.437 |
+| L5/S1_R | 49.960 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 44.326 | L1/L2_R | 60.787 | L2/L3_L | 45.420 |
+| L2/L3_R | 60.279 | L3/L4_L | 46.514 | L3/L4_R | 62.437 |
+| L4/L5_L | 47.048 | L4/L5_R | 61.345 | L5/S1_L | 43.461 |
+| L5/S1_R | 58.782 |         |        |         |        |
+
+2025-03-22 16:09:53.482 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:09:56.967 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch9
+2025-03-22 16:11:05.596 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 9/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.685s, data_time: 0.002s, total_loss: 4.5, iou_loss: 1.9, l1_loss: 0.7, conf_loss: 1.2, cls_loss: 0.7, lr: 6.250e-05, size: 640, ETA: 0:30:00
+2025-03-22 16:12:06.039 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:12:17.377 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:12:17.442 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:12:17.773 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.33s)
+2025-03-22 16:12:17.774 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:12:17.776 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:12:17.778 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:12:18.034 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.19 ms, Average NMS time: 0.90 ms, Average inference time: 20.09 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.428
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.917
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.324
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.425
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.441
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.525
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.530
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.530
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.528
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.534
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 33.378 | L1/L2_R | 51.684 | L2/L3_L | 33.682 |
+| L2/L3_R | 52.938 | L3/L4_L | 34.090 | L3/L4_R | 53.676 |
+| L4/L5_L | 35.752 | L4/L5_R | 52.026 | L5/S1_L | 32.025 |
+| L5/S1_R | 48.737 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 44.097 | L1/L2_R | 61.294 | L2/L3_L | 44.784 |
+| L2/L3_R | 61.777 | L3/L4_L | 45.573 | L3/L4_R | 62.893 |
+| L4/L5_L | 46.692 | L4/L5_R | 61.624 | L5/S1_L | 44.046 |
+| L5/S1_R | 57.538 |         |        |         |        |
+
+2025-03-22 16:12:18.035 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:12:21.618 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch10
+2025-03-22 16:13:12.776 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 10/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.511s, data_time: 0.002s, total_loss: 3.7, iou_loss: 2.0, l1_loss: 0.5, conf_loss: 0.6, cls_loss: 0.6, lr: 6.250e-05, size: 384, ETA: 0:26:34
+2025-03-22 16:14:14.016 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:14:25.495 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:14:25.556 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:14:25.574 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:14:25.574 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:14:25.577 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:14:25.579 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:14:26.155 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.14 ms, Average NMS time: 0.80 ms, Average inference time: 19.94 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.437
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.915
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.346
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.432
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.453
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.539
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.544
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.544
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.539
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.551
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 34.435 | L1/L2_R | 53.320 | L2/L3_L | 33.352 |
+| L2/L3_R | 53.201 | L3/L4_L | 34.685 | L3/L4_R | 54.114 |
+| L4/L5_L | 37.253 | L4/L5_R | 53.358 | L5/S1_L | 32.505 |
+| L5/S1_R | 50.988 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 45.802 | L1/L2_R | 63.452 | L2/L3_L | 45.394 |
+| L2/L3_R | 62.411 | L3/L4_L | 47.226 | L3/L4_R | 63.604 |
+| L4/L5_L | 48.397 | L4/L5_R | 62.563 | L5/S1_L | 44.885 |
+| L5/S1_R | 59.924 |         |        |         |        |
+
+2025-03-22 16:14:26.156 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:14:29.794 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch11
+2025-03-22 16:15:39.119 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 11/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.692s, data_time: 0.002s, total_loss: 3.9, iou_loss: 1.9, l1_loss: 0.7, conf_loss: 0.8, cls_loss: 0.5, lr: 6.250e-05, size: 672, ETA: 0:23:42
+2025-03-22 16:16:39.563 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:16:51.079 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:16:51.140 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:16:51.159 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:16:51.159 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:16:51.162 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:16:51.164 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:16:51.909 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.21 ms, Average NMS time: 0.89 ms, Average inference time: 20.10 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.386
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.896
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.235
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.364
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.429
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.476
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.481
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.481
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.475
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.488
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 30.588 | L1/L2_R | 47.204 | L2/L3_L | 29.517 |
+| L2/L3_R | 47.288 | L3/L4_L | 30.943 | L3/L4_R | 47.076 |
+| L4/L5_L | 32.513 | L4/L5_R | 45.521 | L5/S1_L | 29.781 |
+| L5/S1_R | 45.528 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 42.137 | L1/L2_R | 55.939 | L2/L3_L | 40.509 |
+| L2/L3_R | 54.695 | L3/L4_L | 41.985 | L3/L4_R | 54.162 |
+| L4/L5_L | 42.774 | L4/L5_R | 53.122 | L5/S1_L | 41.120 |
+| L5/S1_R | 54.112 |         |        |         |        |
+
+2025-03-22 16:16:51.910 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:16:53.894 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch12
+2025-03-22 16:17:53.682 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 12/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.597s, data_time: 0.002s, total_loss: 3.3, iou_loss: 1.9, l1_loss: 0.4, conf_loss: 0.5, cls_loss: 0.5, lr: 6.250e-05, size: 352, ETA: 0:20:51
+2025-03-22 16:18:48.773 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:18:59.944 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:19:00.006 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:19:00.024 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:19:00.025 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:19:00.027 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:19:00.029 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:19:00.758 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.35 ms, Average NMS time: 0.84 ms, Average inference time: 20.19 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.439
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.923
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.345
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.442
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.443
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.533
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.537
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.537
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.534
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.543
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 35.622 | L1/L2_R | 52.466 | L2/L3_L | 35.100 |
+| L2/L3_R | 51.844 | L3/L4_L | 35.370 | L3/L4_R | 53.677 |
+| L4/L5_L | 37.323 | L4/L5_R | 53.394 | L5/S1_L | 33.136 |
+| L5/S1_R | 50.569 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 46.412 | L1/L2_R | 61.751 | L2/L3_L | 45.852 |
+| L2/L3_R | 60.660 | L3/L4_L | 47.048 | L3/L4_R | 62.132 |
+| L4/L5_L | 47.786 | L4/L5_R | 61.904 | L5/S1_L | 44.936 |
+| L5/S1_R | 58.985 |         |        |         |        |
+
+2025-03-22 16:19:00.759 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:19:03.829 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch13
+2025-03-22 16:20:11.110 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 13/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.672s, data_time: 0.002s, total_loss: 3.6, iou_loss: 2.0, l1_loss: 0.5, conf_loss: 0.6, cls_loss: 0.5, lr: 6.250e-05, size: 448, ETA: 0:18:08
+2025-03-22 16:21:11.963 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:21:23.418 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:21:23.478 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:21:23.496 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:21:23.497 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:21:23.499 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:21:23.502 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:21:24.098 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.20 ms, Average NMS time: 0.90 ms, Average inference time: 20.09 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.412
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.907
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.299
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.396
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.445
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.509
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.512
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.512
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.508
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.519
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 33.767 | L1/L2_R | 50.291 | L2/L3_L | 31.516 |
+| L2/L3_R | 49.985 | L3/L4_L | 33.939 | L3/L4_R | 51.609 |
+| L4/L5_L | 35.016 | L4/L5_R | 49.331 | L5/S1_L | 30.829 |
+| L5/S1_R | 45.896 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 45.293 | L1/L2_R | 59.213 | L2/L3_L | 43.511 |
+| L2/L3_R | 58.503 | L3/L4_L | 45.471 | L3/L4_R | 59.848 |
+| L4/L5_L | 45.751 | L4/L5_R | 57.386 | L5/S1_L | 42.901 |
+| L5/S1_R | 54.492 |         |        |         |        |
+
+2025-03-22 16:21:24.099 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:21:26.079 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch14
+2025-03-22 16:22:27.172 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 14/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.610s, data_time: 0.002s, total_loss: 3.6, iou_loss: 1.9, l1_loss: 0.5, conf_loss: 0.6, cls_loss: 0.5, lr: 6.250e-05, size: 448, ETA: 0:15:32
+2025-03-22 16:23:24.804 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:23:35.782 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:23:35.843 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:23:35.861 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:23:35.861 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:23:35.864 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:23:35.866 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:23:36.433 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.15 ms, Average NMS time: 0.79 ms, Average inference time: 19.94 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.406
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.905
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.288
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.386
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.446
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.498
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.502
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.502
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.498
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.507
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 32.200 | L1/L2_R | 50.407 | L2/L3_L | 30.476 |
+| L2/L3_R | 49.900 | L3/L4_L | 32.086 | L3/L4_R | 50.850 |
+| L4/L5_L | 33.124 | L4/L5_R | 49.657 | L5/S1_L | 29.145 |
+| L5/S1_R | 47.955 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 43.766 | L1/L2_R | 59.162 | L2/L3_L | 41.832 |
+| L2/L3_R | 57.614 | L3/L4_L | 43.028 | L3/L4_R | 58.477 |
+| L4/L5_L | 43.359 | L4/L5_R | 57.360 | L5/S1_L | 40.585 |
+| L5/S1_R | 56.497 |         |        |         |        |
+
+2025-03-22 16:23:36.434 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:23:38.276 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch15
+2025-03-22 16:24:35.520 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 15/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.572s, data_time: 0.002s, total_loss: 3.7, iou_loss: 1.9, l1_loss: 0.6, conf_loss: 0.7, cls_loss: 0.5, lr: 6.250e-05, size: 544, ETA: 0:12:57
+2025-03-22 16:25:33.365 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:25:44.388 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:25:44.450 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:25:44.477 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.03s)
+2025-03-22 16:25:44.477 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:25:44.480 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:25:44.483 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:25:44.736 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.21 ms, Average NMS time: 0.80 ms, Average inference time: 20.00 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.413
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.911
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.299
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.396
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.448
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.506
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.510
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.510
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.508
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.513
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 32.151 | L1/L2_R | 49.688 | L2/L3_L | 32.331 |
+| L2/L3_R | 50.141 | L3/L4_L | 33.576 | L3/L4_R | 51.326 |
+| L4/L5_L | 34.692 | L4/L5_R | 50.977 | L5/S1_L | 30.546 |
+| L5/S1_R | 47.727 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 43.537 | L1/L2_R | 58.426 | L2/L3_L | 43.562 |
+| L2/L3_R | 59.010 | L3/L4_L | 45.115 | L3/L4_R | 59.442 |
+| L4/L5_L | 44.885 | L4/L5_R | 58.553 | L5/S1_L | 41.705 |
+| L5/S1_R | 56.168 |         |        |         |        |
+
+2025-03-22 16:25:44.737 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:25:46.849 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch16
+2025-03-22 16:26:52.365 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 16/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.654s, data_time: 0.002s, total_loss: 3.2, iou_loss: 1.7, l1_loss: 0.5, conf_loss: 0.5, cls_loss: 0.5, lr: 6.250e-05, size: 480, ETA: 0:10:30
+2025-03-22 16:27:48.099 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:27:59.026 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:27:59.086 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:27:59.105 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:27:59.106 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:27:59.108 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:27:59.110 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:27:59.663 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.18 ms, Average NMS time: 0.83 ms, Average inference time: 20.01 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.436
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.910
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.343
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.428
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.455
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.539
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.542
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.542
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.538
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.548
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 33.864 | L1/L2_R | 53.377 | L2/L3_L | 34.435 |
+| L2/L3_R | 52.443 | L3/L4_L | 35.020 | L3/L4_R | 54.104 |
+| L4/L5_L | 37.066 | L4/L5_R | 53.529 | L5/S1_L | 32.144 |
+| L5/S1_R | 49.616 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 45.700 | L1/L2_R | 63.122 | L2/L3_L | 45.878 |
+| L2/L3_R | 62.259 | L3/L4_L | 47.684 | L3/L4_R | 63.579 |
+| L4/L5_L | 48.753 | L4/L5_R | 62.234 | L5/S1_L | 44.173 |
+| L5/S1_R | 58.934 |         |        |         |        |
+
+2025-03-22 16:27:59.664 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:28:01.422 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch17
+2025-03-22 16:28:58.919 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 17/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.574s, data_time: 0.002s, total_loss: 3.4, iou_loss: 1.9, l1_loss: 0.5, conf_loss: 0.5, cls_loss: 0.5, lr: 6.250e-05, size: 384, ETA: 0:08:04
+2025-03-22 16:30:04.385 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:30:15.265 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:30:15.328 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:30:15.346 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:30:15.346 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:30:15.350 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:30:15.352 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:30:15.602 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.20 ms, Average NMS time: 0.78 ms, Average inference time: 19.98 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.434
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.913
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.344
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.428
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.451
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.539
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.542
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.542
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.539
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.546
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 33.701 | L1/L2_R | 52.779 | L2/L3_L | 33.681 |
+| L2/L3_R | 52.882 | L3/L4_L | 35.321 | L3/L4_R | 54.108 |
+| L4/L5_L | 36.682 | L4/L5_R | 53.282 | L5/S1_L | 31.233 |
+| L5/S1_R | 50.137 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 45.929 | L1/L2_R | 62.766 | L2/L3_L | 45.700 |
+| L2/L3_R | 61.777 | L3/L4_L | 47.735 | L3/L4_R | 63.401 |
+| L4/L5_L | 48.499 | L4/L5_R | 61.980 | L5/S1_L | 44.224 |
+| L5/S1_R | 59.492 |         |        |         |        |
+
+2025-03-22 16:30:15.603 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:30:17.606 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch18
+2025-03-22 16:31:29.064 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 18/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.714s, data_time: 0.002s, total_loss: 3.7, iou_loss: 1.9, l1_loss: 0.6, conf_loss: 0.7, cls_loss: 0.5, lr: 6.250e-05, size: 672, ETA: 0:05:45
+2025-03-22 16:32:35.056 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:32:46.088 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:32:46.148 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:32:46.166 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:32:46.167 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:32:46.169 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:32:46.171 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:32:46.421 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.21 ms, Average NMS time: 0.88 ms, Average inference time: 20.10 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.447
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.923
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.361
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.447
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.455
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.547
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.550
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.550
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.547
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.555
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 36.184 | L1/L2_R | 54.595 | L2/L3_L | 35.049 |
+| L2/L3_R | 53.480 | L3/L4_L | 36.253 | L3/L4_R | 54.087 |
+| L4/L5_L | 38.116 | L4/L5_R | 54.170 | L5/S1_L | 33.581 |
+| L5/S1_R | 51.302 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 47.506 | L1/L2_R | 64.137 | L2/L3_L | 46.743 |
+| L2/L3_R | 62.614 | L3/L4_L | 48.422 | L3/L4_R | 63.147 |
+| L4/L5_L | 49.389 | L4/L5_R | 62.640 | L5/S1_L | 45.038 |
+| L5/S1_R | 60.584 |         |        |         |        |
+
+2025-03-22 16:32:46.422 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:32:49.430 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch19
+2025-03-22 16:33:49.095 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 19/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.596s, data_time: 0.002s, total_loss: 3.3, iou_loss: 1.7, l1_loss: 0.5, conf_loss: 0.6, cls_loss: 0.5, lr: 6.250e-05, size: 608, ETA: 0:03:26
+2025-03-22 16:34:43.044 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:34:54.264 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:34:54.324 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:34:54.342 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:34:54.343 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:34:54.345 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:34:54.347 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:34:54.911 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.18 ms, Average NMS time: 0.78 ms, Average inference time: 19.96 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.438
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.917
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.343
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.434
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.453
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.541
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.544
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.544
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.541
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.548
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 34.605 | L1/L2_R | 53.459 | L2/L3_L | 33.965 |
+| L2/L3_R | 52.866 | L3/L4_L | 35.222 | L3/L4_R | 54.864 |
+| L4/L5_L | 36.614 | L4/L5_R | 53.741 | L5/S1_L | 31.985 |
+| L5/S1_R | 51.130 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 46.489 | L1/L2_R | 63.376 | L2/L3_L | 45.649 |
+| L2/L3_R | 62.284 | L3/L4_L | 47.710 | L3/L4_R | 63.756 |
+| L4/L5_L | 48.244 | L4/L5_R | 62.411 | L5/S1_L | 43.842 |
+| L5/S1_R | 60.203 |         |        |         |        |
+
+2025-03-22 16:34:54.912 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:34:56.786 | INFO     | yolox.core.trainer:before_epoch:203 - ---> start train epoch20
+2025-03-22 16:36:12.232 | INFO     | yolox.core.trainer:after_iter:255 - epoch: 20/20, iter: 100/198, gpu mem: 13699Mb, mem: 4.6Gb, iter_time: 0.754s, data_time: 0.002s, total_loss: 3.5, iou_loss: 2.0, l1_loss: 0.5, conf_loss: 0.5, cls_loss: 0.5, lr: 6.250e-05, size: 384, ETA: 0:01:08
+2025-03-22 16:37:05.362 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:37:16.461 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:259 - Evaluate in main process...
+2025-03-22 16:37:16.521 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - Loading and preparing results...
+2025-03-22 16:37:16.540 | INFO     | yolox.evaluators.coco_evaluator:evaluate_prediction:292 - DONE (t=0.02s)
+2025-03-22 16:37:16.540 | INFO     | pycocotools.coco:loadRes:366 - creating index...
+2025-03-22 16:37:16.542 | INFO     | pycocotools.coco:loadRes:366 - index created!
+2025-03-22 16:37:16.544 | INFO     | yolox.layers.jit_ops:jit_load:111 - Load fast_cocoeval op in 0.001s.
+2025-03-22 16:37:16.807 | INFO     | yolox.core.trainer:evaluate_and_save_model:348 - 
+Average forward time: 19.19 ms, Average NMS time: 0.79 ms, Average inference time: 19.98 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.449
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.920
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.364
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.447
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.459
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.554
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.556
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.556
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.554
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.558
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = -1.000
+per class AP:
+| class   | AP     | class   | AP     | class   | AP     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 35.653 | L1/L2_R | 54.907 | L2/L3_L | 35.408 |
+| L2/L3_R | 54.162 | L3/L4_L | 35.351 | L3/L4_R | 55.863 |
+| L4/L5_L | 37.096 | L4/L5_R | 54.917 | L5/S1_L | 33.044 |
+| L5/S1_R | 52.444 |         |        |         |        |
+per class AR:
+| class   | AR     | class   | AR     | class   | AR     |
+|:--------|:-------|:--------|:-------|:--------|:-------|
+| L1/L2_L | 47.176 | L1/L2_R | 65.127 | L2/L3_L | 46.921 |
+| L2/L3_R | 63.706 | L3/L4_L | 48.193 | L3/L4_R | 65.330 |
+| L4/L5_L | 48.601 | L4/L5_R | 64.010 | L5/S1_L | 45.267 |
+| L5/S1_R | 61.675 |         |        |         |        |
+
+2025-03-22 16:37:16.807 | INFO     | yolox.core.trainer:save_ckpt:358 - Save weights to /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x
+2025-03-22 16:37:19.841 | INFO     | yolox.core.trainer:after_train:195 - Training of experiment is done and the best AP is 44.88
