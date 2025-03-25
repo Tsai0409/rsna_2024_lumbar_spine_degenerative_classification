@@ -16,8 +16,8 @@ WORKING_DIR="/kaggle/working/duplicate"
 
 import argparse
 parser = argparse.ArgumentParser()
-# parser.add_argument("--configs", '-c', nargs='+', type=str, default=['test'])
-parser.add_argument("--configs", '-c', nargs='+', type=str, default=['rsna_axial_all_images_left_yolox_x'])
+parser.add_argument("--configs", '-c', nargs='+', type=str, default=['test'])
+# parser.add_argument("--configs", '-c', nargs='+', type=str, default=['rsna_axial_all_images_left_yolox_x'])
 # parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0,1,2,3,4])
 parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0,1])
 args = parser.parse_args()
@@ -25,17 +25,17 @@ args = parser.parse_args()
 configs = args.configs
 
 from src.yolo_configs import *
-# cfg = eval(configs[0])()
+cfg = eval(configs[0])()
 # 假設你有一個字典或模塊，其中包含所有類
-class_map = {
-    "rsna_axial_all_images_left_yolox_x": rsna_axial_all_images_left_yolox_x,
-    "rsna_axial_all_images_right_yolox_x": rsna_axial_all_images_right_yolox_x,
-    "rsna_10classes_yolox_x": rsna_10classes_yolox_x
-}
+# class_map = {
+#     "rsna_axial_all_images_left_yolox_x": rsna_axial_all_images_left_yolox_x,
+#     "rsna_axial_all_images_right_yolox_x": rsna_axial_all_images_right_yolox_x,
+#     "rsna_10classes_yolox_x": rsna_10classes_yolox_x
+# }
 # 根據 configs[0] 來獲取類並創建實例
-cfg_class = class_map[configs[0]]  # 根據配置獲取對應的類
-cfg = cfg_class()  # 創建該類的實例
-print(cfg)
+# cfg_class = class_map[configs[0]]  # 根據配置獲取對應的類
+# cfg = cfg_class()  # 創建該類的實例
+# print(cfg)
 
 tests = []
 for model_n, config in enumerate(configs):
