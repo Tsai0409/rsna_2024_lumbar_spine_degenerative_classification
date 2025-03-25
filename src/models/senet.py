@@ -383,7 +383,7 @@ def initialize_pretrained_model(model, num_classes, settings):
 #    local_weight_path = "/kaggle/working/se_resnext50_32x4d-a260b3a4.pth"
 #    state_dict = torch.load(local_weight_path)
 #    model.load_state_dict(state_dict)  # 這三行 手動下載在 kaggle
-    pretrained_weights_path = "/kaggle/input/pretrain-2/se_resnext50_32x4d-a260b3a4-2.pth"  # 修改為你的本地路徑
+    pretrained_weights_path = "/kaggle/input/pretrain-7/se_resnext50_32x4d-a260b3a4-2.pth"  # 修改為你的本地路徑
 
     if os.path.exists(pretrained_weights_path):
         model.load_state_dict(torch.load(pretrained_weights_path))
