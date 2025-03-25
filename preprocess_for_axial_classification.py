@@ -91,6 +91,6 @@ train_df[['image_height', 'image_width']] = np.array(results)
 
 # train_df.to_csv('input/axial_classification.csv', index=False)
 train_df.to_csv(f'{WORKING_DIR}/csv_train/axial_classification_7/axial_classification.csv', index=False)
-print('save to input/axial_classification.csv')
+# print('save to input/axial_classification.csv')
 print('save to csv_train/axial_classification_7/axial_classification.csv')
 print('preprocess_for_axial_classification.py finish')
