@@ -68,6 +68,7 @@ boxdf = pd.read_csv(f'{WORKING_DIR}/csv_train/axial_classification_7/axial_yolo_
 boxdf = boxdf[['path','x_min', 'y_min', 'x_max', 'y_max']]
 boxdf.path = boxdf.path.apply(lambda x: 'input/' + x.split('/input/')[-1])
 train_df = tr.merge(boxdf, on='path')
+train_df.to_csv(f'{WORKING_DIR}/train_df.csv')  # 我加
 
 import cv2
 from multiprocessing import Pool, cpu_count
