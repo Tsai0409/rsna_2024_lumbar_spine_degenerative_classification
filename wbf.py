@@ -7,6 +7,12 @@ import warnings
 warnings.simplefilter('ignore')
 from multiprocessing import cpu_count
 
+# kaggle input
+DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+
+# 設定環境變數
+WORKING_DIR="/kaggle/working/duplicate"
+
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--configs", '-c', nargs='+', type=str, default=['test'])
@@ -21,7 +27,8 @@ cfg = eval(configs[0])()
 tests = []
 for model_n, config in enumerate(configs):
     for fold in args.fold:
-        test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
+        # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/results/{config}/test_fold{fold}.csv')
         test['model_n'] = f'{model_n}_fold{fold}'
         tests.append(test)
 test = pd.concat(tests)
@@ -70,9 +77,10 @@ p.close()
 
 results = pd.DataFrame(wbf_result_maps_list)
 
-os.makedirs(f'results/wbf', exist_ok=True)
+# os.makedirs(f'results/wbf', exist_ok=True)
+os.makedirs(f'{WORKING_DIR}/results/wbf', exist_ok=True)
 print('='*100)
 filename = "_".join(configs)
-print(f"pd.read_csv(f\'results/wbf/{filename}.csv\')")
+print(f"pd.read_csv(f\'{WORKING_DIR}/results/wbf/{filename}.csv\')")
 print('='*100)
-results.to_csv(f'results/wbf/{"_".join(configs)}.csv', index=False)
+results.to_csv(f'{WORKING_DIR}/results/wbf/{"_".join(configs)}.csv', index=False)

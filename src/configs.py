@@ -221,7 +221,7 @@ class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
         self.predict_test = False
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+# classification for axial (stage 2)
 class rsna_axial_spinal_crop_base(rsna_v1):
     def __init__(self):
         super().__init__()
@@ -272,7 +272,9 @@ class rsna_axial_spinal_dis3_crop_x1_y2(rsna_axial_spinal_crop_base):
         super().__init__()
         self.box_crop_x_ratio = 1
         self.box_crop_y_ratio = 2
-        
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 class rsna_axial_spinal_dis3_crop_x05_y6_reduce_noise(rsna_axial_spinal_dis3_crop_x05_y6):
     def __init__(self):
         super().__init__()
@@ -303,6 +305,8 @@ class rsna_axial_spinal_dis3_crop_x1_y2_reduce_noise(rsna_axial_spinal_dis3_crop
         self.train_df['study_level'] = self.train_df.study_id.astype(str) + '_' + self.train_df.level.apply(lambda x: x.replace('/', '_').lower())
         self.train_df = self.train_df[~self.train_df.study_level.isin(noise_df.study_level)]
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# classification for axial (stage 1)
 class rsna_axial_ss_nfn_crop_base(rsna_v1):
     def __init__(self):
         super().__init__()
@@ -338,7 +342,6 @@ class rsna_axial_ss_nfn_crop_base(rsna_v1):
         self.box_crop = True
         self.box_crop_x_ratio = 0
         self.box_crop_y_ratio = 6
-
 
 class rsna_axial_ss_nfn_x2_y2_center_pad0(rsna_axial_ss_nfn_crop_base):
     def __init__(self):
@@ -434,6 +437,7 @@ class rsna_axial_ss_nfn_x2_y6_center_pad0(rsna_axial_ss_nfn_crop_base):
             train_df_right['x_max'] = train_df_right['x_max'] + train_df_right['image_width']/center_pad_ratio
 
         self.train_df = pd.concat([self.train_df, train_df_right])
+
 class rsna_axial_ss_nfn_x2_y8_center_pad10(rsna_axial_ss_nfn_crop_base):
     def __init__(self):
         super().__init__()
@@ -482,6 +486,8 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10(rsna_axial_ss_nfn_crop_base):
 
         self.train_df = pd.concat([self.train_df, train_df_right])
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# reduce_noise
 class rsna_axial_ss_nfn_x2_y2_center_pad0_reduce_noise(rsna_axial_ss_nfn_crop_base):
     def __init__(self):
         super().__init__()
@@ -623,6 +629,7 @@ class rsna_axial_ss_nfn_x2_y6_center_pad0_reduce_noise(rsna_axial_ss_nfn_crop_ba
             train_df_right['x_max'] = train_df_right['x_max'] + train_df_right['image_width']/center_pad_ratio
 
         self.train_df = pd.concat([self.train_df, train_df_right])
+
 class rsna_axial_ss_nfn_x2_y8_center_pad10_reduce_noise(rsna_axial_ss_nfn_crop_base):
     def __init__(self):
         super().__init__()
@@ -692,11 +699,13 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10_reduce_noise(rsna_axial_ss_nfn_crop_b
 
         self.train_df = pd.concat([self.train_df, train_df_right])
 
-
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# classification for sagittal (stage 1)
 class rsna_saggital_spinal_crop_base(rsna_v1):
     def __init__(self):
         super().__init__()
-        self.train_df_path = 'input/sagittal_spinal_range2_rolling5.csv'
+        # self.train_df_path = 'input/sagittal_spinal_range2_rolling5.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         dfs = []
         col = 'spinal_canal_stenosis'
@@ -735,6 +744,7 @@ class rsna_saggital_spinal_crop_base(rsna_v1):
         self.box_crop = True
         self.box_crop_x_ratio = 1
         self.box_crop_y_ratio = 0.5
+
 class rsna_saggital_mil_spinal_crop_x03_y05(rsna_saggital_spinal_crop_base):
     def __init__(self):
         super().__init__()
@@ -747,6 +757,8 @@ class rsna_saggital_mil_spinal_crop_x03_y07(rsna_saggital_spinal_crop_base):
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.7
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# reduce_noise
 class rsna_saggital_mil_spinal_crop_x03_y05_reduce_noise(rsna_saggital_mil_spinal_crop_x03_y05):
     def __init__(self):
         super().__init__()
@@ -763,10 +775,13 @@ class rsna_saggital_mil_spinal_crop_x03_y07_reduce_noise(rsna_saggital_mil_spina
         self.train_df['study_level'] = self.train_df.study_id.astype(str) + '_' + self.train_df.level.apply(lambda x: x.replace('/', '_').lower())
         self.train_df = self.train_df[~self.train_df.study_level.isin(noise_df.study_level)]
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# classification for sagittal (stage 2)
 class rsna_saggital_mil_ss_crop_base(rsna_v1):
     def __init__(self):
         super().__init__()
-        self.train_df_path = 'input/sagittal_right_ss_range2_rolling5.csv'
+        # self.train_df_path = 'input/sagittal_right_ss_range2_rolling5.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_right_ss_range2_rolling5.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['left_right'] = 'right'
         self.train_df['subarticular_stenosis_normal'] = self.train_df['right_subarticular_stenosis_normal'].values
@@ -818,18 +833,21 @@ class rsna_saggital_mil_ss_crop_x03_y05_96(rsna_saggital_mil_ss_crop_base):
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.5
         self.image_size = 96
+
 class rsna_saggital_mil_ss_crop_x03_y07_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self):
         super().__init__()
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.7
         self.image_size = 96
+
 class rsna_saggital_mil_ss_crop_x03_y2_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self):
         super().__init__()
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 2
         self.image_size = 96
+
 class rsna_saggital_mil_ss_crop_x1_y07_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self):
         super().__init__()
@@ -837,6 +855,8 @@ class rsna_saggital_mil_ss_crop_x1_y07_96(rsna_saggital_mil_ss_crop_base):
         self.box_crop_y_ratio = 0.7
         self.image_size = 96
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# reduce_noise
 class rsna_saggital_mil_ss_crop_x03_y05_96_reduce_noise(rsna_saggital_mil_ss_crop_x03_y05_96):
     def __init__(self):
         super().__init__()
@@ -981,11 +1001,13 @@ class rsna_saggital_mil_ss_crop_x1_y07_96_reduce_noise(rsna_saggital_mil_ss_crop
         for col in self.label_features:
             self.train_df = self.train_df[~self.train_df[col].isnull()]
 
-
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# classification for sagittal (stage 3)
 class rsna_saggital_mil_nfn_crop_base(rsna_v1):
     def __init__(self):
         super().__init__()
-        self.train_df_path = 'input/sagittal_right_nfn_range2_rolling5.csv'
+        # self.train_df_path = 'input/sagittal_right_nfn_range2_rolling5.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_right_nfn_range2_rolling5.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df['left_right'] = 'right'
         self.train_df['neural_foraminal_narrowing_normal'] = self.train_df['right_neural_foraminal_narrowing_normal'].values
@@ -1037,22 +1059,27 @@ class rsna_saggital_mil_nfn_crop_x07_y1_v2(rsna_saggital_mil_nfn_crop_base):
         super().__init__()
         self.box_crop_x_ratio = 0.7
         self.box_crop_y_ratio = 1
+
 class rsna_saggital_mil_nfn_crop_x15_y1_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self):
         super().__init__()
         self.box_crop_x_ratio = 1.5
         self.box_crop_y_ratio = 1
+
 class rsna_saggital_mil_nfn_crop_x03_y1_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self):
         super().__init__()
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 1
+
 class rsna_saggital_mil_nfn_crop_x05_y05_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self):
         super().__init__()
         self.box_crop_x_ratio = 0.5
         self.box_crop_y_ratio = 0.5
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# reduce_noise
 class rsna_saggital_mil_nfn_crop_x07_y1_v2_reduce_noise(rsna_saggital_mil_nfn_crop_x07_y1_v2):
     def __init__(self):
         super().__init__()

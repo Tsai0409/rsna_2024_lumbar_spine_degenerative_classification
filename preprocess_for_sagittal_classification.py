@@ -1,11 +1,22 @@
+# preprocess_for_sagittal_classification.py
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+
+# kaggle input
+DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+
+# 設定環境變數
+WORKING_DIR="/kaggle/working/duplicate"
+
 config = 'rsna_10classes_yolox_x'
 box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
-tr = pd.read_csv('input/train_with_fold.csv')
-oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
-test = pd.read_csv(f'results/wbf/{config}.csv')
+# tr = pd.read_csv('input/train_with_fold.csv')
+tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+# oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/results/{config}/oof_fold{fold}.csv') for fold in range(2)])
+# test = pd.read_csv(f'results/wbf/{config}.csv')
+test = pd.read_csv(f'{WORKING_DIR}/results/wbf/{config}.csv')
 test['study_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[0]))
 test['series_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[1]))
 test = test[~test['study_id'].isin(oof.study_id)]
@@ -39,10 +50,10 @@ box_df['lr'] = box_df.class_name.apply(lambda x: x.split('_')[1])
 rolling = 5
 range_n = 2
 
-
 # spinal
 dfs = []
-df_path = 'results/rsna_sagittal_cl/oof.csv'
+# df_path = 'results/rsna_sagittal_cl/oof.csv'
+df_path = f'{WORKING_DIR}/results/rsna_sagittal_cl/oof.csv'
 df = pd.read_csv(df_path)
 df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
 for id, idf in df.groupby('series_id'):
@@ -64,6 +75,7 @@ for id, idf in df.groupby('series_id'):
     ldf['paths'] = ','.join(l_paths)
     ldf['path'] = path_fit_xy
     dfs.append(ldf)
+
 df = pd.concat(dfs)
 df = df.drop_duplicates('study_id')
 df = df.merge(box_df, on=['study_id'])
@@ -81,7 +93,8 @@ for i, idf in df.groupby(['study_id', 'level']):
     dfs.append(idf)
 df = pd.concat(dfs)    
 
-tr = pd.read_csv('input/train.csv')
+# tr = pd.read_csv('input/train.csv')
+tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
 df = df.merge(tr, on='study_id')
 dfs = []
 for level, idf in df.groupby('level'):
@@ -94,16 +107,19 @@ for level, idf in df.groupby('level'):
         idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Severe', f'{col}_severe'] = 1
     dfs.append(idf)
 df = pd.concat(dfs)
-p = f'input/sagittal_spinal_range2_rolling5.csv'
+# p = f'input/sagittal_spinal_range2_rolling5.csv'
+p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'
 df.to_csv(p, index=False)
 print(p)
 
 # foraminal
 for left_right in ['left', 'right']:
     dfs = []
-    df_path = 'results/rsna_sagittal_cl/oof.csv'
+    # df_path = 'results/rsna_sagittal_cl/oof.csv'
+    df_path = f'{WORKING_DIR}/results/rsna_sagittal_cl/oof.csv'
     df = pd.read_csv(df_path)
-    sdf = pd.read_csv('input/train_series_descriptions.csv')
+    # sdf = pd.read_csv('input/train_series_descriptions.csv')
+    sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
     df = df[df.series_description!='Sagittal T1']   
     df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
@@ -142,7 +158,8 @@ for left_right in ['left', 'right']:
         idf = idf.iloc[:1]
         dfs.append(idf)
     df = pd.concat(dfs)    
-    tr = pd.read_csv('input/train.csv')
+    # tr = pd.read_csv('input/train.csv')
+    tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
     df = df.merge(tr, on='study_id')
     dfs = []
     for level, idf in df.groupby('level'):
@@ -155,16 +172,19 @@ for left_right in ['left', 'right']:
             idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Severe', f'{col}_severe'] = 1
         dfs.append(idf)
     df = pd.concat(dfs)    
-    p = f'input/sagittal_{left_right}_nfn_range2_rolling5.csv'
+    # p = f'input/sagittal_{left_right}_nfn_range2_rolling5.csv'
+    p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
     print(p)
 
 # subarticular
 for left_right in ['left', 'right']:
     dfs = []
-    df_path = 'results/rsna_sagittal_cl/oof.csv'
+    # df_path = 'results/rsna_sagittal_cl/oof.csv'
+    df_path = f'{WORKING_DIR}/results/rsna_sagittal_cl/oof.csv'
     df = pd.read_csv(df_path)
-    sdf = pd.read_csv('input/train_series_descriptions.csv')
+    # sdf = pd.read_csv('input/train_series_descriptions.csv')
+    sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
     df = df[df.series_description!='Sagittal T1']   
     df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
@@ -206,7 +226,8 @@ for left_right in ['left', 'right']:
         idf = idf.iloc[:1]
         dfs.append(idf)
     df = pd.concat(dfs)    
-    tr = pd.read_csv('input/train.csv')
+    # tr = pd.read_csv('input/train.csv')
+    tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
     df = df.merge(tr, on='study_id')
     dfs = []
     for level, idf in df.groupby('level'):
@@ -219,6 +240,7 @@ for left_right in ['left', 'right']:
             idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Severe', f'{col}_severe'] = 1
         dfs.append(idf)
     df = pd.concat(dfs)    
-    p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
+    # p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
+    p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
     df.to_csv(p, index=False)
     print(p)
