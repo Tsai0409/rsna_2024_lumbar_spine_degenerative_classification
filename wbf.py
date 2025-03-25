@@ -8,6 +8,10 @@ import warnings
 warnings.simplefilter('ignore')
 from multiprocessing import cpu_count
 
+# 在 kaggle 執行時使用
+# wbf_path = "/kaggle/working/duplicate"
+# !python3 {wbf_path}/wbf.py --configs rsna_axial_all_images_left_yolox_x
+
 # kaggle input
 DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
 
@@ -19,7 +23,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--configs", '-c', nargs='+', type=str, default=['test'])
 # parser.add_argument("--configs", '-c', nargs='+', type=str, default=['rsna_axial_all_images_left_yolox_x'])
 # parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0,1,2,3,4])
-parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0,1])
+parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0,1])  # for rsna_10classes_yolox_x
+# parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0])  # for rsna_axial_all_images_left_yolox_x\rsna_axial_all_images_right_yolox_x
 args = parser.parse_args()
 
 configs = args.configs
