@@ -34,7 +34,7 @@ for col in label_features:
         tr.loc[((tr[col+'_'+level]=='Normal/Mild') & (tr['pred_level']==level_n+1)), f'{col}_normal'] = 1
         tr.loc[((tr[col+'_'+level]=='Moderate') & (tr['pred_level']==level_n+1)), f'{col}_moderate'] = 1
         tr.loc[((tr[col+'_'+level]=='Severe') & (tr['pred_level']==level_n+1)), f'{col}_severe'] = 1
-tr.to_csv('/kaggle/working/tr.csv')  # 我加
+# tr.to_csv('/kaggle/working/tr.csv')  # 我加
 
 # axial right
 # test = pd.read_csv('results/rsna_axial_all_images_right_yolox_x/test_fold0.csv')
@@ -66,11 +66,11 @@ df.to_csv(f'{WORKING_DIR}/csv_train/axial_classification_7/axial_yolo_results.cs
 # boxdf = pd.read_csv('results/axial_yolo_results.csv')
 boxdf = pd.read_csv(f'{WORKING_DIR}/csv_train/axial_classification_7/axial_yolo_results.csv')
 boxdf = boxdf[['path','x_min', 'y_min', 'x_max', 'y_max']]
-boxdf.to_csv('/kaggle/working/boxdf.csv')  # 我加
+# boxdf.to_csv('/kaggle/working/boxdf.csv')  # 我加
 # tr.to_csv('/kaggle/working/tr.csv')  # 我加
 # boxdf.path = boxdf.path.apply(lambda x: 'input/' + x.split('/input/')[-1])  # 這行好像不用加
 train_df = tr.merge(boxdf, on='path')
-train_df.to_csv('/kaggle/working/train_df.csv')  # 我加
+# train_df.to_csv('/kaggle/working/train_df.csv')  # 我加
 
 import cv2
 from multiprocessing import Pool, cpu_count

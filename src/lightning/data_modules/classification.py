@@ -6,7 +6,7 @@ from pathlib import Path
 import pickle
 from glob import glob
 import cv2
-from PIL import Im
+from PIL import Image
 import random
 import albumentations as A
 
