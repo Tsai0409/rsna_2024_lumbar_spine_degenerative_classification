@@ -22,7 +22,7 @@ parser.add_argument("--configs", '-c', nargs='+', type=str, default=['rsna_axial
 parser.add_argument('--fold', '-f', nargs='+', type=int, default=[0,1])
 args = parser.parse_args()
 
-# configs = args.configs
+configs = args.configs
 
 from src.yolo_configs import *
 # cfg = eval(configs[0])()
@@ -35,6 +35,7 @@ class_map = {
 # 根據 configs[0] 來獲取類並創建實例
 cfg_class = class_map[configs[0]]  # 根據配置獲取對應的類
 cfg = cfg_class()  # 創建該類的實例
+print(cfg)
 
 tests = []
 for model_n, config in enumerate(configs):
