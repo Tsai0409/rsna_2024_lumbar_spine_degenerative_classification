@@ -126,8 +126,9 @@ class Baseline:
         self.save_every_epoch_val_preds = False
 
 class rsna_v1(Baseline):
-    def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
+        self.fold = fold  # 我加
         self.compe = 'rsna_2024'
         self.predict_valid = True
         self.predict_test = False
@@ -704,8 +705,9 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10_reduce_noise(rsna_axial_ss_nfn_crop_b
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # classification for sagittal (stage 1)
 class rsna_saggital_spinal_crop_base(rsna_v1):
-    def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
+        self.fold = fold  # 我加
         # self.train_df_path = 'input/sagittal_spinal_range2_rolling5.csv'
         self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'
         self.train_df = pd.read_csv(self.train_df_path)
