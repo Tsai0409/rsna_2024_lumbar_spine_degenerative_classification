@@ -445,4 +445,4 @@ print(f'command: mv {config_path} {cfg.absolute_path}/results/{args.config}/')
 # command: mv rsna_axial_all_images_left_yolox_x /kaggle/working/duplicate/results/rsna_axial_all_images_left_yolox_x/
 os.system(f'mv {config_path} {cfg.absolute_path}/results/{args.config}/')
 
-# 如何辨別時 Left/Right 呢 -> yolo.configs 中在 trainning data 就分好了
+# 如何辨別時 Left/Right 呢 -> yolo.configs 中在 training data 就分好了
