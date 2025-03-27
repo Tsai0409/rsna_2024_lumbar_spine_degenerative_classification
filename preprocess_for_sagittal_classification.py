@@ -55,7 +55,8 @@ dfs = []
 # df_path = 'results/rsna_sagittal_cl/oof.csv'
 df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'
 df = pd.read_csv(df_path)
-df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+# df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
 for id, idf in df.groupby('series_id'):
     idf = idf.sort_values(['x_pos', 'instance_number'])
     idf = idf.drop_duplicates('x_pos')
@@ -122,7 +123,8 @@ for left_right in ['left', 'right']:
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
     df = df[df.series_description_y!='Sagittal T1']   
-    df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+    # df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+    df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     for id, idf in df.groupby('series_id'):
         idf = idf.sort_values(['x_pos', 'instance_number'])
         idf = idf.drop_duplicates('x_pos')
@@ -187,7 +189,8 @@ for left_right in ['left', 'right']:
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
     df = df[df.series_description_y!='Sagittal T1']   
-    df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+    # df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+    df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     for id, idf in df.groupby('series_id'):
         idf = idf.sort_values(['x_pos', 'instance_number'])
         idf = idf.drop_duplicates('x_pos')
