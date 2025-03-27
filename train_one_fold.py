@@ -178,7 +178,8 @@ if __name__ == "__main__":
         limit_val_batches=1.0,
         callbacks=[checkpoint_callback, early_stop_callback, lr_monitor],
         logger=[logger],
-        sync_batchnorm=cfg.sync_batchnorm,
+        # sync_batchnorm=cfg.sync_batchnorm,
+        sync_batchnorm=False,  # 禁用 SyncBatchNorm
         enable_progress_bar=False,
         resume_from_checkpoint=f'{OUTPUT_PATH}/fold_{args.fold}.ckpt' if cfg.resume else None,  # self.resume = False (all condition)
         accelerator='gpu' if torch.cuda.is_available() else 'cpu',
