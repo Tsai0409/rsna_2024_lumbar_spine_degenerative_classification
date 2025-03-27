@@ -9,6 +9,11 @@ DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classificat
 # 設定環境變數
 WORKING_DIR="/kaggle/working/duplicate"
 
+# 找為什麼 training DataFrame 的資料為空？
+# tr -> train_one_fold.csv 有 fold0-4 的資訊
+
+
+
 config = 'rsna_10classes_yolox_x'
 box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
 # tr = pd.read_csv('input/train_with_fold.csv')
