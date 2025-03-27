@@ -15,11 +15,12 @@ box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
 tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
 oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/results/{config}/oof_fold{fold}.csv') for fold in range(2)])
+oof.to_csv('/kaggle/working/oof.csv')  # 我加
 # test = pd.read_csv(f'results/wbf/{config}.csv')
 test = pd.read_csv(f'{WORKING_DIR}/results/wbf/{config}.csv')
 test['study_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[0]))
 test['series_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[1]))
-test = test[~test['study_id'].isin(oof.study_id)]
+test = test[~test['study_id'].isin(oof.study_id)]  # 將在 oof 中的 study_id 全部移除
 t2_ids = tr[tr.series_description_y == 'Sagittal T2/STIR'].series_id
 test = test[test['series_id'].isin(t2_ids)]
 dfs = []
