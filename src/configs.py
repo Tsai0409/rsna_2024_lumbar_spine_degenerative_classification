@@ -223,8 +223,9 @@ class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # classification for axial (stage 2)
 class rsna_axial_spinal_crop_base(rsna_v1):
-    def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
+        self.fold = fold  # 我加
 #        self.train_df_path = 'input/axial_classification.csv'
         self.train_df_path = '/kaggle/working/duplicate/csv_train/axial_classification_7/axial_classification.csv'
         self.train_df = pd.read_csv(self.train_df_path)
@@ -308,7 +309,7 @@ class rsna_axial_spinal_dis3_crop_x1_y2_reduce_noise(rsna_axial_spinal_dis3_crop
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # classification for axial (stage 1)
 class rsna_axial_ss_nfn_crop_base(rsna_v1):
-    def __init__(self):
+    def __init__(self, fold=0):
         super().__init__()
         cols = []
         label_features = [
@@ -320,6 +321,7 @@ class rsna_axial_ss_nfn_crop_base(rsna_v1):
             cols.append(f'{col}_moderate')
             cols.append(f'{col}_severe')
 
+        self.fold = fold  # 我加
         self.label_features = cols
         self.num_classes = len(self.label_features)
         self.model_name = 'convnext_small.in12k_ft_in1k_384'
