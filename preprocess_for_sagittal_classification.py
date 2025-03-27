@@ -20,7 +20,7 @@ test = pd.read_csv(f'{WORKING_DIR}/results/wbf/{config}.csv')
 test['study_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[0]))
 test['series_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[1]))
 test = test[~test['study_id'].isin(oof.study_id)]
-t2_ids = tr[tr.series_description == 'Sagittal T2/STIR'].series_id
+t2_ids = tr[tr.series_description_y == 'Sagittal T2/STIR'].series_id
 test = test[test['series_id'].isin(t2_ids)]
 dfs = []
 for i, idf in test.groupby('study_id'):
@@ -121,7 +121,7 @@ for left_right in ['left', 'right']:
     # sdf = pd.read_csv('input/train_series_descriptions.csv')
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
-    df = df[df.series_description!='Sagittal T1']   
+    df = df[df.series_description_y!='Sagittal T1']   
     df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     for id, idf in df.groupby('series_id'):
         idf = idf.sort_values(['x_pos', 'instance_number'])
@@ -186,7 +186,7 @@ for left_right in ['left', 'right']:
     # sdf = pd.read_csv('input/train_series_descriptions.csv')
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
-    df = df[df.series_description!='Sagittal T1']   
+    df = df[df.series_description_y!='Sagittal T1']   
     df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     for id, idf in df.groupby('series_id'):
         idf = idf.sort_values(['x_pos', 'instance_number'])
