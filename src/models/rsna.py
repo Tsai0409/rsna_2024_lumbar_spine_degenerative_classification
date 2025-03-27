@@ -1026,16 +1026,24 @@ class RSNA2ndModel(nn.Module):
 #        base_model=senet_mod(se_resnext50_32x4d, pretrained=pretrain_true),
         pool='avg',
         swin=False,
+        local_weight_path=None,  # 路徑參數，允許從本地加載權重；我加
     ):
         super().__init__()
         self.swin = swin
         self.criterion = nn.CrossEntropyLoss()
         
-        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
-        self.model_name = self.base_model.__class__.__name__
-        initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
+        # self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
+        # 初始化基礎模型
+        self.base_model = senet_mod(se_resnext50_32x4d, pretrained=False)  # 不自動下載預訓練權重
+
+        if local_weight_path:
+            # 如果提供了本地權重路徑，則加載權重
+            state_dict = torch.load(local_weight_path)
+            self.base_model.load_state_dict(state_dict)
         
-        self.encoder, nc = drop_fc(base_model)
+        self.model_name = self.base_model.__class__.__name__
+        # initialize_pretrained_model(base_model, num_classes, settings)   # 本地檔案初始化預訓練模型
+        self.encoder, nc = drop_fc(self.base_model)
         self.head = nn.Sequential(
             AdaptiveConcatPool2d(),
             Flatten(),
@@ -1417,8 +1425,8 @@ class RSNA2ndModel2backbone(nn.Module):
         self.base_model = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
         self.base_model2 = senet_mod(se_resnext50_32x4d, pretrained=pretrain_true)
         self.model_name = base_model.__class__.__name__
-        nitialize_pretrained_model(self.base_model, num_classes, settings)
-        initialize_pretrained_model(self.base_model2, num_classes, settings)
+        # initialize_pretrained_model(self.base_model, num_classes, settings)
+        # initialize_pretrained_model(self.base_model2, num_classes, settings)
         
         self.encoder, nc = drop_fc(base_model)
         self.encoder2, nc2 = drop_fc(base_model2)
