@@ -702,6 +702,19 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10_reduce_noise(rsna_axial_ss_nfn_crop_b
         self.train_df = pd.concat([self.train_df, train_df_right])
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+class rsna_v1(Baseline):
+    def __init__(self):
+        super().__init__()
+        self.compe = 'rsna_2024'
+        self.predict_valid = True
+        self.predict_test = False
+        self.model_name = 'convnext_small.in12k_ft_in1k_384'
+        self.transform = medical_v3  # 定義在：src/utils/augmentations/augmentation.py
+        self.batch_size = 8
+        self.lr = 1e-5
+        self.grad_accumulations = 2
+        self.p_rand_order_v1 = 0
+
 # classification for sagittal (stage 1)
 class rsna_saggital_spinal_crop_base(rsna_v1):
     def __init__(self, fold=0):  # 加上fold參數
@@ -731,10 +744,9 @@ class rsna_saggital_spinal_crop_base(rsna_v1):
         self.model_name = 'convnext_small.in12k_ft_in1k_384'
         self.drop_rate = 0.0
         self.drop_path_rate = 0.0
-        base_model = timm.create_model(self.model_name, pretrained=True, num_classes=1,
-            drop_rate=self.drop_rate, drop_path_rate=self.drop_path_rate)
-        self.model = RSNA2ndModel(base_model=base_model,
-            num_classes=len(self.label_features), pool='avg', swin=False)
+        base_model = timm.create_model(self.model_name, pretrained=True, num_classes=1, drop_rate=self.drop_rate, drop_path_rate=self.drop_path_rate)
+        # self.model = RSNA2ndModel(base_model=base_model, num_classes=len(self.label_features), pool='avg', swin=False)
+        self.model = RSNA2ndModel(num_classes=len(self.label_features), pool='avg', swin=False)
         self.metric = None
         self.memo = ''
         self.lr = 5.5e-5
@@ -824,10 +836,9 @@ class rsna_saggital_mil_ss_crop_base(rsna_v1):
         self.drop_rate = 0.0
         self.drop_path_rate = 0.0
 
-        base_model = timm.create_model(self.model_name, pretrained=True, num_classes=1,
-            drop_rate=self.drop_rate, drop_path_rate=self.drop_path_rate)
-        self.model = RSNA2ndModel(base_model=base_model,
-            num_classes=len(self.label_features), pool='avg', swin=False)
+        base_model = timm.create_model(self.model_name, pretrained=True, num_classes=1, drop_rate=self.drop_rate, drop_path_rate=self.drop_path_rate)
+        # self.model = RSNA2ndModel(base_model=base_model, num_classes=len(self.label_features), pool='avg', swin=False)
+        self.model = RSNA2ndModel(num_classes=len(self.label_features), pool='avg', swin=False)
         self.box_crop = True
         self.box_crop_x_ratio = 0.4
         self.box_crop_y_ratio = 0.2
@@ -1055,10 +1066,9 @@ class rsna_saggital_mil_nfn_crop_base(rsna_v1):
         self.drop_rate = 0.0
         self.drop_path_rate = 0.0
 
-        base_model = timm.create_model(self.model_name, pretrained=True, num_classes=1,
-            drop_rate=self.drop_rate, drop_path_rate=self.drop_path_rate)
-        self.model = RSNA2ndModel(base_model=base_model,
-            num_classes=len(self.label_features), pool='avg', swin=False)
+        base_model = timm.create_model(self.model_name, pretrained=True, num_classes=1, drop_rate=self.drop_rate, drop_path_rate=self.drop_path_rate)
+        # self.model = RSNA2ndModel(base_model=base_model, num_classes=len(self.label_features), pool='avg', swin=False)
+        self.model = RSNA2ndModel(num_classes=len(self.label_features), pool='avg', swin=False)
         self.box_crop = True
         self.box_crop_x_ratio = 0.4
         self.box_crop_y_ratio = 0.2
