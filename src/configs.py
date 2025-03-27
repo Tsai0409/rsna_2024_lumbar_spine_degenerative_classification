@@ -704,8 +704,9 @@ class rsna_axial_ss_nfn_x2_y8_center_pad10_reduce_noise(rsna_axial_ss_nfn_crop_b
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # classification for sagittal (stage 1)
 class rsna_saggital_spinal_crop_base(rsna_v1):
-    def __init__(self):
+    def __init__(self, fold=0):  # 加上fold參數
         super().__init__()
+        self.fold = fold  # 儲存fold參數
         # self.train_df_path = 'input/sagittal_spinal_range2_rolling5.csv'
         self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'
         self.train_df = pd.read_csv(self.train_df_path)
@@ -750,14 +751,14 @@ class rsna_saggital_spinal_crop_base(rsna_v1):
 class rsna_saggital_mil_spinal_crop_x03_y05(rsna_saggital_spinal_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.5
 
 class rsna_saggital_mil_spinal_crop_x03_y07(rsna_saggital_spinal_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.7
 
@@ -834,7 +835,7 @@ class rsna_saggital_mil_ss_crop_base(rsna_v1):
 class rsna_saggital_mil_ss_crop_x03_y05_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.5
         self.image_size = 96
@@ -842,7 +843,7 @@ class rsna_saggital_mil_ss_crop_x03_y05_96(rsna_saggital_mil_ss_crop_base):
 class rsna_saggital_mil_ss_crop_x03_y07_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 0.7
         self.image_size = 96
@@ -850,7 +851,7 @@ class rsna_saggital_mil_ss_crop_x03_y07_96(rsna_saggital_mil_ss_crop_base):
 class rsna_saggital_mil_ss_crop_x03_y2_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 2
         self.image_size = 96
@@ -858,7 +859,7 @@ class rsna_saggital_mil_ss_crop_x03_y2_96(rsna_saggital_mil_ss_crop_base):
 class rsna_saggital_mil_ss_crop_x1_y07_96(rsna_saggital_mil_ss_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 1
         self.box_crop_y_ratio = 0.7
         self.image_size = 96
@@ -1065,28 +1066,28 @@ class rsna_saggital_mil_nfn_crop_base(rsna_v1):
 class rsna_saggital_mil_nfn_crop_x07_y1_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.7
         self.box_crop_y_ratio = 1
 
 class rsna_saggital_mil_nfn_crop_x15_y1_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 1.5
         self.box_crop_y_ratio = 1
 
 class rsna_saggital_mil_nfn_crop_x03_y1_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.3
         self.box_crop_y_ratio = 1
 
 class rsna_saggital_mil_nfn_crop_x05_y05_v2(rsna_saggital_mil_nfn_crop_base):
     def __init__(self, fold=0):
         super().__init__()
-        self.fold = fold  # 我加
+        # self.fold = fold  # 我加
         self.box_crop_x_ratio = 0.5
         self.box_crop_y_ratio = 0.5
 
