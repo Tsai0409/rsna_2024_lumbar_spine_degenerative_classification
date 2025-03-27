@@ -11,8 +11,8 @@ WORKING_DIR="/kaggle/working/duplicate"
 
 # 找為什麼 training DataFrame 的資料為空？
 # tr -> train_one_fold.csv 有 fold0-4 的資訊
-
-
+# oof -> 合併 /results/rsna_10classes_yolox_x/oof_fold0.csv、/results/rsna_10classes_yolox_x/oof_fold1.csv 有 fold0-1 的資訊
+# test -> wbf 沒有 fold 資訊
 
 config = 'rsna_10classes_yolox_x'
 box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
@@ -28,6 +28,7 @@ test['series_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[
 test = test[~test['study_id'].isin(oof.study_id)]  # 將在 oof 中的 study_id 全部移除
 t2_ids = tr[tr.series_description_y == 'Sagittal T2/STIR'].series_id
 test = test[test['series_id'].isin(t2_ids)]
+test.to_csv('/kaggle/working/test.csv')  # 我加
 dfs = []
 for i, idf in test.groupby('study_id'):
     assert idf.series_id.nunique()==1
