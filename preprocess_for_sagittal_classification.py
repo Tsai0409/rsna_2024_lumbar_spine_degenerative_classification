@@ -53,7 +53,7 @@ range_n = 2
 # spinal
 dfs = []
 # df_path = 'results/rsna_sagittal_cl/oof.csv'
-df_path = f'{WORKING_DIR}/results/rsna_sagittal_cl/oof.csv'
+df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'
 df = pd.read_csv(df_path)
 df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
 for id, idf in df.groupby('series_id'):
@@ -116,7 +116,7 @@ print(p)
 for left_right in ['left', 'right']:
     dfs = []
     # df_path = 'results/rsna_sagittal_cl/oof.csv'
-    df_path = f'{WORKING_DIR}/results/rsna_sagittal_cl/oof.csv'
+    df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'
     df = pd.read_csv(df_path)
     # sdf = pd.read_csv('input/train_series_descriptions.csv')
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
@@ -181,7 +181,7 @@ for left_right in ['left', 'right']:
 for left_right in ['left', 'right']:
     dfs = []
     # df_path = 'results/rsna_sagittal_cl/oof.csv'
-    df_path = f'{WORKING_DIR}/results/rsna_sagittal_cl/oof.csv'
+    df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'
     df = pd.read_csv(df_path)
     # sdf = pd.read_csv('input/train_series_descriptions.csv')
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
@@ -244,3 +244,4 @@ for left_right in ['left', 'right']:
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
     df.to_csv(p, index=False)
     print(p)
+print('preprocess_for_sagittal_classification.py finish')
