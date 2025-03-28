@@ -53,6 +53,7 @@ for id, idf in box_df.groupby('study_id'):
 
 box_df['level'] = box_df.class_name.apply(lambda x: x.split('_')[0])
 box_df['lr'] = box_df.class_name.apply(lambda x: x.split('_')[1])
+box_df.to_csv('/kaggle/working/box_df.csv')  # 我加
 
 rolling = 5
 range_n = 2
