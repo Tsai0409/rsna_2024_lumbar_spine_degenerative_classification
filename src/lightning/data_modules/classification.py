@@ -364,7 +364,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             tr = self.cfg.train_df  # tr train input
         else:  # here
             tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 除了當前 fold 作為訓練資料
-        self.tr = tr
+        self.tr = tr  # 現在 self.cfg.fold 的為 0，但是 self.cfg.train_df.fold 沒有 fold 以外的資料 (sagittal_spinal_range2_rolling5.csv)
         print(f"len(train_df) after filtering: {len(tr)}")  # 我加
         print(f"Current fold: {self.cfg.fold}")  # 我加
 

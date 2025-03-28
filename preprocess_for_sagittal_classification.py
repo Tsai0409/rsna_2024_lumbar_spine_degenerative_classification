@@ -29,6 +29,7 @@ test = test[~test['study_id'].isin(oof.study_id)]  # 將在 oof 中的 study_id 
 t2_ids = tr[tr.series_description_y == 'Sagittal T2/STIR'].series_id
 test = test[test['series_id'].isin(t2_ids)]
 test.to_csv('/kaggle/working/test.csv')  # 我加
+
 dfs = []
 for i, idf in test.groupby('study_id'):
     assert idf.series_id.nunique()==1
@@ -121,6 +122,7 @@ p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_roll
 df.to_csv(p, index=False)
 print(p)
 
+
 # foraminal
 for left_right in ['left', 'right']:
     dfs = []
@@ -186,6 +188,7 @@ for left_right in ['left', 'right']:
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
     print(p)
+
 
 # subarticular
 for left_right in ['left', 'right']:
