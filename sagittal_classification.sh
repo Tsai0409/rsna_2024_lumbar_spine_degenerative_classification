@@ -47,12 +47,12 @@ do
         fi
 
         # 執行預測腳本
-        infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
-        echo "Executing: $infcmd"
-        if ! eval $infcmd; then
-            echo "Error: Prediction failed for config $config fold $fold."
-            continue  # 跳過失敗的配置，繼續執行其他
-        fi
+        # infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
+        # echo "Executing: $infcmd"
+        # if ! eval $infcmd; then
+        #     echo "Error: Prediction failed for config $config fold $fold."
+        #     continue  # 跳過失敗的配置，繼續執行其他
+        # fi
 
         echo "----------------------------------------"
     done
