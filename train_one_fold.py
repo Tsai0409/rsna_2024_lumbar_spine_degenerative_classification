@@ -165,7 +165,8 @@ if __name__ == "__main__":
     # https://pytorch-lightning.readthedocs.io/en/latest/common/trainer.html
     trainer = Trainer(  # Trainer 負責管理模型訓練
         # strategy=strategy,
-        strategy=DDPStrategy(find_unused_parameters=False),  # 我加
+        # strategy=DDPStrategy(find_unused_parameters=False),  # 我加
+        strategy=DDPStrategy(find_unused_parameters=True),  # 修改這裡
         max_epochs=cfg.epochs,
         gpus=n_gpu,
         accumulate_grad_batches=cfg.grad_accumulations,
