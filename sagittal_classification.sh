@@ -7,13 +7,13 @@ PREPROCESS_SCRIPT="$WORKING_DIR/preprocess_for_sagittal_classification.py"
 TRAIN_SCRIPT="$WORKING_DIR/train_one_fold.py"
 PREDICT_SCRIPT="$WORKING_DIR/predict.py"
 
-# 執行預處理 (finish)
-# cmd="python $PREPROCESS_SCRIPT"
-# echo "Executing: $cmd"
-# if ! eval $cmd; then
-#     echo "Error: Preprocessing failed."
-#     exit 1
-# fi
+執行預處理 (finish)
+cmd="python $PREPROCESS_SCRIPT"
+echo "Executing: $cmd"
+if ! eval $cmd; then
+    echo "Error: Preprocessing failed."
+    exit 1
+fi
 
 # 設置 configs 和 folds 變數
 configs=(
@@ -34,28 +34,28 @@ configs=(
 folds=(0)
 
 # 遍歷配置和摺疊數進行訓練與預測
-for config in "${configs[@]}"
-do
-    for fold in "${folds[@]}"
-    do
-        # 執行訓練腳本
-        # cmd="python $TRAIN_SCRIPT -c $config -f $fold"
-        # echo "Executing: $cmd"
-        # if ! eval $cmd; then
-        #     echo "Error: Training failed for config $config fold $fold."
-        #     continue  # 跳過失敗的配置，繼續執行其他
-        # fi
+# for config in "${configs[@]}"
+# do
+#     for fold in "${folds[@]}"
+#     do
+#         # 執行訓練腳本
+#         # cmd="python $TRAIN_SCRIPT -c $config -f $fold"
+#         # echo "Executing: $cmd"
+#         # if ! eval $cmd; then
+#         #     echo "Error: Training failed for config $config fold $fold."
+#         #     continue  # 跳過失敗的配置，繼續執行其他
+#         # fi
 
-        # 執行預測腳本
-        infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
-        echo "Executing: $infcmd"
-        if ! eval $infcmd; then
-            echo "Error: Prediction failed for config $config fold $fold."
-            continue  # 跳過失敗的配置，繼續執行其他
-        fi
+#         # 執行預測腳本
+#         infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
+#         echo "Executing: $infcmd"
+#         if ! eval $infcmd; then
+#             echo "Error: Prediction failed for config $config fold $fold."
+#             continue  # 跳過失敗的配置，繼續執行其他
+#         fi
 
-        echo "----------------------------------------"
-    done
-done
+#         echo "----------------------------------------"
+#     done
+# done
 
 echo "Script completed successfully!"
