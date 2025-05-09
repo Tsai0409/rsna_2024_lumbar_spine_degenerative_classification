@@ -19,10 +19,10 @@ box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
 # tr = pd.read_csv('input/train_with_fold.csv')
 tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')  # 所有狀態的資訊
 # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
-oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/results/{config}/oof_fold{fold}.csv') for fold in range(2)])  # version-34 (sagittal region estimation)
-oof.to_csv('/kaggle/working/oof.csv')  # 我加
+oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/results/{config}/oof_fold{fold}.csv') for fold in range(2)])  # version-34 (sagittal 中 valid 預測出來的 bounding box 資訊)
+oof.to_csv('/kaggle/working/oof.csv')  # 我加  
 # test = pd.read_csv(f'results/wbf/{config}.csv')
-test = pd.read_csv(f'{WORKING_DIR}/results/wbf/{config}.csv')  # wbf/rsna_10classes_yolox_x.csv 經過整理過後的 bounding box
+test = pd.read_csv(f'{WORKING_DIR}/results/wbf/{config}.csv')  # wbf/rsna_10classes_yolox_x.csv 經過整理過後的 bounding box (用 test 的資料)
 test['study_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[0]))
 test['series_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[1]))
 test = test[~test['study_id'].isin(oof.study_id)]  # 將在 oof 中有出現的 study_id 全部移除
@@ -36,15 +36,22 @@ for i, idf in test.groupby('study_id'):  # 每個 study_id 對應 只能有一�
 for i, idf in oof.groupby('study_id'):
     assert idf.series_id.nunique()==1
 
-box_df = pd.concat([oof, test])
-for id, name in oof.drop_duplicates('class_id')[['class_id', 'class_name']].values:
+box_df = pd.concat([oof, test])  # 包含 valid 以及 test 的資料
+# test 中沒有 class_name（只有 class_id），需從 oof 補上
+for id, name in oof.drop_duplicates('class_id')[['class_id', 'class_name']].values:  # 先找出 10 中的 class_id；
+    # [['class_id', 'class_name']].values 將 DataFrame 轉成 numpy array；
+#     array([
+#         [0, 'L1_L'],
+#         [1, 'L1_R'],
+#         [2, 'L2_L'],
+#     ])
     box_df.loc[box_df.class_id==id, 'class_name'] = name
 
 dfs = []
-for id, idf in tqdm(box_df[['study_id', 'conf', 'class_id', 'class_name']+box_cols].groupby(['study_id', 'class_id'])):
-    idf = idf[idf.conf==idf.conf.max()].iloc[:1]
-    dfs.append(idf)
-box_df = pd.concat(dfs)
+for id, idf in tqdm(box_df[['study_id', 'conf', 'class_id', 'class_name']+box_cols].groupby(['study_id', 'class_id'])):  # box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
+    idf = idf[idf.conf==idf.conf.max()].iloc[:1]  # 只保留 conf 最高的 bounding box
+    dfs.append(idf)  # 收集每個 study_id + class_id 中 conf 最高的一筆
+box_df = pd.concat(dfs)  # 將所有 study_id + class_id 的代表框合併成一個總表
 
 error_dfs = []
 for id, idf in box_df.groupby('study_id'):
@@ -62,32 +69,33 @@ range_n = 2
 # spinal
 dfs = []
 # df_path = 'results/rsna_sagittal_cl/oof.csv'
-df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'
+df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'  # slice estimation 的結果  region_estimation_by_yolox_6/oof.csv
 df = pd.read_csv(df_path)
 # df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
-df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
+df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'  # 將原本 study_id___series_id___instance_number -> series_id___instance_number
 for id, idf in df.groupby('series_id'):
     idf = idf.sort_values(['x_pos', 'instance_number'])
     idf = idf.drop_duplicates('x_pos')
-    idf[f'pred_spinal_rolling'] = idf[f'pred_spinal'].rolling(rolling, center=True).mean()    
+    idf[f'pred_spinal_rolling'] = idf[f'pred_spinal'].rolling(rolling, center=True).mean()  # rolling=5 -> 以目前 slice 為中心取前後各 2 張做平均
 
-    path_fit_xy = idf[idf['pred_spinal']==idf['pred_spinal'].max()].path.values[0]
+    path_fit_xy = idf[idf['pred_spinal']==idf['pred_spinal'].max()].path.values[0]  # 找出原始分數最高的那張影像作為「代表影像」的路徑
     
     col = 'pred_spinal_rolling'
-    n = idf[idf[col]==idf[col].max()].instance_number.values[0]
+    n = idf[idf[col]==idf[col].max()].instance_number.values[0]  # 找出原始分數最高的那張影像作為「代表影像」的 instance_number
 
-    ldf = idf[(idf.instance_number >= n-range_n) & (idf.instance_number <= n+range_n)]
+    ldf = idf[(idf.instance_number >= n-range_n) & (idf.instance_number <= n+range_n)]  # 留下 5 row 的 DataFrame
     l_paths = ['nan'] * (1+range_n*2)
     for path_n, path in enumerate(ldf.path):
         l_paths[path_n] = path
 
-    ldf = ldf.iloc[:1]
-    ldf['paths'] = ','.join(l_paths)
-    ldf['path'] = path_fit_xy
+    ldf = ldf.iloc[:1]  # 取 5 張 slice 的第一個 row
+    ldf['paths'] = ','.join(l_paths)  # 前後 5 張 slice 的 path
+    ldf['path'] = path_fit_xy  # conf 最高 slice 的 path
     dfs.append(ldf)
-
 df = pd.concat(dfs)
 df = df.drop_duplicates('study_id')
+df.to_csv('/kaggle/working/df1.csv')  # 我加
+
 df = df.merge(box_df, on=['study_id'])
 dfs = []
 for i, idf in df.groupby(['study_id', 'level']):
@@ -258,4 +266,5 @@ for left_right in ['left', 'right']:
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
     df.to_csv(p, index=False)
     print(p)
+
 print('preprocess_for_sagittal_classification.py finish')
