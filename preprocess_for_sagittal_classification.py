@@ -109,7 +109,8 @@ for i, idf in df.groupby(['study_id', 'level']):
     idf['r_y'] = (r.y_max.values[0] + r.y_min.values[0])/2
     idf = idf.iloc[:1]
     dfs.append(idf)
-df = pd.concat(dfs)    
+df = pd.concat(dfs)
+df.to_csv('/kaggle/working/df2.csv')  # 我加
 
 # tr = pd.read_csv('input/train.csv')
 tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
