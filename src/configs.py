@@ -348,9 +348,9 @@ class rsna_axial_ss_nfn_crop_base(rsna_v1):
 class rsna_axial_ss_nfn_x2_y2_center_pad0(rsna_axial_ss_nfn_crop_base):
     def __init__(self):
         super().__init__()
-        image_width_ratio = 2
-        self.box_crop_y_ratio = 2
-        center_pad_ratio = 0
+        image_width_ratio = 2  # 以 bounding box 中間，取影像寬度的 1/2
+        self.box_crop_y_ratio = 2  # 以「偵測框中心」為基準，上下各取 1/2 範圍
+        center_pad_ratio = 0  # 調整裁切區域是否左右偏移
 
 #        self.train_df_path = 'input/axial_classification.csv'
         self.train_df_path = '/kaggle/working/duplicate/csv_train/axial_classification_7/axial_classification.csv'
@@ -359,25 +359,26 @@ class rsna_axial_ss_nfn_x2_y2_center_pad0(rsna_axial_ss_nfn_crop_base):
         del self.train_df['x_max']
         self.train_df['left_right'] = 'left'
         cols = [
-            'left_neural_foraminal_narrowing_normal',           
+            'left_neural_foraminal_narrowing_normal',
             'left_neural_foraminal_narrowing_moderate',
             'left_neural_foraminal_narrowing_severe',
-            'left_subarticular_stenosis_normal',           
+            'left_subarticular_stenosis_normal',
             'left_subarticular_stenosis_moderate',
             'left_subarticular_stenosis_severe',
         ]
         for c in cols:
-            self.train_df[c.replace('left_', '')] = self.train_df[c].values
+            self.train_df[c.replace('left_', '')] = self.train_df[c].values  # 創建新的 col，將原來 left 開頭的 ss, nfn 填到這邊
         self.train_df['x_max'] = self.train_df['x_min'] + self.train_df['image_width']/image_width_ratio
         if center_pad_ratio!=0:
             self.train_df['x_min'] = self.train_df['x_min'] - self.train_df['image_width']/center_pad_ratio
+
 
         train_df_right = pd.read_csv(self.train_df_path)
         train_df_right['x_max'] = (train_df_right.x_max + train_df_right.x_min)/2
         del train_df_right['x_min']
         train_df_right['left_right'] = 'right'
         cols = [
-            'right_neural_foraminal_narrowing_normal',           
+            'right_neural_foraminal_narrowing_normal',
             'right_neural_foraminal_narrowing_moderate',
             'right_neural_foraminal_narrowing_severe',
             'right_subarticular_stenosis_normal',           
@@ -385,12 +386,12 @@ class rsna_axial_ss_nfn_x2_y2_center_pad0(rsna_axial_ss_nfn_crop_base):
             'right_subarticular_stenosis_severe',
         ]
         for c in cols:
-            train_df_right[c.replace('right_', '')] = train_df_right[c].values
+            train_df_right[c.replace('right_', '')] = train_df_right[c].values  # 創建新的 col，將原來 right 開頭的 ss, nfn 填到這邊
         train_df_right['x_min'] = train_df_right['x_max'] - train_df_right['image_width']/image_width_ratio
         if center_pad_ratio!=0:
             train_df_right['x_max'] = train_df_right['x_max'] + train_df_right['image_width']/center_pad_ratio
 
-        self.train_df = pd.concat([self.train_df, train_df_right])
+        self.train_df = pd.concat([self.train_df, train_df_right])  # 將左右合併起來 -> 最後在
 
 class rsna_axial_ss_nfn_x2_y6_center_pad0(rsna_axial_ss_nfn_crop_base):
     def __init__(self):
@@ -406,10 +407,10 @@ class rsna_axial_ss_nfn_x2_y6_center_pad0(rsna_axial_ss_nfn_crop_base):
         del self.train_df['x_max']
         self.train_df['left_right'] = 'left'
         cols = [
-            'left_neural_foraminal_narrowing_normal',           
+            'left_neural_foraminal_narrowing_normal',
             'left_neural_foraminal_narrowing_moderate',
             'left_neural_foraminal_narrowing_severe',
-            'left_subarticular_stenosis_normal',           
+            'left_subarticular_stenosis_normal',
             'left_subarticular_stenosis_moderate',
             'left_subarticular_stenosis_severe',
         ]

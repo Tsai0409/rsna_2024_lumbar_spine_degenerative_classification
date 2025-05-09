@@ -47,18 +47,19 @@ class ForkedPdb(pdb.Pdb):
         finally:
             sys.stdin = _stdin
 
-class ClassificationDataset(Dataset):
+class ClassificationDataset(Dataset):  # image label
     def __init__(self, df, transforms, cfg, phase, current_epoch=None):
         self.transforms = transforms
         self.paths = df.path.values  # df = train_for_sagittal_level_cl_v1_for_train_spinal_only.csv
         self.cfg = cfg
         self.phase = phase  # phase='train' (defined below)
         self.current_epoch = current_epoch
-        # phase='train'
+        # phase='train', 'vaild'
         if phase != 'test':
             self.labels = df[cfg.label_features].values  # 按照 label_features = ['label1', 'label2'...]
         
-        # cfg.box_crop = None
+        # cfg.box_crop = None -> silce estimation(sagittal)
+        # cfg.box_crop = Ture -> axial classificaion\sagittal classification
         if (self.cfg.box_crop is not None) and (self.cfg.box_crop):
             self.boxes = df[['x_min', 'y_min', 'x_max', 'y_max']].astype(int).values
 
@@ -67,18 +68,21 @@ class ClassificationDataset(Dataset):
 
     def __getitem__(self, idx):
         path = self.paths[idx]  # image path(including temp)
-        image = cv2.imread(path)[:,:,::-1]  # [:,:,::-1] 對圖片進行反轉
+        image = cv2.imread(path)[:,:,::-1]  # [:,:,::-1] 對圖片進行反轉 (BGR -> RGB)
 
-        # cfg.box_crop = None
+        # cfg.box_crop = None -> silce estimation(sagittal)
+        # cfg.box_crop = Ture -> axial classificaion\sagittal classification
         if self.cfg.box_crop:
             box = self.boxes[idx]
             x_pad = (box[2] - box[0])//2 * self.cfg.box_crop_x_ratio
             y_pad = (box[3] - box[1])//2 * self.cfg.box_crop_y_ratio
             x_min = np.max([box[0]-x_pad, 0])
             y_min = np.max([box[1]-y_pad, 0])
-            if hasattr(self.cfg, 'box_crop_y_upper_ratio'):  # 如果 cfg 中定義了 box_crop_y_upper_ratio
+            
+            if hasattr(self.cfg, 'box_crop_y_upper_ratio'):  # 如果 cfg 中定義了 box_crop_y_upper_ratio；box_crop_y_upper_ratio 沒有使用
                 y_upper_pad = (box[3] - box[1])//2 * self.cfg.box_crop_y_upper_ratio
                 y_min = np.max([box[1]-y_upper_pad, 0])
+
             x_max = np.min([box[2]+x_pad, image.shape[1]])
             y_max = np.min([box[3]+y_pad, image.shape[0]])
             s = image.shape
@@ -321,7 +325,7 @@ def worker_init_fn(worker_id):  # worker_id 是由 DataLoader 在啟動每個子
     
 def get_dataset_class(cfg):
     # cfg.use_sagittal_mil_dataset 在crop之前沒有出現
-    if ((hasattr(cfg, 'use_sagittal_mil_dataset')) and (cfg.use_sagittal_mil_dataset)):
+    if ((hasattr(cfg, 'use_sagittal_mil_dataset')) and (cfg.use_sagittal_mil_dataset)):  # sagittal classification 時才會用到
         claz = SagittalMILDataset
     else:
         claz = ClassificationDataset  # here
@@ -336,6 +340,11 @@ def my_collate_fn(batch):  # 不執行
 
 def my_collate_fn(batch):  # 遇到名稱相同的執行後者；拿 class ClassificationDataset 的輸出結果 return image, torch.FloatTensor(label) 作為 batch
     images = [item[0] for item in batch]  # (image, label)
+    # 看資料的格式是 (image, label) 或 (image, (label, mask))->tuple 
+    # item[0]	image
+    # item[1]	(label, mask)
+    # item[1][0]	label
+    # item[1][1]	mask
     images = torch.stack(images, dim=0)  # 把所有影像堆疊成一個 tensor，產生的張量形狀一般為(batch_size, channels, height, width)
 
     if isinstance(batch[0][1], tuple):  # 檢查第一筆資料的第二個元素(即 label)是否為 tuple；如果是 tuple，代表每筆資料的 label 內包含多個元素(例如可能包含標籤和 mask)
@@ -364,7 +373,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             tr = self.cfg.train_df  # tr train input
         else:  # here
             # tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 除了當前 fold 作為訓練資料
-            tr = self.cfg.train_df[self.cfg.train_df.fold == self.cfg.fold]  # 在 sagittal_classification 中時使用；讓 train 跟 valid 的 data 是一樣的
+            tr = self.cfg.train_df[self.cfg.train_df.fold == self.cfg.fold]  # 在 sagittal_classification 中時使用；讓 train 跟 valid 的 data 是一樣的 -> 我修正的，因為只用一個 fold 訓練(同時又要作為 train 與 vaild 的資料)
             # 假設如果是完整的 5fold 還會遇到 training data 資料為空的情況嗎？
         self.tr = tr  # 現在 self.cfg.fold 的為 0，但是 self.cfg.train_df.fold 沒有 fold 以外的資料 (sagittal_spinal_range2_rolling5.csv)
         print(f"len(train_df) after filtering: {len(tr)}")  # 我加
@@ -384,7 +393,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             print(f'upsample, len: {origin_len} -> {len(tr)}')
 
         print('len(train):', len(tr))
-        claz = get_dataset_class(self.cfg)
+        claz = get_dataset_class(self.cfg)  # 產生 model 的 input 資料 (image, label)
 
         # cfg.use_custom_sampler 沒有出現在 configs -> 預設為 False
         if getattr(self.cfg, 'use_custom_sampler', False):

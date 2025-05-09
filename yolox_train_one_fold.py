@@ -165,7 +165,7 @@ class_id_name_map = {}
 
 # class_id = [0, 1, 2, 3, 4] -- wrong
 # class_name = [L1/L2, L2/L3, L3/L4, L4/L5, L5/S1] -- wrong
-# class_id = [0, 0] 但我不知道為什麼是這樣 -> 在 yolo.configs 中定義 class_id 及 class_name
+# class_id = [0, 0] 但我不知道為什麼是這樣 -> 在 yolo_configs 中定義 class_id 及 class_name
 # class_name = [left, right]
 for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.unique(), cfg.train_df.sort_values('class_id').class_id.unique())):
     classes = {'supercategory': 'none'}  # 創建了一個名為 classes 的字典

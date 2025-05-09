@@ -220,3 +220,7 @@ print('train_one_fold.py finish')
 # last_fold0.ckpt
 # fold_0.ckpt
 # train.csv
+
+# 5 種不同的輸入照片？
+# model 的輸入、輸出？
+# 看 Inference Code 的程式 axial 的部分

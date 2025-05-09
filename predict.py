@@ -142,15 +142,17 @@ if __name__ == "__main__":
 
     # self.predict_valid = True (all condition)
     if cfg.predict_valid:  # 驗證集的預測；val_dataloader 定義在 data_module/classificaiton.py 中；val_loader 是以(image, label) 的資料型態回傳
-        val, val_loader = prepare_loader(cfg, split='val')  # val：通常是一個 DataFrame，包含驗證集的原始資料（例如 ID、標籤等）；val_loader：是一個資料載入器（DataLoader），可以依批次讀取驗證集的資料，方便後續推論使用。
+        val, val_loader = prepare_loader(cfg, split='val')  # val: DataFrame，包含驗證集的原始資料（例如 ID、標籤等）；val_loader:DataLoader，可以依批次讀取驗證集的資料，方便後續推論使用。
         preds = predict(cfg, val_loader)
         pred_cols = [f'pred_{c}' for c in cfg.label_features]  # self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
         val[pred_cols] = preds[0]
         val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
         print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
 
+    # slice estimation ->
     # class rsna_sagittal_level_cl_spinal_v1、class rsna_sagittal_level_cl_nfn_v1 -> self.predict_test = True
     # class rsna_sagittal_cl -> self.predict_test = False
+    # axial, sagittal classification -> self.predict_test = False
     if cfg.predict_test:
         test, test_loader = prepare_loader(cfg, split='test')  # 只有一個 fold 的 (DataFrame, DataLoader)
         preds = predict(cfg, test_loader)  # test_loader(images, labels)

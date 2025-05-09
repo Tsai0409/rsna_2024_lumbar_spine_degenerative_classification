@@ -32,13 +32,13 @@ for config in "${configs[@]}"
 do
     for fold in "${folds[@]}"
     do
-        # # 執行訓練腳本
-        # cmd="python $TRAIN_SCRIPT -c $config -f $fold"
-        # echo "Executing: $cmd"
-        # if ! eval $cmd; then
-        #     echo "Error: Training failed for config $config fold $fold."
-        #     continue  # 跳過失敗的配置，繼續執行其他
-        # fi
+        # 執行訓練腳本
+        cmd="python $TRAIN_SCRIPT -c $config -f $fold"
+        echo "Executing: $cmd"
+        if ! eval $cmd; then
+            echo "Error: Training failed for config $config fold $fold."
+            continue  # 跳過失敗的配置，繼續執行其他
+        fi
 
         # 執行預測腳本
         infcmd="python $PREDICT_SCRIPT -c $config -f $fold"

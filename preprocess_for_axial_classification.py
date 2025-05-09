@@ -26,7 +26,7 @@ label_features = [
     'left_subarticular_stenosis',
     'right_subarticular_stenosis',
 ]
-for col in label_features:
+for col in label_features:  # 轉為 one-hot vector；一張 圖片 真的可以有 all condition 的 label 的資料嗎？
     tr[f'{col}_normal'] = 0
     tr[f'{col}_moderate'] = 0
     tr[f'{col}_severe'] = 0
@@ -40,9 +40,9 @@ for col in label_features:
 # test = pd.read_csv('results/rsna_axial_all_images_right_yolox_x/test_fold0.csv')
 test = pd.read_csv(f'{WORKING_DIR}/results/rsna_axial_all_images_right_yolox_x/test_fold0.csv')
 dfs=[]
-for p, pdf in tqdm(test.groupby(["path", 'class_id'])):
+for p, pdf in tqdm(test.groupby(["path", 'class_id'])):  # class_id = 0(right)
     dfs.append(pdf[pdf.conf==pdf.conf.max()])
-right=pd.concat(dfs)    
+right=pd.concat(dfs)
 for c in ['conf', 'x_min', 'y_min', 'x_max', 'y_max']:
     right = right.rename(columns={c: 'right_'+c})
 
@@ -50,13 +50,14 @@ for c in ['conf', 'x_min', 'y_min', 'x_max', 'y_max']:
 # test = pd.read_csv('results/rsna_axial_all_images_left_yolox_x/test_fold0.csv')
 test = pd.read_csv(f'{WORKING_DIR}/results/rsna_axial_all_images_left_yolox_x/test_fold0.csv')
 dfs=[]
-for p, pdf in tqdm(test.groupby(["path", 'class_id'])):
+for p, pdf in tqdm(test.groupby(["path", 'class_id'])):  # class_id = 0(left)
     dfs.append(pdf[pdf.conf==pdf.conf.max()])
 left = pd.concat(dfs)    
 for c in ['conf', 'x_min', 'y_min', 'x_max', 'y_max']:
     left = left.rename(columns={c: 'left_'+c})
+
 df = right.merge(left[['path']+['left_conf', 'left_x_min', 'left_y_min', 'left_x_max', 'left_y_max']], on='path')
-df['x_min'] = df[['right_x_min', 'left_x_min']].min(1)
+df['x_min'] = df[['right_x_min', 'left_x_min']].min(1)  # 將 left right 合併成一個大框
 df['y_min'] = df[['right_y_min', 'left_y_min']].min(1)
 df['x_max'] = df[['right_x_max', 'left_x_max']].max(1)
 df['y_max'] = df[['right_y_max', 'left_y_max']].max(1)
