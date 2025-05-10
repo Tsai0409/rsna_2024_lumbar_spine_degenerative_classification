@@ -20,7 +20,7 @@ box_cols = ['x_min', 'y_min', 'x_max', 'y_max']
 tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')  # 所有狀態的資訊
 # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
 oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/results/{config}/oof_fold{fold}.csv') for fold in range(2)])  # version-34 (sagittal 中 valid 預測出來的 bounding box 資訊)
-oof.to_csv('/kaggle/working/oof.csv')  # 我加  
+oof.to_csv('/kaggle/working/oof.csv')  # 我加 → Dataframe1
 # test = pd.read_csv(f'results/wbf/{config}.csv')
 test = pd.read_csv(f'{WORKING_DIR}/results/wbf/{config}.csv')  # wbf/rsna_10classes_yolox_x.csv 經過整理過後的 bounding box (用 test 的資料)
 test['study_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[0]))
@@ -28,7 +28,7 @@ test['series_id'] = test.path.apply(lambda x: int(x.split('/')[-1].split('___')[
 test = test[~test['study_id'].isin(oof.study_id)]  # 將在 oof 中有出現的 study_id 全部移除
 t2_ids = tr[tr.series_description_y == 'Sagittal T2/STIR'].series_id  # 留下 Spinal
 test = test[test['series_id'].isin(t2_ids)]
-test.to_csv('/kaggle/working/test.csv')  # 我加
+test.to_csv('/kaggle/working/test.csv')  # 我加 → Dataframe2
 
 dfs = []
 for i, idf in test.groupby('study_id'):  # 每個 study_id 對應 只能有一個 series_id
@@ -81,7 +81,7 @@ for id, idf in df.groupby('series_id'):
     path_fit_xy = idf[idf['pred_spinal']==idf['pred_spinal'].max()].path.values[0]  # 找出原始分數最高的那張影像作為「代表影像」的路徑
     
     col = 'pred_spinal_rolling'
-    n = idf[idf[col]==idf[col].max()].instance_number.values[0]  # 找出原始分數最高的那張影像作為「代表影像」的 instance_number
+    n = idf[idf[col]==idf[col].max()].instance_number.values[0]  # 使用 pred_spinal 的最大值作為中心點；找出原始分數最高的那張影像作為「代表影像」的 instance_number
 
     ldf = idf[(idf.instance_number >= n-range_n) & (idf.instance_number <= n+range_n)]  # 留下 5 row 的 DataFrame
     l_paths = ['nan'] * (1+range_n*2)
@@ -121,13 +121,13 @@ for level, idf in df.groupby('level'):
         idf[f'{col}_normal'] = 0
         idf[f'{col}_moderate'] = 0
         idf[f'{col}_severe'] = 0
-        idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Normal/Mild', f'{col}_normal'] = 1
+        idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Normal/Mild', f'{col}_normal'] = 1  # 將同一個 series_id 拆開為 5row L1/L2、L2/L3、L3/L4、L4/L5、L5/S1 
         idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Moderate', f'{col}_moderate'] = 1
         idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Severe', f'{col}_severe'] = 1
     dfs.append(idf)
 df = pd.concat(dfs)
 # p = f'input/sagittal_spinal_range2_rolling5.csv'
-p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'
+p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
 print(p)
 
@@ -136,19 +136,19 @@ print(p)
 for left_right in ['left', 'right']:
     dfs = []
     # df_path = 'results/rsna_sagittal_cl/oof.csv'
-    df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'
+    df_path = f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof.csv'  # slice estimation 的結果 region_estimation_by_yolox_6/oof.csv
     df = pd.read_csv(df_path)
     # sdf = pd.read_csv('input/train_series_descriptions.csv')
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
-    df = df[df.series_description_y!='Sagittal T1']   
+    df = df[df.series_description_y!='Sagittal T1']  # 留下 spinal、ss
     # df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     for id, idf in df.groupby('series_id'):
         idf = idf.sort_values(['x_pos', 'instance_number'])
         idf = idf.drop_duplicates('x_pos')
-        idf[f'pred_spinal_rolling'] = idf[f'pred_spinal'].rolling(rolling, center=True).mean()    
-        idf[f'pred_{left_right}_neural_rolling'] = idf[f'pred_{left_right}_neural'].rolling(rolling, center=True).mean()
+        idf[f'pred_spinal_rolling'] = idf[f'pred_spinal'].rolling(rolling, center=True).mean()
+        idf[f'pred_{left_right}_neural_rolling'] = idf[f'pred_{left_right}_neural'].rolling(rolling, center=True).mean()  # 使用 pred_{left_right}_neural_rolling 的最大值作為中心點
         path_fit_xy = idf[idf['pred_spinal']==idf['pred_spinal'].max()].path.values[0]
         
         col = f'pred_{left_right}_neural_rolling'
@@ -165,6 +165,7 @@ for left_right in ['left', 'right']:
         dfs.append(ldf)
     df = pd.concat(dfs)
     df = df.drop_duplicates('study_id')
+
     df = df.merge(box_df, on=['study_id'])
     dfs = []
     for i, idf in df.groupby(['study_id', 'level']):
@@ -178,7 +179,7 @@ for left_right in ['left', 'right']:
         idf['r_y'] = (r.y_max.values[0] + r.y_min.values[0])/2
         idf = idf.iloc[:1]
         dfs.append(idf)
-    df = pd.concat(dfs)    
+    df = pd.concat(dfs)
     # tr = pd.read_csv('input/train.csv')
     tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
     df = df.merge(tr, on='study_id')
@@ -208,7 +209,7 @@ for left_right in ['left', 'right']:
     # sdf = pd.read_csv('input/train_series_descriptions.csv')
     sdf = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train_series_descriptions.csv')
     df = df.merge(sdf, on=['study_id', 'series_id'])
-    df = df[df.series_description_y!='Sagittal T1']   
+    df = df[df.series_description_y!='Sagittal T1']
     # df['path'] = f'input/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     df['path'] = f'/kaggle/temp/sagittal_all_images/' + df.study_id.astype(str) + '___' + df.instance_number.astype(str) + '.png'
     for id, idf in df.groupby('series_id'):
@@ -216,11 +217,11 @@ for left_right in ['left', 'right']:
         idf = idf.drop_duplicates('x_pos')
         path_fit_xy = idf[idf['pred_spinal']==idf['pred_spinal'].max()].path.values[0]
 
-        idf[f'pred_spinal_rolling'] = idf[f'pred_spinal'].rolling(rolling, center=True).mean()    
+        idf[f'pred_spinal_rolling'] = idf[f'pred_spinal'].rolling(rolling, center=True).mean()
         spinal_n = idf[idf['pred_spinal_rolling']==idf['pred_spinal_rolling'].max()].instance_number.values[0]
 
         col = f'pred_{left_right}_neural_rolling'
-        idf[col] = idf[f'pred_{left_right}_neural'].rolling(rolling, center=True).mean()
+        idf[col] = idf[f'pred_{left_right}_neural'].rolling(rolling, center=True).mean()  # 取 pred_{left_right}_neural_rolling 與 pred_spinal_rolling 的平均 instance_number 作為中心點
         n = idf[idf[col]==idf[col].max()].instance_number.values[0]
         n = (spinal_n + n)//2
 
@@ -235,6 +236,7 @@ for left_right in ['left', 'right']:
         dfs.append(ldf)
     df = pd.concat(dfs)
     df = df.drop_duplicates('study_id')
+    
     df = df.merge(box_df, on=['study_id'])
     dfs = []
     for i, idf in df.groupby(['study_id', 'level']):

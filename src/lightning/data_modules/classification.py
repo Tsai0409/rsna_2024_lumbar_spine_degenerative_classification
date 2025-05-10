@@ -116,7 +116,7 @@ def crop_between_keypoints(img, keypoint1, keypoint2, ratio=0.1):
     # Crop the image
     return img[top:bottom, left:right, :]
 
-def angle_of_line(x1, y1, x2, y2):
+def angle_of_line(x1, y1, x2, y2):  # 「這條線要旋轉多少度，才能變水平」的角度
     return math.degrees(math.atan2(-(y2-y1), x2-x1))
 
 import random
@@ -211,7 +211,7 @@ class SagittalMILDataset(Dataset):
     def __init__(self, df, transforms, cfg, phase, current_epoch=None):
         self.transforms = transforms
         self.paths = df.path.values
-        if ((hasattr(cfg, 'windowing_3ch_v1')) and (cfg.windowing_3ch_v1)):
+        if ((hasattr(cfg, 'windowing_3ch_v1')) and (cfg.windowing_3ch_v1)):  # windowing_3ch_v1 沒有出現
             self.windowing_paths = df.windowing_path.values
         self.paths_list = df.paths.values
         self.study_ids = df.study_id.values
@@ -222,17 +222,17 @@ class SagittalMILDataset(Dataset):
                 print('-'*1000)
                 raise
         self.cfg = cfg
-        self.phase = phase
+        self.phase = phase  # train -> test
         self.current_epoch = current_epoch
         self.l_points = df[['l_x', 'l_y']].values
         self.r_points = df[['r_x', 'r_y']].values
-        if phase != 'test':
+        if phase != 'test':  # train -> test
             self.labels = df[cfg.label_features].values
 
     def __len__(self):
         return len(self.paths)
 
-    def load_image(self, path, a, b, origin_size):
+    def load_image(self, path, a, b, origin_size):  # path(conf 最高的 slice)、a = ['l_x', 'l_y']、b = ['r_x', 'r_y']
         if path == 'nan':
             image = np.zeros((origin_size[0], origin_size[1], 3)).astype(np.uint8)
         else:
@@ -240,23 +240,24 @@ class SagittalMILDataset(Dataset):
                 image = np.load(path)
                 image = cv2.resize(image, (origin_size[1], origin_size[0]))
                 image = np.concatenate([image, image[:,:,[0]]], 2)
-            except:
+            except:  # here
                 image = cv2.imread(path)
                 try:
                     image = cv2.resize(image, (origin_size[1], origin_size[0]))
                 except:
-                    image = np.zeros((origin_size[0], origin_size[1], 3)).astype(np.uint8)
+                    image = np.zeros((origin_size[0], origin_size[1], 3)).astype(np.uint8)  # 當讀不到合法影像（或路徑錯誤）時，建立一張「全黑」的佔位圖
 
-        rotate_angle = angle_of_line(a[0], a[1], b[0], b[1])
+        rotate_angle = angle_of_line(a[0], a[1], b[0], b[1])  # 將兩點連線 轉為水平
         transform = A.Compose([
             A.Rotate(limit=(-rotate_angle, -rotate_angle), p=1.0),
-        ], keypoint_params= A.KeypointParams(format='xy', remove_invisible=False),
+        ], keypoint_params= A.KeypointParams(format='xy', remove_invisible=False),  # 不只要旋轉影像，還要把「左右兩個標記點」一起轉到正確的位置
         )
 
         t = transform(image=image, keypoints=[a, b])
         image = t["image"]
         a, b = t["keypoints"]
-        if a[0]<0:
+
+        if a[0]<0:  # 「把任何小於 0 的座標調整回 0」，因為負座標沒有意義
             a = (0, a[1])
         if b[0]<0:
             b = (0, b[1])
@@ -264,15 +265,18 @@ class SagittalMILDataset(Dataset):
             a = (a[0], 0)
         if b[1]<0:
             b = (b[0], 0) 
+
+        # box_crop = True -> sagittal classification
         if self.cfg.box_crop:
-            if ((hasattr(self.cfg, 'xy_center_point')) and (self.cfg.xy_center_point)):
+            # xy_center_point 沒有出現
+            if ((hasattr(self.cfg, 'xy_center_point')) and (self.cfg.xy_center_point)):  # 中點裁切
                 x = int((a[0]+b[0])/2)
                 y = int((a[1]+b[1])/2)
-            else:
+            else:  # here；以「右側那個點 b」作為方框的錨點；單點裁切
                 x = int(b[0])
                 y = int(b[1])
             
-            w = abs(b[0]-a[0])
+            w = abs(b[0]-a[0])  # 計算 x軸 差距
             h = image.shape[0]*0.2
 
             crop_x = int(w * self.cfg.box_crop_x_ratio)
@@ -291,26 +295,27 @@ class SagittalMILDataset(Dataset):
         try:
             origin_size = np.load(path).shape[:2]
         except:
-            origin_size = cv2.imread(path).shape[:2]
+            origin_size = cv2.imread(path).shape[:2]  # here 對每一個 series_id 皆找一次 image_size
 
         study_id = self.study_ids[idx]
-        a = self.l_points[idx]
-        b = self.r_points[idx]
+        a = self.l_points[idx]  # self.l_points = df[['l_x', 'l_y']].values
+        b = self.r_points[idx]  # self.r_points = df[['r_x', 'r_y']].values
 
         images = []
         for path in paths.split(','):
             image = self.load_image(path, a, b, origin_size)
 
             try:
-                images.append(self.transforms(image=image.astype(np.uint8))['image'])
+                images.append(self.transforms(image=image.astype(np.uint8))['image'])  # 把 image（此時是 NumPy array，可能還是浮點型或其他型別）轉成 uint8(整數 0–255)\
             except:
                 print(path)
                 raise
 
-        images = np.stack(images, 0)
+        images = np.stack(images, 0)  # (C, H, W) -> (N, C, H, W)，其中 N = len(images) = 5
         images = torch.tensor(images).float()
 
-        if self.phase == 'train' and random.random() < self.cfg.p_rand_order_v1:
+        # self.p_rand_order_v1 = 0；在「訓練階段」隨機打亂（shuffle）同一筆 sample 底下多張 slice 的順序，以做時間序列上的資料增強，這邊不這樣執行
+        if self.phase == 'train' and random.random() < self.cfg.p_rand_order_v1:  
             indices = torch.randperm(images.size(0))
             images = images[indices]
 
@@ -325,10 +330,11 @@ def worker_init_fn(worker_id):  # worker_id 是由 DataLoader 在啟動每個子
     
 def get_dataset_class(cfg):
     # cfg.use_sagittal_mil_dataset 在crop之前沒有出現
+    # cfg.use_sagittal_mil_dataset = Ture -> sagittal classification 時使用
     if ((hasattr(cfg, 'use_sagittal_mil_dataset')) and (cfg.use_sagittal_mil_dataset)):  # sagittal classification 時才會用到
-        claz = SagittalMILDataset
+        claz = SagittalMILDataset  # here -> sagittal classification
     else:
-        claz = ClassificationDataset  # here
+        claz = ClassificationDataset  # here -> slice estimation、axial classification
     return claz
 
 def my_collate_fn(batch):  # 不執行
