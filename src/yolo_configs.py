@@ -74,7 +74,7 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.fold = fold  # 我加
         self.compe = 'rsna_2024'
         self.update_json = False
-        self.no_aug_epochs = 15
+        self.no_aug_epochs = 15  # src/YOLOX/yolox/exp/yolox_base.py
         self.warmup_epochs = 5
         # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
         self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'
@@ -177,4 +177,4 @@ class rsna_10classes_yolox_x(Baseline):
         # self.epochs = 40
         self.epochs = 20
         # self.inference_only = True -> /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x/best_ckpt.pth 不會產生
-        self.inference_only = False
+        self.inference_only = False 

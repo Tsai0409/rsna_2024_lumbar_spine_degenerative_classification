@@ -8,12 +8,12 @@ TRAIN_SCRIPT="$WORKING_DIR/train_one_fold.py"
 PREDICT_SCRIPT="$WORKING_DIR/predict.py"
 
 # 執行預處理 (finish)
-# cmd="python $PREPROCESS_SCRIPT"
-# echo "Executing: $cmd"
-# if ! eval $cmd; then
-#     echo "Error: Preprocessing failed."
-#     exit 1
-# fi
+cmd="python $PREPROCESS_SCRIPT"
+echo "Executing: $cmd"
+if ! eval $cmd; then
+    echo "Error: Preprocessing failed."
+    exit 1
+fi
 
 # 設置 configs 和 folds 變數
 configs=(
@@ -23,7 +23,7 @@ configs=(
     
     "rsna_axial_spinal_dis3_crop_x05_y6"
     "rsna_axial_spinal_dis3_crop_x1_y2"
-    )
+)
 # folds=(0 1 2 3 4)
 folds=(0)
 
