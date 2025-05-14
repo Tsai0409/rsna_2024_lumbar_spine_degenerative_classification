@@ -143,7 +143,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
         super().__init__()
         self.fold = fold  # 如果你要在這裡使用 fold，我加
 #        self.train_df_path = 'input/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
-        self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_5/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_5/train_for_sagittal_level_cl_v1_for_train_spinal_only.csv'  # 含 fold 資訊
         print("I'm reading from path:", self.train_df_path)
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
