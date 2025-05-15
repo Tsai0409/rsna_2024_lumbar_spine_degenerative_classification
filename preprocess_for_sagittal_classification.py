@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 
 # kaggle input
 DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
@@ -127,6 +128,14 @@ for level, idf in df.groupby('level'):
     dfs.append(idf)
 df = pd.concat(dfs)
 # p = f'input/sagittal_spinal_range2_rolling5.csv'
+label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+df = df.dropna(subset=label_cols).reset_index(drop=True)
+
+mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+df['fold'] = -1
+for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
+    df.loc[val_idx, 'fold'] = fold
+
 p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
 print(p)
@@ -195,6 +204,14 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_nfn_range2_rolling5.csv'
+    label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+    df = df.dropna(subset=label_cols).reset_index(drop=True)
+
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    df['fold'] = -1
+    for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
+        df.loc[val_idx, 'fold'] = fold
+
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
     print(p)
@@ -266,7 +283,15 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
+    label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+    df = df.dropna(subset=label_cols).reset_index(drop=True)
+
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    df['fold'] = -1
+    for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
+        df.loc[val_idx, 'fold'] = fold
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
+
     df.to_csv(p, index=False)
     print(p)
 
