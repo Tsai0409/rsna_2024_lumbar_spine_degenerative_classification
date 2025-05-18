@@ -136,36 +136,28 @@ df = pd.concat(dfs)
 # for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
 #     df.loc[val_idx, 'fold'] = fold
 
-print('version-3')
-# 設定 label 欄位
-label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+print('version-4')
+# 1. L1/L2 中先取出 study_id 層級的 labels
+df_l1l2 = df[df['level'] == 'L1/L2'].copy()
+grouped = df_l1l2.groupby('study_id')[label_cols].max().reset_index()  # 以 max 聚合代表該 study_id 有哪些標籤
 
-# 建立 fold 欄位並預設為 -1
-df['fold'] = -1
-
-# 只挑出 L1/L2 的資料
-df_l1l2 = df[df['level'] == 'L1/L2'].dropna(subset=label_cols).reset_index(drop=True)
-
-# 建立 fold0~4 的分層抽樣
+# 2. 多標籤分層劃分
 mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
-for fold, (_, val_idx) in enumerate(mskf.split(df_l1l2, df_l1l2[label_cols])):
-    df_l1l2.loc[val_idx, 'fold'] = fold
+grouped['fold'] = -1
+for fold, (_, val_idx) in enumerate(mskf.split(grouped, grouped[label_cols])):
+    grouped.loc[val_idx, 'fold'] = fold
 
-# 將 fold 資訊對應到其他 level (L2/L3, L3/L4, L4/L5, L5/S1)
-other_levels = ['L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
-for level in other_levels:
-    df_level = df[df['level'] == level].dropna(subset=label_cols).reset_index(drop=True)
-    
-    if len(df_level) != len(df_l1l2):
-        raise ValueError(f"資料筆數不一致，無法對應 fold：{level} vs L1/L2")
-    
-    df_level['fold'] = df_l1l2['fold'].values
-    
-    # 更新回原始 df 中該 level 的 fold 資訊
-    df.loc[df['level'] == level, 'fold'] = df_level['fold'].values
+# 3. 建立 study_id → fold 對應
+id2fold = dict(zip(grouped['study_id'], grouped['fold']))
 
-# 最後將 L1/L2 的 fold 更新也寫回
-df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
+# 4. 將 fold 寫入原始 df（所有 level）
+df['fold'] = df['study_id'].map(id2fold)
+
+# 5. 檢查哪些 study_id 缺少 level，放入 error_data
+study_level_set = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
+incomplete_ids = study_level_set[study_level_set.apply(lambda x: not all(l in x for l in expected_levels))].index
+error_data = df[df['study_id'].isin(incomplete_ids)].copy()
+
 
 p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
@@ -236,35 +228,26 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_nfn_range2_rolling5.csv'
-    # 設定 label 欄位
-    label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+    # 1. L1/L2 中先取出 study_id 層級的 labels
+    df_l1l2 = df[df['level'] == 'L1/L2'].copy()
+    grouped = df_l1l2.groupby('study_id')[label_cols].max().reset_index()  # 以 max 聚合代表該 study_id 有哪些標籤
 
-    # 建立 fold 欄位並預設為 -1
-    df['fold'] = -1
-
-    # 只挑出 L1/L2 的資料
-    df_l1l2 = df[df['level'] == 'L1/L2'].dropna(subset=label_cols).reset_index(drop=True)
-
-    # 建立 fold0~4 的分層抽樣
+    # 2. 多標籤分層劃分
     mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
-    for fold, (_, val_idx) in enumerate(mskf.split(df_l1l2, df_l1l2[label_cols])):
-        df_l1l2.loc[val_idx, 'fold'] = fold
+    grouped['fold'] = -1
+    for fold, (_, val_idx) in enumerate(mskf.split(grouped, grouped[label_cols])):
+        grouped.loc[val_idx, 'fold'] = fold
 
-    # 將 fold 資訊對應到其他 level (L2/L3, L3/L4, L4/L5, L5/S1)
-    other_levels = ['L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
-    for level in other_levels:
-        df_level = df[df['level'] == level].dropna(subset=label_cols).reset_index(drop=True)
-        
-        if len(df_level) != len(df_l1l2):
-            raise ValueError(f"資料筆數不一致，無法對應 fold：{level} vs L1/L2")
-        
-        df_level['fold'] = df_l1l2['fold'].values
-        
-        # 更新回原始 df 中該 level 的 fold 資訊
-        df.loc[df['level'] == level, 'fold'] = df_level['fold'].values
+    # 3. 建立 study_id → fold 對應
+    id2fold = dict(zip(grouped['study_id'], grouped['fold']))
 
-    # 最後將 L1/L2 的 fold 更新也寫回
-    df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
+    # 4. 將 fold 寫入原始 df（所有 level）
+    df['fold'] = df['study_id'].map(id2fold)
+
+    # 5. 檢查哪些 study_id 缺少 level，放入 error_data
+    study_level_set = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
+    incomplete_ids = study_level_set[study_level_set.apply(lambda x: not all(l in x for l in expected_levels))].index
+    error_data = df[df['study_id'].isin(incomplete_ids)].copy()
 
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
@@ -337,35 +320,26 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
-    # 設定 label 欄位
-    label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+    # 1. L1/L2 中先取出 study_id 層級的 labels
+    df_l1l2 = df[df['level'] == 'L1/L2'].copy()
+    grouped = df_l1l2.groupby('study_id')[label_cols].max().reset_index()  # 以 max 聚合代表該 study_id 有哪些標籤
 
-    # 建立 fold 欄位並預設為 -1
-    df['fold'] = -1
-
-    # 只挑出 L1/L2 的資料
-    df_l1l2 = df[df['level'] == 'L1/L2'].dropna(subset=label_cols).reset_index(drop=True)
-
-    # 建立 fold0~4 的分層抽樣
+    # 2. 多標籤分層劃分
     mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
-    for fold, (_, val_idx) in enumerate(mskf.split(df_l1l2, df_l1l2[label_cols])):
-        df_l1l2.loc[val_idx, 'fold'] = fold
+    grouped['fold'] = -1
+    for fold, (_, val_idx) in enumerate(mskf.split(grouped, grouped[label_cols])):
+        grouped.loc[val_idx, 'fold'] = fold
 
-    # 將 fold 資訊對應到其他 level (L2/L3, L3/L4, L4/L5, L5/S1)
-    other_levels = ['L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
-    for level in other_levels:
-        df_level = df[df['level'] == level].dropna(subset=label_cols).reset_index(drop=True)
-        
-        if len(df_level) != len(df_l1l2):
-            raise ValueError(f"資料筆數不一致，無法對應 fold：{level} vs L1/L2")
-        
-        df_level['fold'] = df_l1l2['fold'].values
-        
-        # 更新回原始 df 中該 level 的 fold 資訊
-        df.loc[df['level'] == level, 'fold'] = df_level['fold'].values
+    # 3. 建立 study_id → fold 對應
+    id2fold = dict(zip(grouped['study_id'], grouped['fold']))
 
-    # 最後將 L1/L2 的 fold 更新也寫回
-    df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
+    # 4. 將 fold 寫入原始 df（所有 level）
+    df['fold'] = df['study_id'].map(id2fold)
+
+    # 5. 檢查哪些 study_id 缺少 level，放入 error_data
+    study_level_set = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
+    incomplete_ids = study_level_set[study_level_set.apply(lambda x: not all(l in x for l in expected_levels))].index
+    error_data = df[df['study_id'].isin(incomplete_ids)].copy()
 
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
 
