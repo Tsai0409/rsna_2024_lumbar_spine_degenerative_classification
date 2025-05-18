@@ -136,6 +136,7 @@ df = pd.concat(dfs)
 # for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
 #     df.loc[val_idx, 'fold'] = fold
 
+print('version-3')
 # 設定 label 欄位
 label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
 
@@ -365,7 +366,7 @@ for left_right in ['left', 'right']:
 
     # 最後將 L1/L2 的 fold 更新也寫回
     df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
-    
+
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
 
     df.to_csv(p, index=False)
