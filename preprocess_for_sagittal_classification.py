@@ -136,23 +136,35 @@ df = pd.concat(dfs)
 # for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
 #     df.loc[val_idx, 'fold'] = fold
 
-# 定義 label columns
+# 設定 label 欄位
 label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
 
-# 移除有 NaN 的 row，重設 index
-df = df.dropna(subset=label_cols).reset_index(drop=True)
-
-# 初始化 fold column
+# 建立 fold 欄位並預設為 -1
 df['fold'] = -1
 
-# 只執行一次 stratified split
-mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
-for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
-    df.loc[val_idx, 'fold'] = 0  # 所有的 val_idx 都標成 fold0
+# 只挑出 L1/L2 的資料
+df_l1l2 = df[df['level'] == 'L1/L2'].dropna(subset=label_cols).reset_index(drop=True)
 
-# 複製 fold0 的結果到 fold1~4
-for i in range(1, 5):
-    df[f'fold{i}'] = df['fold']  # 複製 fold0 的值
+# 建立 fold0~4 的分層抽樣
+mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+for fold, (_, val_idx) in enumerate(mskf.split(df_l1l2, df_l1l2[label_cols])):
+    df_l1l2.loc[val_idx, 'fold'] = fold
+
+# 將 fold 資訊對應到其他 level (L2/L3, L3/L4, L4/L5, L5/S1)
+other_levels = ['L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
+for level in other_levels:
+    df_level = df[df['level'] == level].dropna(subset=label_cols).reset_index(drop=True)
+    
+    if len(df_level) != len(df_l1l2):
+        raise ValueError(f"資料筆數不一致，無法對應 fold：{level} vs L1/L2")
+    
+    df_level['fold'] = df_l1l2['fold'].values
+    
+    # 更新回原始 df 中該 level 的 fold 資訊
+    df.loc[df['level'] == level, 'fold'] = df_level['fold'].values
+
+# 最後將 L1/L2 的 fold 更新也寫回
+df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
 
 p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
@@ -223,23 +235,35 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_nfn_range2_rolling5.csv'
-    # 定義 label columns
+    # 設定 label 欄位
     label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
 
-    # 移除有 NaN 的 row，重設 index
-    df = df.dropna(subset=label_cols).reset_index(drop=True)
-
-    # 初始化 fold column
+    # 建立 fold 欄位並預設為 -1
     df['fold'] = -1
 
-    # 只執行一次 stratified split
-    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
-    for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
-        df.loc[val_idx, 'fold'] = 0  # 所有的 val_idx 都標成 fold0
+    # 只挑出 L1/L2 的資料
+    df_l1l2 = df[df['level'] == 'L1/L2'].dropna(subset=label_cols).reset_index(drop=True)
 
-    # 複製 fold0 的結果到 fold1~4
-    for i in range(1, 5):
-        df[f'fold{i}'] = df['fold']  # 複製 fold0 的值
+    # 建立 fold0~4 的分層抽樣
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    for fold, (_, val_idx) in enumerate(mskf.split(df_l1l2, df_l1l2[label_cols])):
+        df_l1l2.loc[val_idx, 'fold'] = fold
+
+    # 將 fold 資訊對應到其他 level (L2/L3, L3/L4, L4/L5, L5/S1)
+    other_levels = ['L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
+    for level in other_levels:
+        df_level = df[df['level'] == level].dropna(subset=label_cols).reset_index(drop=True)
+        
+        if len(df_level) != len(df_l1l2):
+            raise ValueError(f"資料筆數不一致，無法對應 fold：{level} vs L1/L2")
+        
+        df_level['fold'] = df_l1l2['fold'].values
+        
+        # 更新回原始 df 中該 level 的 fold 資訊
+        df.loc[df['level'] == level, 'fold'] = df_level['fold'].values
+
+    # 最後將 L1/L2 的 fold 更新也寫回
+    df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
 
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
@@ -312,23 +336,36 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
-    # 定義 label columns
+    # 設定 label 欄位
     label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
 
-    # 移除有 NaN 的 row，重設 index
-    df = df.dropna(subset=label_cols).reset_index(drop=True)
-
-    # 初始化 fold column
+    # 建立 fold 欄位並預設為 -1
     df['fold'] = -1
 
-    # 只執行一次 stratified split
-    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
-    for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
-        df.loc[val_idx, 'fold'] = 0  # 所有的 val_idx 都標成 fold0
+    # 只挑出 L1/L2 的資料
+    df_l1l2 = df[df['level'] == 'L1/L2'].dropna(subset=label_cols).reset_index(drop=True)
 
-    # 複製 fold0 的結果到 fold1~4
-    for i in range(1, 5):
-        df[f'fold{i}'] = df['fold']  # 複製 fold0 的值
+    # 建立 fold0~4 的分層抽樣
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    for fold, (_, val_idx) in enumerate(mskf.split(df_l1l2, df_l1l2[label_cols])):
+        df_l1l2.loc[val_idx, 'fold'] = fold
+
+    # 將 fold 資訊對應到其他 level (L2/L3, L3/L4, L4/L5, L5/S1)
+    other_levels = ['L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
+    for level in other_levels:
+        df_level = df[df['level'] == level].dropna(subset=label_cols).reset_index(drop=True)
+        
+        if len(df_level) != len(df_l1l2):
+            raise ValueError(f"資料筆數不一致，無法對應 fold：{level} vs L1/L2")
+        
+        df_level['fold'] = df_l1l2['fold'].values
+        
+        # 更新回原始 df 中該 level 的 fold 資訊
+        df.loc[df['level'] == level, 'fold'] = df_level['fold'].values
+
+    # 最後將 L1/L2 的 fold 更新也寫回
+    df.loc[df['level'] == 'L1/L2', 'fold'] = df_l1l2['fold'].values
+    
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
 
     df.to_csv(p, index=False)
