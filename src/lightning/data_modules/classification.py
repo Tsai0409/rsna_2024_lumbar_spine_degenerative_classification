@@ -386,7 +386,6 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
         print(f"len(train_df) after filtering: {len(tr)}")  # 我加
         print(f"Current fold: {self.cfg.fold}")  # 我加
 
-
         # cfg.upsample = None
         # cfg.upsample 通常會是一個數字(1-5)，如果為1，來表示對「少數類別」的每個樣本進行一次上採樣，即複製一次(將少數類別樣本的數量變成兩倍)
         if self.cfg.upsample is not None:  # 數據集上採樣(upsampling)
