@@ -379,6 +379,7 @@ class MyDataModule(pl.LightningDataModule):  # 我有需要知道 pl.LightningDa
             tr = self.cfg.train_df  # tr train input
         else:  # here
             tr = self.cfg.train_df[self.cfg.train_df.fold != self.cfg.fold]  # 選擇 train_for_sagittal_level_cl_v1_for_train_spinal_only.csv 除了當前 fold 作為訓練資料
+            tr.to_csv('/kaggle/working/train_data.csv')
             # tr = self.cfg.train_df[self.cfg.train_df.fold == self.cfg.fold]  # 在 sagittal_classification 中時使用；讓 train 跟 valid 的 data 是一樣的 -> 我修正的，因為只用一個 fold 訓練(同時又要作為 train 與 vaild 的資料)
             # 假設如果是完整的 5fold 還會遇到 training data 資料為空的情況嗎？
         self.tr = tr  # 現在 self.cfg.fold 的為 0，但是 self.cfg.train_df.fold 沒有 fold 以外的資料 (sagittal_spinal_range2_rolling5.csv)

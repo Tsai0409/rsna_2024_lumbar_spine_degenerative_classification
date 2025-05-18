@@ -142,6 +142,7 @@ print(p)
 
 
 # foraminal
+# left/right rolling 值不同，取的 conf 最大的 slice 不同 (path, paths)
 for left_right in ['left', 'right']:
     dfs = []
     # df_path = 'results/rsna_sagittal_cl/oof.csv'
