@@ -128,13 +128,31 @@ for level, idf in df.groupby('level'):
     dfs.append(idf)
 df = pd.concat(dfs)
 # p = f'input/sagittal_spinal_range2_rolling5.csv'
+# label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+# df = df.dropna(subset=label_cols).reset_index(drop=True)
+
+# mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+# df['fold'] = -1
+# for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
+#     df.loc[val_idx, 'fold'] = fold
+
+# 定義 label columns
 label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+
+# 移除有 NaN 的 row，重設 index
 df = df.dropna(subset=label_cols).reset_index(drop=True)
 
-mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+# 初始化 fold column
 df['fold'] = -1
+
+# 只執行一次 stratified split
+mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
 for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
-    df.loc[val_idx, 'fold'] = fold
+    df.loc[val_idx, 'fold'] = 0  # 所有的 val_idx 都標成 fold0
+
+# 複製 fold0 的結果到 fold1~4
+for i in range(1, 5):
+    df[f'fold{i}'] = df['fold']  # 複製 fold0 的值
 
 p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
@@ -205,13 +223,23 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_nfn_range2_rolling5.csv'
+    # 定義 label columns
     label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+
+    # 移除有 NaN 的 row，重設 index
     df = df.dropna(subset=label_cols).reset_index(drop=True)
 
-    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    # 初始化 fold column
     df['fold'] = -1
+
+    # 只執行一次 stratified split
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
     for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
-        df.loc[val_idx, 'fold'] = fold
+        df.loc[val_idx, 'fold'] = 0  # 所有的 val_idx 都標成 fold0
+
+    # 複製 fold0 的結果到 fold1~4
+    for i in range(1, 5):
+        df[f'fold{i}'] = df['fold']  # 複製 fold0 的值
 
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
@@ -284,13 +312,23 @@ for left_right in ['left', 'right']:
         dfs.append(idf)
     df = pd.concat(dfs)    
     # p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
+    # 定義 label columns
     label_cols = [col for col in df.columns if any(x in col for x in ['_normal', '_moderate', '_severe'])]
+
+    # 移除有 NaN 的 row，重設 index
     df = df.dropna(subset=label_cols).reset_index(drop=True)
 
-    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    # 初始化 fold column
     df['fold'] = -1
+
+    # 只執行一次 stratified split
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
     for fold, (_, val_idx) in enumerate(mskf.split(df, df[label_cols])):
-        df.loc[val_idx, 'fold'] = fold
+        df.loc[val_idx, 'fold'] = 0  # 所有的 val_idx 都標成 fold0
+
+    # 複製 fold0 的結果到 fold1~4
+    for i in range(1, 5):
+        df[f'fold{i}'] = df['fold']  # 複製 fold0 的值
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
 
     df.to_csv(p, index=False)
