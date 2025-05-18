@@ -167,6 +167,12 @@ incomplete_ids = study_level_sets[study_level_sets.apply(lambda levels: not all(
 error_data = df[df['study_id'].isin(incomplete_ids)].copy()
 error_data.to_csv('error_data.csv')
 
+# 9. 將不完整的資料另存一份
+error_data = df[df['study_id'].isin(incomplete_ids)].copy()
+
+# 10. 從 df 中排除這些 study_id
+df = df[~df['study_id'].isin(incomplete_ids)].copy()
+
 p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
 print(p)
@@ -264,6 +270,12 @@ for left_right in ['left', 'right']:
     study_level_sets = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
     incomplete_ids = study_level_sets[study_level_sets.apply(lambda levels: not all(l in levels for l in expected_levels))].index
     error_data = df[df['study_id'].isin(incomplete_ids)].copy()
+
+    # 9. 將不完整的資料另存一份
+    error_data = df[df['study_id'].isin(incomplete_ids)].copy()
+
+    # 10. 從 df 中排除這些 study_id
+    df = df[~df['study_id'].isin(incomplete_ids)].copy()
 
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_nfn_range2_rolling5.csv'
     df.to_csv(p, index=False)
@@ -364,6 +376,12 @@ for left_right in ['left', 'right']:
     study_level_sets = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
     incomplete_ids = study_level_sets[study_level_sets.apply(lambda levels: not all(l in levels for l in expected_levels))].index
     error_data = df[df['study_id'].isin(incomplete_ids)].copy()
+
+    # 9. 將不完整的資料另存一份
+    error_data = df[df['study_id'].isin(incomplete_ids)].copy()
+
+    # 10. 從 df 中排除這些 study_id
+    df = df[~df['study_id'].isin(incomplete_ids)].copy()
 
     p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_{left_right}_ss_range2_rolling5.csv'
 
