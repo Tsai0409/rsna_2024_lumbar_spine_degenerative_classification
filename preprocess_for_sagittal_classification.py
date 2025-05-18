@@ -137,27 +137,35 @@ df = pd.concat(dfs)
 #     df.loc[val_idx, 'fold'] = fold
 
 print('version-4')
-# 1. L1/L2 中先取出 study_id 層級的 labels
-df_l1l2 = df[df['level'] == 'L1/L2'].copy()
-grouped = df_l1l2.groupby('study_id')[label_cols].max().reset_index()  # 以 max 聚合代表該 study_id 有哪些標籤
+# 1. 自動擷取 label 欄位（使用 _normal/_moderate/_severe 結尾的欄位）
+label_cols = [col for col in df.columns if any(suffix in col for suffix in ['_normal', '_moderate', '_severe'])]
 
-# 2. 多標籤分層劃分
+# 2. 設定需要的五個 level
+expected_levels = ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
+
+# 3. 取出 L1/L2 的資料
+df_l1l2 = df[df['level'] == 'L1/L2'].copy()
+
+# 4. 以 study_id 群組取出最大值（代表該 study_id 的 label 整體狀態）
+grouped = df_l1l2.groupby('study_id')[label_cols].max().reset_index()
+
+# 5. 使用 Multilabel Stratified KFold 劃分 study_id fold
 mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
 grouped['fold'] = -1
 for fold, (_, val_idx) in enumerate(mskf.split(grouped, grouped[label_cols])):
     grouped.loc[val_idx, 'fold'] = fold
 
-# 3. 建立 study_id → fold 對應
+# 6. 建立 study_id → fold 的映射表
 id2fold = dict(zip(grouped['study_id'], grouped['fold']))
 
-# 4. 將 fold 寫入原始 df（所有 level）
+# 7. 套用 fold 到整份資料
 df['fold'] = df['study_id'].map(id2fold)
 
-# 5. 檢查哪些 study_id 缺少 level，放入 error_data
-study_level_set = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
-incomplete_ids = study_level_set[study_level_set.apply(lambda x: not all(l in x for l in expected_levels))].index
+# 8. 檢查哪些 study_id 不具有 5 個完整 level（放入 error_data）
+study_level_sets = df[df['study_id'].isin(id2fold.keys())].groupby('study_id')['level'].apply(set)
+incomplete_ids = study_level_sets[study_level_sets.apply(lambda levels: not all(l in levels for l in expected_levels))].index
 error_data = df[df['study_id'].isin(incomplete_ids)].copy()
-
+error_data.to_csv('error_data.csv')
 
 p = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_range2_rolling5.csv'  # 不知道為什麼只有 left 的資料
 df.to_csv(p, index=False)
