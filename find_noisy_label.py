@@ -200,7 +200,7 @@ configs = [
 config_cols = [
     'spinal_canal_stenosis_normal',
     'spinal_canal_stenosis_moderate',
-    'spinal_canal_stenosis_severe',    
+    'spinal_canal_stenosis_severe',
 ]
 
 config_pred_cols = ['pred_'+c for c in config_cols]
@@ -230,13 +230,13 @@ for config in configs:
         for l in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
     ])
     
-    print(len(oof), score, config)
-    
+    print(len(oof), round(score, 4), config)
     preds.append(oof[config_pred_cols].values)
 oof[config_pred_cols] = np.mean(preds, 0)
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
 sagittal_spinal = oof.copy()
+sagittal_spinal.to_csv('sagittal_spinal.csv')  # 我加
 
 
 # nfn
