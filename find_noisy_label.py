@@ -54,8 +54,8 @@ for col in label_features:
         for c in ['normal', 'moderate', 'severe']:
             true_cols.append(f'{col}_{level}_{c}')
 
-pred_cols15 = ['pred_'+c for c in true_cols15]
-pred_cols = ['pred_'+c for c in true_cols]
+pred_cols15 = ['pred_'+c for c in true_cols15]  # 15 個狀態的嚴重程度
+pred_cols = ['pred_'+c for c in true_cols]  # 75 個狀態的嚴重程度 (包含不同位置)
 # tr = pd.read_csv('input/train_with_fold.csv')
 tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 t1_ids = tr[tr.series_description_y=='Sagittal T1'].series_id
@@ -71,8 +71,8 @@ configs = [
     'rsna_axial_spinal_dis3_crop_x05_y6',
     'rsna_axial_spinal_dis3_crop_x1_y2',
 ]
-target_pred_cols = [c for c in pred_cols if 'spinal' in c]
-target_cols = [c for c in true_cols if 'spinal' in c]
+target_pred_cols = [c for c in pred_cols if 'spinal' in c]  #  有 pred
+target_cols = [c for c in true_cols if 'spinal' in c]  # 沒有 pred
 config_pred_cols = pred_cols15
 
 # oof = pd.concat([pd.read_csv(f'results/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(5)])
@@ -729,7 +729,8 @@ noise_df = pd.DataFrame({
 }).sort_values(['target','study_id','level'])
 noise_df['study_level'] = noise_df.study_id.astype(str) + '_' + noise_df.level
 
-noise_df.to_csv(f'results/noisy_target_level_th08.csv', index=False)
+# noise_df.to_csv(f'results/noisy_target_level_th08.csv', index=False)
+noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv', index=False)
 print(th, noise_df.target.value_counts().values / (1975*5))
 noise_df.target.value_counts()
 
