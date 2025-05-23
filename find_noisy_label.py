@@ -12,6 +12,7 @@ import warnings
 warnings.simplefilter('ignore')
 pd.set_option('display.max_columns', 500)
 from sklearn.metrics import roc_auc_score, confusion_matrix, mean_squared_error, average_precision_score, recall_score, log_loss
+
 def specificity_score(y_true, y_pred):
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred).flatten()
     return tn / (tn + fp)
@@ -189,7 +190,19 @@ for config in configs:
         'L5/S1': 5,
     })    
         
-    score = np.mean([np.mean([log_loss(oof[oof.level==l][col.replace('pred_', '')], sigmoid(oof[oof.level==l][col])) for col in config_pred_cols]) for l in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']])
+    # score = np.mean([np.mean([log_loss(oof[oof.level==l][col.replace('pred_', '')], sigmoid(oof[oof.level==l][col])) for col in config_pred_cols]) for l in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']])
+    score = np.mean([
+        np.mean([
+            log_loss(
+                oof[oof.level == l][col.replace('pred_', '')], 
+                sigmoid(oof[oof.level == l][col]),
+                labels=[0, 1] # 我加
+            ) 
+            for col in config_pred_cols
+            if len(np.unique(oof[oof.level == l][col.replace('pred_', '')])) > 1  # 我加
+        ]) 
+        for l in ['L1/L2', 'L2/L3', 'L3/L4', 'L4/L5', 'L5/S1']
+    ])
     
     print(len(oof), score, config)
     
