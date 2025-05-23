@@ -54,8 +54,8 @@ for col in label_features:
         for c in ['normal', 'moderate', 'severe']:
             true_cols.append(f'{col}_{level}_{c}')
 
-pred_cols15 = ['pred_'+c for c in true_cols15]  # 15 個狀態的嚴重程度
-pred_cols = ['pred_'+c for c in true_cols]  # 75 個狀態的嚴重程度 (包含不同位置)
+pred_cols15 = ['pred_'+c for c in true_cols15]  # 15 個 各個病狀的嚴重程度
+pred_cols = ['pred_'+c for c in true_cols]  # 75 個 各個病狀的嚴重程度 (包含不同位置)
 # tr = pd.read_csv('input/train_with_fold.csv')
 tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 t1_ids = tr[tr.series_description_y=='Sagittal T1'].series_id
@@ -75,24 +75,40 @@ target_pred_cols = [c for c in pred_cols if 'spinal' in c]  #  有 pred
 target_cols = [c for c in true_cols if 'spinal' in c]  # 沒有 pred
 config_pred_cols = pred_cols15
 
-# oof = pd.concat([pd.read_csv(f'results/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(5)])
+# oof = pd.concat([pd.read_csv(f'results/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(5)])  # 合併 5 fold 的結果
 oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(1)])
-config_pred_cols = [c for c in config_pred_cols if c in list(oof)]
+config_pred_cols = [c for c in config_pred_cols if c in list(oof)]  # 據實際讀入的 oof DataFrame，確認哪些你想要的欄位 config_pred_cols 是真的存在的
 config_cols = [col.replace('pred_', '') for col in config_pred_cols]
 
-oof = oof.groupby(['study_id', 'pred_level'])[config_cols+config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])
+oof = oof.groupby(['study_id', 'pred_level'])[config_cols + config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])
 true = oof[config_cols].values
+
 dfs = []
 for config in configs:
     # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
     oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
-    score = np.mean([np.mean([roc_auc_score(oof[oof.pred_level==l][col.replace('pred_', '')], oof[oof.pred_level==l][col]) for col in config_pred_cols]) for l in [1,2,3,4,5]])
-    score2 = np.mean([np.mean([log_loss(oof[oof.pred_level==l][col.replace('pred_', '')], sigmoid(oof[oof.pred_level==l][col])) for col in config_pred_cols]) for l in [1,2,3,4,5]])
+    # score = np.mean([np.mean([roc_auc_score(oof[oof.pred_level==l][col.replace('pred_', '')], oof[oof.pred_level==l][col]) for col in config_pred_cols]) for l in [1,2,3,4,5]])
+    # score2 = np.mean([np.mean([log_loss(oof[oof.pred_level==l][col.replace('pred_', '')], sigmoid(oof[oof.pred_level==l][col])) for col in config_pred_cols]) for l in [1,2,3,4,5]])
+    score = np.mean([
+        np.mean([
+            roc_auc_score(
+                oof[oof.pred_level==l][col.replace('pred_', '')],  # 真實標籤 y_true -> y_true → 實際是否為 normal
+                oof[oof.pred_level==l][col]  # 預測分數 y_score -> y_score → 模型預測值
+            ) for col in config_pred_cols
+        ]) for l in [1,2,3,4,5]
+    ])
+    score2 = np.mean([
+        np.mean([
+            log_loss(
+                oof[oof.pred_level==l][col.replace('pred_', '')], 
+                sigmoid(oof[oof.pred_level==l][col])
+            ) for col in config_pred_cols
+        ]) for l in [1,2,3,4,5]
+    ])
     
     print(len(oof), score, score2, config)            
     oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])
     dfs.append(oof)
-
 oof = pd.concat(dfs)
 
 oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index()
@@ -101,6 +117,7 @@ oof[config_cols] = true
 oof[[col.replace('pred_', '') for col in config_pred_cols]] = oof[[col.replace('pred_', '') for col in config_pred_cols]].astype(int)
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
+oof.to_csv('oof.csv')  # 我加
 axial_spinal = oof.copy()
 
 
