@@ -71,18 +71,19 @@ configs = [
     'rsna_axial_spinal_dis3_crop_x05_y6',
     'rsna_axial_spinal_dis3_crop_x1_y2',
 ]
-target_pred_cols = [c for c in pred_cols if 'spinal' in c]  #  有 pred
-target_cols = [c for c in true_cols if 'spinal' in c]  # 沒有 pred
-config_pred_cols = pred_cols15
+target_pred_cols = [c for c in pred_cols if 'spinal' in c]  # 真實標籤 y_true
+target_cols = [c for c in true_cols if 'spinal' in c]       # 預測分數 y_score
+config_pred_cols = pred_cols15  # 15 個 各個病狀的嚴重程度
 
 # oof = pd.concat([pd.read_csv(f'results/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(5)])  # 合併 5 fold 的結果
 oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(1)])
-config_pred_cols = [c for c in config_pred_cols if c in list(oof)]  # 據實際讀入的 oof DataFrame，確認哪些你想要的欄位 config_pred_cols 是真的存在的
-config_cols = [col.replace('pred_', '') for col in config_pred_cols]
+# 確認 column
+config_pred_cols = [c for c in config_pred_cols if c in list(oof)]  # 據實際讀入的 oof DataFrame，確認哪些你想要的欄位 config_pred_cols 是真的存在的 -> pred_spinal_canal_stenosis_normal、pred_spinal_canal_stenosis_moderate、pred_spinal_canal_stenosis_severe
+config_cols = [col.replace('pred_', '') for col in config_pred_cols]  # -> spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe
 
-oof = oof.groupby(['study_id', 'pred_level'])[config_cols + config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])
+oof = oof.groupby(['study_id', 'pred_level'])[config_cols + config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])  # 將值抓到新的 dataframe
 oof.to_csv('oof.csv')  # 我加
-true = oof[config_cols].values
+true = oof[config_cols].values  # -> spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe
 
 dfs = []
 for config in configs:
@@ -90,15 +91,15 @@ for config in configs:
     oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     # score = np.mean([np.mean([roc_auc_score(oof[oof.pred_level==l][col.replace('pred_', '')], oof[oof.pred_level==l][col]) for col in config_pred_cols]) for l in [1,2,3,4,5]])
     # score2 = np.mean([np.mean([log_loss(oof[oof.pred_level==l][col.replace('pred_', '')], sigmoid(oof[oof.pred_level==l][col])) for col in config_pred_cols]) for l in [1,2,3,4,5]])
-    score = np.mean([
+    score = np.mean([  # 整個 dataframe 算一個
         np.mean([
-            roc_auc_score(
+            roc_auc_score(  #  ROC AUC 分數(Area Under Curve)，用來評估預測效果好壞
                 oof[oof.pred_level==l][col.replace('pred_', '')],  # 真實標籤 y_true -> y_true → 實際是否為 normal
-                oof[oof.pred_level==l][col]  # 預測分數 y_score -> y_score → 模型預測值
-            ) for col in config_pred_cols
+                oof[oof.pred_level==l][col]                        # 預測分數 y_score -> y_score → 模型預測值
+            ) for col in config_pred_cols  #  -> pred_spinal_canal_stenosis_normal、pred_spinal_canal_stenosis_moderate、pred_spinal_canal_stenosis_severe
         ]) for l in [1,2,3,4,5]
     ])
-    score2 = np.mean([
+    score2 = np.mean([  # 整個 dataframe 算一個
         np.mean([
             log_loss(
                 oof[oof.pred_level==l][col.replace('pred_', '')], 
@@ -107,22 +108,23 @@ for config in configs:
         ]) for l in [1,2,3,4,5]
     ])
     
-    print(len(oof), score, score2, config)            
-    oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])  # 對不同 configs 做 mean()
-    dfs.append(oof)
-oof = pd.concat(dfs)
+    print(len(oof), score, score2, config)
+    oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])  # 針對 5 個 fold 做 mean()
+    dfs.append(oof)  # 將每個 group 合併
+oof = pd.concat(dfs)  # 將每個 configs 合併
 
-oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index()
-oof[config_cols] = true
+oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index()  # 對不同 configs 做 mean()
+oof[config_cols] = true  # -> spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe
 
-oof[[col.replace('pred_', '') for col in config_pred_cols]] = oof[[col.replace('pred_', '') for col in config_pred_cols]].astype(int)
-oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
-oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
+oof[[col.replace('pred_', '') for col in config_pred_cols]] = oof[[col.replace('pred_', '') for col in config_pred_cols]].astype(int)  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe 轉為整數
+oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe -> normal、moderate、severe
+oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values  # 將 pred_spinal_canal_stenosis_normal、pred_spinal_canal_stenosis_moderate、pred_spinal_canal_stenosis_severe -> pred_normal、pred_moderate、pred_severe
 oof.to_csv('oof-2.csv')  # 我加
 axial_spinal = oof.copy()
 
 
 # axial nfn
+
 configs = [
     'rsna_axial_ss_nfn_x2_y2_center_pad0',
     'rsna_axial_ss_nfn_x2_y6_center_pad0',
