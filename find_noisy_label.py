@@ -18,6 +18,7 @@ def specificity_score(y_true, y_pred):
 
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
+
 class ParticipantVisibleError(Exception):
     pass
 
@@ -25,6 +26,7 @@ from scipy.optimize import minimize
 
 WORKING_DIR="/kaggle/working/duplicate"
 
+# not used
 def get_condition(full_location: str) -> str:
     for injury_condition in ['spinal', 'foraminal', 'subarticular']:
         if injury_condition in full_location:
