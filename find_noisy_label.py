@@ -699,7 +699,8 @@ cri(preds, trues, False)
 
 for c in [c.replace('pred_', '') for c in pred_cols]:
     oof[f'{c}_loss'] = np.abs(oof[c].values-oof['pred_'+c].values)
-oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv('results/oof_ensemble.csv', index=False)
+# oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv('results/oof_ensemble.csv', index=False)
+oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv', index=False)
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
 
 
@@ -709,7 +710,8 @@ levels = []
 cols = []
 ids = []
 for col in ['spinal_canal_stenosis','left_neural_foraminal_narrowing', 'right_neural_foraminal_narrowing', 'left_subarticular_stenosis', 'right_subarticular_stenosis']:
-    oof = pd.read_csv('results/oof_ensemble.csv')
+    # oof = pd.read_csv('results/oof_ensemble.csv')
+    oof = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv')
     for level_i, level in zip([1,2,3,4,5], ['l1_l2', 'l2_l3', 'l3_l4', 'l4_l5', 'l5_s1']):
         dfs = []
         for claz in ['normal', 'moderate', 'severe']:
@@ -738,7 +740,8 @@ levels = []
 cols = []
 ids = []
 for col in ['spinal_canal_stenosis','left_neural_foraminal_narrowing', 'right_neural_foraminal_narrowing', 'left_subarticular_stenosis', 'right_subarticular_stenosis']:
-    oof = pd.read_csv('results/oof_ensemble.csv')
+    # oof = pd.read_csv('results/oof_ensemble.csv')
+    oof = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv')
     for level_i, level in zip([1,2,3,4,5], ['l1_l2', 'l2_l3', 'l3_l4', 'l4_l5', 'l5_s1']):
         dfs = []
         for claz in ['normal', 'moderate', 'severe']:
@@ -756,5 +759,6 @@ noise_df = pd.DataFrame({
 }).sort_values(['target','study_id','level'])
 noise_df['study_level'] = noise_df.study_id.astype(str) + '_' + noise_df.level
 
-noise_df.to_csv(f'results/noisy_target_level_th09.csv', index=False)
+# noise_df.to_csv(f'results/noisy_target_level_th09.csv', index=False)
+noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th09.csv', index=False)
 print(th, noise_df.target.value_counts().values / (1975*5))
