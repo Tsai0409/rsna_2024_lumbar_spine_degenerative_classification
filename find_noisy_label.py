@@ -427,7 +427,7 @@ for c in ['is_axial', 'normal', 'moderate', 'severe']:
     del sagittal[c]
 
 
-df = axial.merge(sagittal, on=['study_id', 'target', 'level', 'lr'], how='outer')
+df = axial.merge(sagittal, on=['study_id', 'target', 'level', 'lr'], how='outer')  # how='outer'：保留 兩邊的所有資料
 
 df.loc[df.sagittal_pred_normal.isnull(), 'sagittal_pred_normal'] = df.loc[df.sagittal_pred_normal.isnull(), 'axial_pred_normal']
 df.loc[df.sagittal_pred_moderate.isnull(), 'sagittal_pred_moderate'] = df.loc[df.sagittal_pred_moderate.isnull(), 'axial_pred_moderate']
@@ -454,6 +454,7 @@ df=df.sort_values(['study_id', 'target'])
 m = {
     'study_id': []
 }
+
 meta_cols = []
 for axial_sagittal in ['sagittal', 'axial']:
     for target in ['spinal_canal_stenosis', 'left_neural_foraminal_narrowing', 'right_neural_foraminal_narrowing', 'left_subarticular_stenosis', 'right_subarticular_stenosis']:
