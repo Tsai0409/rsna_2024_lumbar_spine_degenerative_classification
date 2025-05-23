@@ -410,17 +410,18 @@ del axial['is_axial']
 
 sagittal = oof[oof.is_axial==0]
 sagittal.columns = [
-'study_id',
-'target',
-'level',
-'is_axial',
-'lr',
-'normal',
-'moderate',
-'severe',
-'sagittal_pred_normal',
-'sagittal_pred_moderate',
-'sagittal_pred_severe']
+    'study_id',
+    'target',
+    'level',
+    'is_axial',
+    'lr',
+    'normal',
+    'moderate',
+    'severe',
+    'sagittal_pred_normal',
+    'sagittal_pred_moderate',
+    'sagittal_pred_severe'
+]
 
 for c in ['is_axial', 'normal', 'moderate', 'severe']:
     del sagittal[c]
