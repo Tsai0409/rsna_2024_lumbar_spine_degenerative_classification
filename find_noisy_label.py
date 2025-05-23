@@ -57,8 +57,8 @@ pred_cols15 = ['pred_'+c for c in true_cols15]
 pred_cols = ['pred_'+c for c in true_cols]
 # tr = pd.read_csv('input/train_with_fold.csv')
 tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
-t1_ids = tr[tr.series_description=='Sagittal T1'].series_id
-t2_ids = tr[tr.series_description=='Sagittal T2/STIR'].series_id
+t1_ids = tr[tr.series_description_y=='Sagittal T1'].series_id
+t2_ids = tr[tr.series_description_y=='Sagittal T2/STIR'].series_id
 
 
 axial_dis_th = 5
