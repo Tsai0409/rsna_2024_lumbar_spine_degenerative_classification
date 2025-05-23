@@ -32,12 +32,12 @@ def get_condition(full_location: str) -> str:
 sub = pd.read_csv('input/sample_submission.csv')
 
 label_features = [
-            'spinal_canal_stenosis',
-            'left_neural_foraminal_narrowing',
-            'right_neural_foraminal_narrowing',
-            'left_subarticular_stenosis',
-            'right_subarticular_stenosis',
-        ]
+    'spinal_canal_stenosis',
+    'left_neural_foraminal_narrowing',
+    'right_neural_foraminal_narrowing',
+    'left_subarticular_stenosis',
+    'right_subarticular_stenosis',
+]
 true_cols15 = []
 true_cols = []
 for col in label_features:
