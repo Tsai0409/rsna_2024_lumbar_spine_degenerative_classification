@@ -65,7 +65,7 @@ t2_ids = tr[tr.series_description_y=='Sagittal T2/STIR'].series_id
 axial_dis_th = 5
 
 
-# # axial 
+# # axial
 
 configs = [
     'rsna_axial_spinal_dis3_crop_x05_y6',
@@ -108,7 +108,7 @@ for config in configs:
         ]) for l in [1,2,3,4,5]
     ])
     
-    print(len(oof), score, score2, config)
+    print(len(oof), round(score, 4), round(score2, 4), config)
     oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])  # 針對 5 個 fold 做 mean()
     dfs.append(oof)  # 將每個 group 合併
 oof = pd.concat(dfs)  # 將每個 configs 合併
@@ -119,19 +119,18 @@ oof[config_cols] = true  # -> spinal_canal_stenosis_normal、spinal_canal_stenos
 oof[[col.replace('pred_', '') for col in config_pred_cols]] = oof[[col.replace('pred_', '') for col in config_pred_cols]].astype(int)  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe 轉為整數
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe -> normal、moderate、severe
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values  # 將 pred_spinal_canal_stenosis_normal、pred_spinal_canal_stenosis_moderate、pred_spinal_canal_stenosis_severe -> pred_normal、pred_moderate、pred_severe
-oof.to_csv('oof-2.csv')  # 我加
+oof.to_csv('oof2.csv')  # 我加
 axial_spinal = oof.copy()
 
 
 # axial nfn
-
 configs = [
     'rsna_axial_ss_nfn_x2_y2_center_pad0',
     'rsna_axial_ss_nfn_x2_y6_center_pad0',
     'rsna_axial_ss_nfn_x2_y8_center_pad10',
 ]
-target_pred_cols = [c for c in pred_cols if 'neural_foraminal_narrowing' in c]
-target_cols = [c for c in true_cols if 'neural_foraminal_narrowing' in c]
+target_pred_cols = [c for c in pred_cols if 'neural_foraminal_narrowing' in c]  # 15 個 各個病狀的嚴重程度
+target_cols = [c for c in true_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度 (包含不同位置)
 cols = [
     'neural_foraminal_narrowing_normal',
     'neural_foraminal_narrowing_moderate',
@@ -147,12 +146,14 @@ for config in configs:
     score = np.mean([log_loss(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     score2 = np.mean([roc_auc_score(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     print(len(oof), round(score, 4), round(score2, 4), config)
-    preds.append(oof[config_pred_cols].values)
-oof[config_pred_cols] = np.mean(preds, 0)
+    preds.append(oof[config_pred_cols].values)  # 將值存成 list 的形式 -> neural_foraminal_narrowing_normal、neural_foraminal_narrowing_moderate、neural_foraminal_narrowing_severe
+oof[config_pred_cols] = np.mean(preds, 0)  # 以每個 config 取 mean()
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
 oof.loc[oof.dis.isnull(), 'dis'] = oof.dis.mean()
-axial_nfn = oof[oof.dis < axial_dis_th]
+oof.to_csv('oof3.csv')  # 我加
+axial_nfn = oof[oof.dis < axial_dis_th]  # axial_dis_th = 5
+axial_nfn.to_csv('axial_nfn.csv')  # 我加
 
 
 # axial ss
@@ -161,7 +162,11 @@ configs = [
     'rsna_axial_ss_nfn_x2_y6_center_pad0',
     'rsna_axial_ss_nfn_x2_y8_center_pad10',
 ]
-cols = ['subarticular_stenosis_normal', 'subarticular_stenosis_moderate', 'subarticular_stenosis_severe']
+cols = [
+    'subarticular_stenosis_normal', 
+    'subarticular_stenosis_moderate', 
+    'subarticular_stenosis_severe'
+]
 # oof = pd.concat([pd.read_csv(f'results/{configs[0]}/oof_fold{fold}.csv') for fold in range(5)])
 oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{configs[0]}/oof_fold{fold}.csv') for fold in range(1)])
 config_pred_cols = ['pred_'+c for c in cols]
@@ -181,7 +186,8 @@ oof[config_pred_cols] = np.mean(preds, 0)
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
 oof.loc[oof.dis.isnull(), 'dis'] = oof.dis.mean()
-axial_ss = oof[oof.dis < axial_dis_th]
+axial_ss = oof[oof.dis < axial_dis_th]  # axial_dis_th = 5
+axial_ss.to_csv('axial_ss.csv')  # 我加
 
 
 # # sagittal
