@@ -232,7 +232,7 @@ for config in configs:
     
     print(len(oof), round(score, 4), config)
     preds.append(oof[config_pred_cols].values)
-oof[config_pred_cols] = np.mean(preds, 0)
+oof[config_pred_cols] = np.mean(preds, 0)  # 以每個 config 取 mean()
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
 sagittal_spinal = oof.copy()
@@ -388,22 +388,23 @@ oof = pd.DataFrame({
 })
 oof[['normal', 'moderate', 'severe']] = np.array(trues).astype(int)
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = np.array(preds)
+oof.to_csv('oof4.csv')  # 我加
 
 
 axial = oof[oof.is_axial==1]
 axial.head(2)
 axial.columns = [
-'study_id',
-'target',
-'level',
-'is_axial',
-'lr',
-'normal',
-'moderate',
-'severe',
-'axial_pred_normal',
-'axial_pred_moderate',
-'axial_pred_severe'
+    'study_id',
+    'target',
+    'level',
+    'is_axial',
+    'lr',
+    'normal',
+    'moderate',
+    'severe',
+    'axial_pred_normal',
+    'axial_pred_moderate',
+    'axial_pred_severe'
 ]
 del axial['is_axial']
 
