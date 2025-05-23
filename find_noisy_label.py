@@ -81,6 +81,7 @@ config_pred_cols = [c for c in config_pred_cols if c in list(oof)]  # 據實際�
 config_cols = [col.replace('pred_', '') for col in config_pred_cols]
 
 oof = oof.groupby(['study_id', 'pred_level'])[config_cols + config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])
+oof.to_csv('oof.csv')  # 我加
 true = oof[config_cols].values
 
 dfs = []
@@ -107,7 +108,7 @@ for config in configs:
     ])
     
     print(len(oof), score, score2, config)            
-    oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])
+    oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])  # 對不同 configs 做 mean()
     dfs.append(oof)
 oof = pd.concat(dfs)
 
@@ -117,7 +118,7 @@ oof[config_cols] = true
 oof[[col.replace('pred_', '') for col in config_pred_cols]] = oof[[col.replace('pred_', '') for col in config_pred_cols]].astype(int)
 oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values
 oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values
-oof.to_csv('oof.csv')  # 我加
+oof.to_csv('oof-2.csv')  # 我加
 axial_spinal = oof.copy()
 
 
