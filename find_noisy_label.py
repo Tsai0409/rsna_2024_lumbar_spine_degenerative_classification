@@ -23,13 +23,16 @@ class ParticipantVisibleError(Exception):
 
 from scipy.optimize import minimize
 
+WORKING_DIR="/kaggle/working/duplicate"
+
 def get_condition(full_location: str) -> str:
     for injury_condition in ['spinal', 'foraminal', 'subarticular']:
         if injury_condition in full_location:
             return injury_condition
     raise ValueError(f'condition not found in {full_location}')
 
-sub = pd.read_csv('input/sample_submission.csv')
+# sub = pd.read_csv('input/sample_submission.csv')
+sub = pd.read_csv(f'{WORKING_DIR}/csv_train/output_2/myself_submission_fold0.csv')
 
 label_features = [
     'spinal_canal_stenosis',
@@ -50,7 +53,8 @@ for col in label_features:
 
 pred_cols15 = ['pred_'+c for c in true_cols15]
 pred_cols = ['pred_'+c for c in true_cols]
-tr = pd.read_csv('input/train_with_fold.csv')
+# tr = pd.read_csv('input/train_with_fold.csv')
+tr = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
 t1_ids = tr[tr.series_description=='Sagittal T1'].series_id
 t2_ids = tr[tr.series_description=='Sagittal T2/STIR'].series_id
 
@@ -68,7 +72,8 @@ target_pred_cols = [c for c in pred_cols if 'spinal' in c]
 target_cols = [c for c in true_cols if 'spinal' in c]
 config_pred_cols = pred_cols15
 
-oof = pd.concat([pd.read_csv(f'results/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(5)])
+# oof = pd.concat([pd.read_csv(f'results/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(5)])
+oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/rsna_axial_spinal_dis3_crop_x1_y2/oof_fold{fold}.csv') for fold in range(1)])
 config_pred_cols = [c for c in config_pred_cols if c in list(oof)]
 config_cols = [col.replace('pred_', '') for col in config_pred_cols]
 
@@ -76,7 +81,8 @@ oof = oof.groupby(['study_id', 'pred_level'])[config_cols+config_pred_cols].mean
 true = oof[config_cols].values
 dfs = []
 for config in configs:
-    oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     score = np.mean([np.mean([roc_auc_score(oof[oof.pred_level==l][col.replace('pred_', '')], oof[oof.pred_level==l][col]) for col in config_pred_cols]) for l in [1,2,3,4,5]])
     score2 = np.mean([np.mean([log_loss(oof[oof.pred_level==l][col.replace('pred_', '')], sigmoid(oof[oof.pred_level==l][col])) for col in config_pred_cols]) for l in [1,2,3,4,5]])
     
@@ -113,7 +119,8 @@ config_cols = [col.replace('pred_', '') for col in config_pred_cols]
 
 preds = []
 for config in configs:
-    oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     score = np.mean([log_loss(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     score2 = np.mean([roc_auc_score(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     print(len(oof), round(score, 4), round(score2, 4), config)
@@ -132,13 +139,15 @@ configs = [
     'rsna_axial_ss_nfn_x2_y8_center_pad10',
 ]
 cols = ['subarticular_stenosis_normal', 'subarticular_stenosis_moderate', 'subarticular_stenosis_severe']
-oof = pd.concat([pd.read_csv(f'results/{configs[0]}/oof_fold{fold}.csv') for fold in range(5)])
+# oof = pd.concat([pd.read_csv(f'results/{configs[0]}/oof_fold{fold}.csv') for fold in range(5)])
+oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{configs[0]}/oof_fold{fold}.csv') for fold in range(1)])
 config_pred_cols = ['pred_'+c for c in cols]
 config_cols = [col.replace('pred_', '') for col in config_pred_cols]
 
 preds = []
 for config in configs:
-    oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])#.sort_values(['path', 'level'])
+    # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])  #.sort_values(['path', 'level'])、
+    oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     score = np.mean([log_loss(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     score2 = np.mean([roc_auc_score(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     oof = oof[oof.dis < axial_dis_th]
@@ -168,7 +177,8 @@ config_cols = [
 config_pred_cols = ['pred_'+c for c in config_cols]
 preds = []
 for config in configs:
-    oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     oof['pred_level'] = oof.level.map({
         'L1/L2': 1,
         'L2/L3': 2,
@@ -200,7 +210,8 @@ config_pred_cols = ['pred_'+c for c in config_cols]
 
 preds = []
 for config in configs:
-    oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     score = np.mean([log_loss(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     score2 = np.mean([roc_auc_score(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     print(len(oof), round(score, 4), round(score2, 4), config)
@@ -233,7 +244,8 @@ config_cols = ['subarticular_stenosis_normal', 'subarticular_stenosis_moderate',
 config_pred_cols = ['pred_'+c for c in config_cols]
 preds = []
 for config in configs:
-    oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    # oof = pd.concat([pd.read_csv(f'results/{config}/oof_fold{fold}.csv') for fold in range(5)])
+    oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv') for fold in range(1)])
     score = np.mean([log_loss(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     score2 = np.mean([roc_auc_score(oof[col.replace('pred_', '')], sigmoid(oof[col])) for col in config_pred_cols])
     print(len(oof), round(score, 4), round(score2, 4), config)
@@ -429,7 +441,8 @@ for i, idf in df.groupby('study_id'):
 df = pd.DataFrame(m)
 
 
-tr = pd.read_csv('input/train.csv')
+# tr = pd.read_csv('input/train.csv')
+tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
 label_features = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
 cols = []
 for col in label_features:
@@ -587,65 +600,65 @@ def normalize_probabilities_to_one_numpy(array: np.ndarray) -> np.ndarray:
     return normalized_array
 
 
-df = pd.read_csv('input/oof_predictions_submission_format_ip_v4_sub.csv')
-df['study_id'] = df.row_id.apply(lambda x: int(x.split('_')[0]))
-print(len(df))
-df['target_level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:]))
-df['target'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:-2]))
-df['level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[-2:]))
-cols = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
+# df = pd.read_csv('input/oof_predictions_submission_format_ip_v4_sub.csv')
+# df['study_id'] = df.row_id.apply(lambda x: int(x.split('_')[0]))
+# print(len(df))
+# df['target_level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:]))
+# df['target'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:-2]))
+# df['level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[-2:]))
+# cols = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
 
-m = {'study_id': []}
-for c in cols:
-    m[f'ian_{c}_normal'] = []
-    m[f'ian_{c}_moderate'] = []
-    m[f'ian_{c}_severe'] = []
-for i, idf in df.groupby('study_id'):
-    m['study_id'].append(i)
+# m = {'study_id': []}
+# for c in cols:
+#     m[f'ian_{c}_normal'] = []
+#     m[f'ian_{c}_moderate'] = []
+#     m[f'ian_{c}_severe'] = []
+# for i, idf in df.groupby('study_id'):
+#     m['study_id'].append(i)
 
-    for tl, ldf in idf.groupby('target_level'):
-        m[f'ian_{tl}_normal'].append(ldf.normal_mild.values[0])
-        m[f'ian_{tl}_moderate'].append(ldf.moderate.values[0])
-        m[f'ian_{tl}_severe'].append(ldf.severe.values[0])
-ian = pd.DataFrame(m).sort_values('study_id')
-preds_ian = torch.FloatTensor(ian[[c.replace('pred_', 'ian_') for c in pred_cols]].fillna(0).values)
-trues = torch.FloatTensor(oof[[c.replace('pred_', '') for c in pred_cols]].fillna(0).values.astype(int))
-cri(preds_ian, trues, False)
+#     for tl, ldf in idf.groupby('target_level'):
+#         m[f'ian_{tl}_normal'].append(ldf.normal_mild.values[0])
+#         m[f'ian_{tl}_moderate'].append(ldf.moderate.values[0])
+#         m[f'ian_{tl}_severe'].append(ldf.severe.values[0])
+# ian = pd.DataFrame(m).sort_values('study_id')
+# preds_ian = torch.FloatTensor(ian[[c.replace('pred_', 'ian_') for c in pred_cols]].fillna(0).values)
+# trues = torch.FloatTensor(oof[[c.replace('pred_', '') for c in pred_cols]].fillna(0).values.astype(int))
+# cri(preds_ian, trues, False)
 
 
-df = pd.read_csv('input/bartley_sagittal_oof.csv')
-row_df = pd.read_csv('input/oof_predictions_submission_format_ip_v4_sub.csv')
-df = row_df.merge(df, on='row_id', how='left')
-df.loc[~df.normal_mild_y.isnull(), 'normal_mild'] = df.loc[~df.normal_mild_y.isnull(), 'normal_mild_y']
-df.loc[df.normal_mild_y.isnull(), 'normal_mild'] = df.loc[df.normal_mild_y.isnull(), 'normal_mild_x']
-df.loc[~df.moderate_y.isnull(), 'moderate'] = df.loc[~df.moderate_y.isnull(), 'moderate_y']
-df.loc[df.moderate_y.isnull(), 'moderate'] = df.loc[df.moderate_y.isnull(), 'moderate_x']
-df.loc[~df.severe_y.isnull(), 'severe'] = df.loc[~df.severe_y.isnull(), 'severe_y']
-df.loc[df.severe_y.isnull(), 'severe'] = df.loc[df.severe_y.isnull(), 'severe_x']
-df = df[list(row_df)]
-df['study_id'] = df.row_id.apply(lambda x: int(x.split('_')[0]))
+# df = pd.read_csv('input/bartley_sagittal_oof.csv')
+# row_df = pd.read_csv('input/oof_predictions_submission_format_ip_v4_sub.csv')
+# df = row_df.merge(df, on='row_id', how='left')
+# df.loc[~df.normal_mild_y.isnull(), 'normal_mild'] = df.loc[~df.normal_mild_y.isnull(), 'normal_mild_y']
+# df.loc[df.normal_mild_y.isnull(), 'normal_mild'] = df.loc[df.normal_mild_y.isnull(), 'normal_mild_x']
+# df.loc[~df.moderate_y.isnull(), 'moderate'] = df.loc[~df.moderate_y.isnull(), 'moderate_y']
+# df.loc[df.moderate_y.isnull(), 'moderate'] = df.loc[df.moderate_y.isnull(), 'moderate_x']
+# df.loc[~df.severe_y.isnull(), 'severe'] = df.loc[~df.severe_y.isnull(), 'severe_y']
+# df.loc[df.severe_y.isnull(), 'severe'] = df.loc[df.severe_y.isnull(), 'severe_x']
+# df = df[list(row_df)]
+# df['study_id'] = df.row_id.apply(lambda x: int(x.split('_')[0]))
 
-df['target_level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:]))
-df['target'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:-2]))
-df['level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[-2:]))
-cols = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
+# df['target_level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:]))
+# df['target'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[1:-2]))
+# df['level'] = df.row_id.apply(lambda x: '_'.join(x.split('_')[-2:]))
+# cols = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
 
-m = {'study_id': []}
-for c in cols:
-    m[f'bartley_{c}_normal'] = []
-    m[f'bartley_{c}_moderate'] = []
-    m[f'bartley_{c}_severe'] = []
-for i, idf in df.groupby('study_id'):
-    m['study_id'].append(i)
+# m = {'study_id': []}
+# for c in cols:
+#     m[f'bartley_{c}_normal'] = []
+#     m[f'bartley_{c}_moderate'] = []
+#     m[f'bartley_{c}_severe'] = []
+# for i, idf in df.groupby('study_id'):
+#     m['study_id'].append(i)
 
-    for tl, ldf in idf.groupby('target_level'):
-        m[f'bartley_{tl}_normal'].append(ldf.normal_mild.values[0])
-        m[f'bartley_{tl}_moderate'].append(ldf.moderate.values[0])
-        m[f'bartley_{tl}_severe'].append(ldf.severe.values[0])
-bartley = pd.DataFrame(m).sort_values('study_id')
-preds_bartley = torch.FloatTensor(bartley[[c.replace('pred_', 'bartley_') for c in pred_cols]].fillna(0).values)
-trues = torch.FloatTensor(oof[[c.replace('pred_', '') for c in pred_cols]].fillna(0).values.astype(int))
-cri(preds_bartley, trues, False)
+#     for tl, ldf in idf.groupby('target_level'):
+#         m[f'bartley_{tl}_normal'].append(ldf.normal_mild.values[0])
+#         m[f'bartley_{tl}_moderate'].append(ldf.moderate.values[0])
+#         m[f'bartley_{tl}_severe'].append(ldf.severe.values[0])
+# bartley = pd.DataFrame(m).sort_values('study_id')
+# preds_bartley = torch.FloatTensor(bartley[[c.replace('pred_', 'bartley_') for c in pred_cols]].fillna(0).values)
+# trues = torch.FloatTensor(oof[[c.replace('pred_', '') for c in pred_cols]].fillna(0).values.astype(int))
+# cri(preds_bartley, trues, False)
 
 
 preds.numpy().shape, len(cols)
@@ -653,11 +666,11 @@ preds.numpy().shape, len(cols)
 
 th = 0
 
-preds = (preds_yuji*2+preds_ian*2+preds_bartley)/5
+# preds = (preds_yuji*2+preds_ian*2+preds_bartley)/5
+preds = (preds_yuji*2)/2
 spinal = preds.numpy()[:, [2,5,8,11,14]]
 new_preds = []
 for v in spinal:
-    
     i = v.tolist().index(v.max())
     if v.max() > th:
         v[i]*=1.25
