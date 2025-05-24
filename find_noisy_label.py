@@ -402,7 +402,7 @@ axial.columns = [
     'normal',
     'moderate',
     'severe',
-    'axial_pred_normal',
+    'axial_pred_normal',  # 將 ['pred_normal', 'pred_moderate', 'pred_severe'] -> ['axial_pred_normal', 'axial_pred_moderate', 'axial_pred_severe'] 重新命名
     'axial_pred_moderate',
     'axial_pred_severe'
 ]
@@ -484,6 +484,7 @@ for i, idf in df.groupby('study_id'):
                         assert len(tdf) == 1
                         m[f'{axial_sagittal}_pred_{target}_{level}_{condition}'].append(tdf[f'{axial_sagittal}_pred_{condition}'].values[0])
 df = pd.DataFrame(m)
+df.to_csv('df2.csv')  # 我加
 
 
 # tr = pd.read_csv('input/train.csv')
