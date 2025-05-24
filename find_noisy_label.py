@@ -491,12 +491,12 @@ df.to_csv('df2.csv')  # 我加
 tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
 # label_features 有 25 個狀態
 label_features = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
-cols = []
+cols = []  # 75 個狀態
 for col in label_features:
     tr[f'{col}_normal'] = 0
     tr[f'{col}_moderate'] = 0
     tr[f'{col}_severe'] = 0
-    tr.loc[tr[col]=='Normal/Mild', f'{col}_normal'] = 1
+    tr.loc[tr[col]=='Normal/Mild', f'{col}_normal'] = 1  # 將 train.csv 的 25 個狀態 -> 轉為 75 個狀態的 one-hot vector(_normal、_moderate、_severe)
     tr.loc[tr[col]=='Moderate', f'{col}_moderate'] = 1
     tr.loc[tr[col]=='Severe', f'{col}_severe'] = 1
     tr.loc[tr[col].isnull(), f'{col}_normal'] = np.nan
@@ -505,7 +505,7 @@ for col in label_features:
     cols.append(f'{col}_normal')
     cols.append(f'{col}_moderate')
     cols.append(f'{col}_severe')
-    
+
 tr = tr[['study_id']+cols]
 for c in cols:
     if c in list(df):
@@ -514,7 +514,6 @@ oof = tr.merge(df, on='study_id')
 for c in cols:
     oof.loc[oof[c].isnull(), 'axial_pred_'+c] = np.nan
     oof.loc[oof[c].isnull(), 'sagittal_pred_'+c] = np.nan
-
 oof.to_csv('oof5.csv')  # 我加
 
 
@@ -523,7 +522,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 def generate_weights_from_onehot(targets, class_weights):
-    y_true_indices = torch.argmax(targets, dim=1)
+    y_true_indices = torch.argmax(targets, dim=1)  # targets = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] -> y_true_indices = [0, 1, 2]
     weights = class_weights[y_true_indices]
     return weights
 
@@ -535,25 +534,25 @@ class Rsna2024Loss(nn.Module):
         self.epsilon = 1e-7
 
     def forward(self, preds, targets, sigmoid=True):
-        if sigmoid:
+        if sigmoid:  # sigmoid = False
             preds = torch.sigmoid(preds)
         loss_list = []
         for idxes, class_weights in zip([range(15),range(15, 45),range(45, 75)], [[1,2,4]*5,[1,2,4]*10, [1,2,4]*10]):
-            group_targets = targets[:, idxes]
-            group_targets = group_targets.view(group_targets.shape[0]*len(idxes)//3, 3)
+            group_targets = targets[:, idxes]  # (batch size, selected col)
+            group_targets = group_targets.view(group_targets.shape[0]*len(idxes)//3, 3)  # batch size * selected col / 3(normal, moderate, severe)
             group_preds = preds[:, idxes]
             group_preds = group_preds.view(group_preds.shape[0]*len(idxes)//3, 3)
             weights = generate_weights_from_onehot(group_targets, torch.tensor(class_weights, device=self.device))
-            weights = weights*group_targets.sum(1)
+            weights = weights * group_targets.sum(1)
             group_preds = group_preds / torch.sum(group_preds, dim=1, keepdim=True)
-            loss = - (group_targets * group_preds.log()).sum(dim=1)
+            loss = - (group_targets * group_preds.log()).sum(dim=1)  # 計算每一筆樣本的 multi-class cross-entropy loss
             loss = (weights * loss).sum() / weights.sum()
             loss_list.append(loss)
 
-        idxes = range(15)
+        idxes = range(15)  # 針對 spinal
         group_targets = targets[:, idxes]
         group_preds = preds[:, idxes]
-        group_targets = torch.max(group_targets[:, [2,5,8,11,14]], 1)[0]
+        group_targets = torch.max(group_targets[:, [2,5,8,11,14]], 1)[0]  # 針對 severe
         group_preds = torch.max(group_preds[:, [2,5,8,11,14]], 1)[0]
         weights = (targets[:, idxes]*torch.tensor([[1,2,4]*5]*len(targets), device=self.device)).max(1)[0]
         losses = F.binary_cross_entropy(group_preds, group_targets, reduction='none')
@@ -578,6 +577,7 @@ def normalize_probabilities_to_one_torch(tensor: torch.Tensor) -> torch.Tensor:
 
 import torch
 
+# not used
 def custom_normalize_torch(tensor: torch.Tensor) -> torch.Tensor:
     # Ensure the input tensor has the correct shape (batch_size, 3)
     if tensor.shape[1] != 3:
@@ -609,7 +609,6 @@ def custom_normalize_torch(tensor: torch.Tensor) -> torch.Tensor:
         torch.stack([normal_normalized, moderate_normalized, severe], dim=1),
         regular_normalized
     )
-
     return result
 
 
@@ -618,28 +617,29 @@ for condition, w in zip(['spinal', 'neural_foraminal_narrowing', 'subarticular_s
     c_cols = [c for c in pred_cols if condition in c]
     for c in c_cols:
         oof[c] = oof['axial_'+c]*w + oof['sagittal_'+c]*(1-w)
-        oof[c] = oof[c].fillna(oof[c].mean())
+        oof[c] = oof[c].fillna(oof[c].mean())  # 補齊缺失值
 preds = sigmoid(oof[pred_cols].fillna(0).values)
 preds = torch.FloatTensor(preds)
-for i in range(5):
-    preds[:, i*3+1] *= 1.8
-    preds[:, i*3+2] *= 5
-    preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])
-for i in range(5, 15):
+for i in range(5):  # spinal
+    preds[:, i*3+1] *= 1.8  # moderate
+    preds[:, i*3+2] *= 5    # severe
+    preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])  # 重新正規化
+for i in range(5, 15):  # neural_foraminal_narrowing
     preds[:, i*3+1] *= 2.2
     preds[:, i*3+2] *= 5
     preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])
-for i in range(15, 25):
+for i in range(15, 25):  # subarticular_stenosis
     preds[:, i*3+1] *= 2.2
     preds[:, i*3+2] *= 5.5
     preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])
+
 import copy
 preds_yuji = copy.deepcopy(preds)
 oof[pred_cols] = preds_yuji.numpy()
 trues = torch.FloatTensor(oof[[c.replace('pred_', '') for c in pred_cols]].fillna(0).values.astype(int))
 len(oof), cri(preds_yuji, trues, False)
 
-
+# not used
 def normalize_probabilities_to_one_numpy(array: np.ndarray) -> np.ndarray:
     total = np.sum(array)
     if total == 0:
@@ -726,15 +726,16 @@ for v in spinal:
 preds[:, [2,5,8,11,14]] = torch.FloatTensor(new_preds)
 for i in range(5):
     preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])
-oof[pred_cols] = preds.numpy()    
-cri(preds, trues, False)    
+oof[pred_cols] = preds.numpy()
+cri(preds, trues, False)
 
 
-for c in [c.replace('pred_', '') for c in pred_cols]:
+for c in [c.replace('pred_', '') for c in pred_cols]:   # pred_cols = 15 個 各個病狀的嚴重程度
     oof[f'{c}_loss'] = np.abs(oof[c].values-oof['pred_'+c].values)
 # oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv('results/oof_ensemble.csv', index=False)
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv', index=False)
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
+oof.to_csv('oof6.csv')  # 我加
 
 
 th = 0.8
