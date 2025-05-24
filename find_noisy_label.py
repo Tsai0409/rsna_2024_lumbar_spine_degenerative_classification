@@ -129,7 +129,7 @@ configs = [
     'rsna_axial_ss_nfn_x2_y6_center_pad0',
     'rsna_axial_ss_nfn_x2_y8_center_pad10',
 ]
-target_pred_cols = [c for c in pred_cols if 'neural_foraminal_narrowing' in c]  # 15 個 各個病狀的嚴重程度
+target_pred_cols = [c for c in pred_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度
 target_cols = [c for c in true_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度 (包含不同位置)
 cols = [
     'neural_foraminal_narrowing_normal',
@@ -730,12 +730,11 @@ oof[pred_cols] = preds.numpy()
 cri(preds, trues, False)
 
 
-for c in [c.replace('pred_', '') for c in pred_cols]:   # pred_cols = 15 個 各個病狀的嚴重程度
+for c in [c.replace('pred_', '') for c in pred_cols]:   # pred_cols = 75 個 各個病狀的嚴重程度
     oof[f'{c}_loss'] = np.abs(oof[c].values-oof['pred_'+c].values)
 # oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv('results/oof_ensemble.csv', index=False)
-oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv', index=False)
+oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv', index=False)  # pred_cols(共 75 欄)、xxx_loss(也是 75 欄)
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
-oof.to_csv('oof6.csv')  # 我加
 
 
 th = 0.8
@@ -765,7 +764,7 @@ noise_df['study_level'] = noise_df.study_id.astype(str) + '_' + noise_df.level
 
 # noise_df.to_csv(f'results/noisy_target_level_th08.csv', index=False)
 noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv', index=False)
-print(th, noise_df.target.value_counts().values / (1975*5))
+print(th, noise_df.target.value_counts().values / (1975*5))  # 得到 5 個不同 col 的數值
 noise_df.target.value_counts()
 
 
