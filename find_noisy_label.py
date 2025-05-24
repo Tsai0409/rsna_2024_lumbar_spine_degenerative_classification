@@ -465,7 +465,7 @@ for axial_sagittal in ['sagittal', 'axial']:
                 meta_cols.append(f'{axial_sagittal}_pred_{target}_{level}_{condition}')
 
 ts  = []
-for i, idf in df.groupby('study_id'):
+for i, idf in df.groupby('study_id'):  # 拆成 152 個 col (將 axial、sagittal 分開)
     m['study_id'].append(i)
     for level in ['l1_l2', 'l2_l3', 'l3_l4', 'l4_l5', 'l5_s1']:
         ldf = idf[idf.level == level]
@@ -489,6 +489,7 @@ df.to_csv('df2.csv')  # 我加
 
 # tr = pd.read_csv('input/train.csv')
 tr = pd.read_csv(f'{WORKING_DIR}/kaggle_csv/train.csv')
+# label_features 有 25 個狀態
 label_features = ['spinal_canal_stenosis_l1_l2', 'spinal_canal_stenosis_l2_l3', 'spinal_canal_stenosis_l3_l4', 'spinal_canal_stenosis_l4_l5', 'spinal_canal_stenosis_l5_s1', 'left_neural_foraminal_narrowing_l1_l2', 'left_neural_foraminal_narrowing_l2_l3', 'left_neural_foraminal_narrowing_l3_l4', 'left_neural_foraminal_narrowing_l4_l5', 'left_neural_foraminal_narrowing_l5_s1', 'right_neural_foraminal_narrowing_l1_l2', 'right_neural_foraminal_narrowing_l2_l3', 'right_neural_foraminal_narrowing_l3_l4', 'right_neural_foraminal_narrowing_l4_l5', 'right_neural_foraminal_narrowing_l5_s1', 'left_subarticular_stenosis_l1_l2', 'left_subarticular_stenosis_l2_l3', 'left_subarticular_stenosis_l3_l4', 'left_subarticular_stenosis_l4_l5', 'left_subarticular_stenosis_l5_s1', 'right_subarticular_stenosis_l1_l2', 'right_subarticular_stenosis_l2_l3', 'right_subarticular_stenosis_l3_l4', 'right_subarticular_stenosis_l4_l5', 'right_subarticular_stenosis_l5_s1']
 cols = []
 for col in label_features:
@@ -513,6 +514,8 @@ oof = tr.merge(df, on='study_id')
 for c in cols:
     oof.loc[oof[c].isnull(), 'axial_pred_'+c] = np.nan
     oof.loc[oof[c].isnull(), 'sagittal_pred_'+c] = np.nan
+
+oof.to_csv('oof5.csv')  # 我加
 
 
 import torch
