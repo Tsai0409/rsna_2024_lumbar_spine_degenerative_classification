@@ -450,6 +450,7 @@ df.level = df.level.map({
     5: 'l5_s1',
 })
 df=df.sort_values(['study_id', 'target'])
+df.to_csv('df.csv')  # 我加
 
 m = {
     'study_id': []
@@ -516,6 +517,7 @@ for c in cols:
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 def generate_weights_from_onehot(targets, class_weights):
     y_true_indices = torch.argmax(targets, dim=1)
     weights = class_weights[y_true_indices]
@@ -558,7 +560,6 @@ class Rsna2024Loss(nn.Module):
 
 cri = Rsna2024Loss()
 
-
 def normalize_probabilities_to_one_torch(tensor: torch.Tensor) -> torch.Tensor:
     # Normalize the sum of each row's probabilities to 100%.
     # 0.75, 0.75 => 0.5, 0.5
@@ -569,7 +570,6 @@ def normalize_probabilities_to_one_torch(tensor: torch.Tensor) -> torch.Tensor:
         raise ValueError('All rows must contain at least one non-zero prediction')
     normalized_tensor = tensor / row_totals
     return normalized_tensor
-import torch
 
 
 import torch
