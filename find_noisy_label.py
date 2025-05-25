@@ -130,8 +130,8 @@ configs = [
     'rsna_axial_ss_nfn_x2_y6_center_pad0',
     'rsna_axial_ss_nfn_x2_y8_center_pad10',
 ]
-target_pred_cols = [c for c in pred_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度
-target_cols = [c for c in true_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度 (包含不同位置)
+target_pred_cols = [c for c in pred_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度 (nfn(left/right) L1~L5 n/m/s)
+target_cols = [c for c in true_cols if 'neural_foraminal_narrowing' in c]  # 75 個 各個病狀的嚴重程度 (nfn(left/right) L1~L5 n/m/s)
 cols = [
     'neural_foraminal_narrowing_normal',
     'neural_foraminal_narrowing_moderate',
