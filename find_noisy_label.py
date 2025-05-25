@@ -515,13 +515,14 @@ oof = tr.merge(df, on='study_id')
 for c in cols:
     oof.loc[oof[c].isnull(), 'axial_pred_'+c] = np.nan
     oof.loc[oof[c].isnull(), 'sagittal_pred_'+c] = np.nan
-oof.to_csv('oof5.csv')  # 我加
+oof.to_csv('oof5.csv')  # 我加 -> 75 個實際 label + 150 預測 label(axial、sagittal)
 
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# ① 自定義 Loss 函數與工具函數定義
 def generate_weights_from_onehot(targets, class_weights):
     y_true_indices = torch.argmax(targets, dim=1)  # targets = [[1, 0, 0], [0, 1, 0], [0, 0, 1]] -> y_true_indices = [0, 1, 2]
     weights = class_weights[y_true_indices]
@@ -612,7 +613,7 @@ def custom_normalize_torch(tensor: torch.Tensor) -> torch.Tensor:
     )
     return result
 
-
+# ② axial + sagittal 融合預測 + normalize + severe 放大加權
 ws = [0.7, 0.5, 0.8]
 for condition, w in zip(['spinal', 'neural_foraminal_narrowing', 'subarticular_stenosis'], ws):    
     c_cols = [c for c in pred_cols if condition in c]
@@ -622,9 +623,9 @@ for condition, w in zip(['spinal', 'neural_foraminal_narrowing', 'subarticular_s
 preds = sigmoid(oof[pred_cols].fillna(0).values)
 preds = torch.FloatTensor(preds)
 for i in range(5):  # spinal
-    preds[:, i*3+1] *= 1.8  # moderate
-    preds[:, i*3+2] *= 5    # severe
-    preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])  # 重新正規化
+    preds[:, i*3+1] *= 1.8  # moderate (1,4,7,10,13)
+    preds[:, i*3+2] *= 5    # severe (2,5,8,11,14)
+    preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])  # 重新正規化，針對 0-14
 for i in range(5, 15):  # neural_foraminal_narrowing
     preds[:, i*3+1] *= 2.2
     preds[:, i*3+2] *= 5
@@ -634,6 +635,8 @@ for i in range(15, 25):  # subarticular_stenosis
     preds[:, i*3+2] *= 5.5
     preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])
 
+
+# ③ 呼叫 Loss 函數進行評估
 import copy
 preds_yuji = copy.deepcopy(preds)
 oof[pred_cols] = preds_yuji.numpy()
@@ -715,6 +718,8 @@ preds.numpy().shape, len(cols)
 
 th = 0
 
+
+# ④ 計算每個樣本欄位的 loss 差異（|真實值 - 預測值|）
 # preds = (preds_yuji*2+preds_ian*2+preds_bartley)/5
 preds = (preds_yuji*2)/2
 spinal = preds.numpy()[:, [2,5,8,11,14]]
@@ -738,6 +743,7 @@ oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
 
 
+# ⑤ 輸出含有 noisy 預測的樣本（th=0.8）
 th = 0.8
 m = {}
 levels = []
@@ -769,6 +775,7 @@ print(th, noise_df.target.value_counts().values / (1975*5))  # 得到 5 個不�
 noise_df.target.value_counts()
 
 
+# ⑥ 輸出 noisy 樣本（th=0.9）
 th = 0.9
 m = {}
 levels = []
