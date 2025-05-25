@@ -83,7 +83,7 @@ config_cols = [col.replace('pred_', '') for col in config_pred_cols]  # -> spina
 
 oof = oof.groupby(['study_id', 'pred_level'])[config_cols + config_pred_cols].mean().reset_index().sort_values(['study_id', 'pred_level'])  # 將值抓到新的 dataframe
 oof.to_csv('oof.csv')  # 我加
-true = oof[config_cols].values  # -> spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe
+true = oof[config_cols].values  # -> spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe (主要找到 true label)
 
 dfs = []
 for config in configs:
@@ -117,13 +117,14 @@ oof = oof.groupby(['study_id', 'pred_level'])[config_pred_cols].mean().reset_ind
 oof[config_cols] = true  # -> spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe
 
 oof[[col.replace('pred_', '') for col in config_pred_cols]] = oof[[col.replace('pred_', '') for col in config_pred_cols]].astype(int)  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe 轉為整數
-oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe -> normal、moderate、severe
-oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values  # 將 pred_spinal_canal_stenosis_normal、pred_spinal_canal_stenosis_moderate、pred_spinal_canal_stenosis_severe -> pred_normal、pred_moderate、pred_severe
+oof[['normal', 'moderate', 'severe']] = oof[[c.replace('pred_', '') for c in config_pred_cols]].values  # 將 spinal_canal_stenosis_normal、spinal_canal_stenosis_moderate、spinal_canal_stenosis_severe -> normal、moderate、severe(標準答案)
+oof[['pred_normal', 'pred_moderate', 'pred_severe']] = oof[config_pred_cols].values  # 將 pred_spinal_canal_stenosis_normal、pred_spinal_canal_stenosis_moderate、pred_spinal_canal_stenosis_severe -> pred_normal、pred_moderate、pred_severe(預測答案)
 oof.to_csv('oof2.csv')  # 我加
 axial_spinal = oof.copy()
 
 
 # axial nfn
+
 configs = [
     'rsna_axial_ss_nfn_x2_y2_center_pad0',
     'rsna_axial_ss_nfn_x2_y6_center_pad0',
