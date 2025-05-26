@@ -865,7 +865,6 @@ class rsna_saggital_mil_spinal_crop_x03_y05_reduce_noise(rsna_saggital_mil_spina
         super().__init__()
 
         self.fold = fold  # 儲存fold參數
-
         # noise_df = pd.read_csv(f'results/noisy_target_level_1016.csv')
         noise_df = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv')
         noise_df = noise_df[noise_df.target == 'spinal_canal_stenosis']
@@ -900,19 +899,11 @@ class rsna_saggital_mil_spinal_crop_x03_y07_reduce_noise(rsna_saggital_mil_spina
         super().__init__()
 
         self.fold = fold  # 儲存fold參數
-
         # noise_df = pd.read_csv(f'results/noisy_target_level_1016.csv')
         noise_df = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv')
         noise_df = noise_df[noise_df.target == 'spinal_canal_stenosis']
 
         # 構建 study_level 並篩除 noisy 樣本
-        self.train_df['level'] = self.train_df.pred_level.map({
-            1: 'l1_l2',
-            2: 'l2_l3',
-            3: 'l3_l4',
-            4: 'l4_l5',
-            5: 'l5_s1',
-        })
         self.train_df['study_level'] = self.train_df.study_id.astype(str) + '_' + self.train_df.level.str.replace('/', '_').str.lower()
         self.train_df = self.train_df[~self.train_df.study_level.isin(noise_df.study_level)]
 
