@@ -865,8 +865,6 @@ class rsna_saggital_mil_spinal_crop_x03_y05_reduce_noise(rsna_saggital_mil_spina
         super().__init__()
 
         self.fold = fold  # 儲存fold參數
-        self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_crop_x03_y05.csv'
-        self.train_df = pd.read_csv(self.train_df_path)
 
         # noise_df = pd.read_csv(f'results/noisy_target_level_1016.csv')
         noise_df = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv')
@@ -902,8 +900,6 @@ class rsna_saggital_mil_spinal_crop_x03_y07_reduce_noise(rsna_saggital_mil_spina
         super().__init__()
 
         self.fold = fold  # 儲存fold參數
-        self.train_df_path = f'{WORKING_DIR}/csv_train/axial_classification_7/sagittal_spinal_crop_x03_y07.csv'
-        self.train_df = pd.read_csv(self.train_df_path)
 
         # noise_df = pd.read_csv(f'results/noisy_target_level_1016.csv')
         noise_df = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv')
