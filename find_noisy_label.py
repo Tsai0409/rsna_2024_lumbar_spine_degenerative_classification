@@ -624,7 +624,7 @@ preds = sigmoid(oof[pred_cols].fillna(0).values)
 preds = torch.FloatTensor(preds)
 for i in range(5):  # spinal
     preds[:, i*3+1] *= 1.8  # moderate (1,4,7,10,13)
-    preds[:, i*3+2] *= 5    # severe (2,5,8,11,14)
+    preds[:, i*3+2] *= 5    # severe (2,5,8,11,14) -> (大範圍加強)
     preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])  # 重新正規化，針對 0-14
 for i in range(5, 15):  # neural_foraminal_narrowing
     preds[:, i*3+1] *= 2.2
@@ -722,20 +722,24 @@ th = 0
 # ④ 計算每個樣本欄位的 loss 差異（|真實值 - 預測值|）
 # preds = (preds_yuji*2+preds_ian*2+preds_bartley)/5
 preds = (preds_yuji*2)/2
+
+# 對 spinal 這 5 個 level 的 severe (索引2,5,8,11,14) 進行強化
 spinal = preds.numpy()[:, [2,5,8,11,14]]
 new_preds = []
 for v in spinal:
     i = v.tolist().index(v.max())
-    if v.max() > th:
-        v[i]*=1.25
+    if v.max() > th:  # th = 0 (永遠成立)
+        v[i]*=1.25    # 對 spinal severe 五個位置中機率最大的那個，無條件放大 1.25 倍 -> (局部額外加強)
     new_preds.append(v)
 preds[:, [2,5,8,11,14]] = torch.FloatTensor(new_preds)
+
+# 重新對每個 group(三類 normal/moderate/severe) 做 normalize，確保三類加總為 1
 for i in range(5):
     preds[:, i*3:(i+1)*3] = normalize_probabilities_to_one_torch(preds[:, i*3:(i+1)*3])
 oof[pred_cols] = preds.numpy()
 cri(preds, trues, False)
 
-
+# 計算 loss 差異 (預測誤差)
 for c in [c.replace('pred_', '') for c in pred_cols]:   # pred_cols = 75 個 各個病狀的嚴重程度
     oof[f'{c}_loss'] = np.abs(oof[c].values-oof['pred_'+c].values)
 # oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv('results/oof_ensemble.csv', index=False)
@@ -771,7 +775,8 @@ noise_df['study_level'] = noise_df.study_id.astype(str) + '_' + noise_df.level
 
 # noise_df.to_csv(f'results/noisy_target_level_th08.csv', index=False)
 noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th08.csv', index=False)
-print(th, noise_df.target.value_counts().values / (1975*5))  # 得到 5 個不同 col 的數值
+# print(th, noise_df.target.value_counts().values / (1975*5)) 
+print(th, noise_df.target.value_counts().values / (393*5))  # 得到 5 個不同 col 的數值 ['spinal_canal_stenosis','left_neural_foraminal_narrowing', 'right_neural_foraminal_narrowing', 'left_subarticular_stenosis', 'right_subarticular_stenosis']
 noise_df.target.value_counts()
 
 
@@ -803,4 +808,5 @@ noise_df['study_level'] = noise_df.study_id.astype(str) + '_' + noise_df.level
 
 # noise_df.to_csv(f'results/noisy_target_level_th09.csv', index=False)
 noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th09.csv', index=False)
-print(th, noise_df.target.value_counts().values / (1975*5))
+# print(th, noise_df.target.value_counts().values / (1975*5))
+print(th, noise_df.target.value_counts().values / (393*5))
