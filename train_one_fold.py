@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # ├── metrics.csv   # 記錄 loss、accuracy 等數據
     # ├── hparams.yaml  # 記錄模型超參數
 
-    monitor = 'val_metric'
+    monitor = 'val_metric'  # 只會保留 val_metric 表現最好的那個模型 → 存成 fold_0.ckpt
     checkpoint_callback = ModelCheckpoint(  # ModelCheckpoint（儲存最佳的模型權重）
         dirpath=OUTPUT_PATH, filename=f"fold_{args.fold}", auto_insert_metric_name=False,
         save_top_k=cfg.save_top_k, monitor=monitor, mode='max', verbose=True, save_last=False)

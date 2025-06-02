@@ -12,7 +12,7 @@ def pickle_load(path):
  # cfg.valid_df = None
 def get_val(cfg):
     if cfg.valid_df is None: 
-        val = cfg.train_df[cfg.train_df.fold == cfg.fold] # 假設現在 fold=0 -> fold0 就是驗證資料
+        val = cfg.train_df[cfg.train_df.fold == cfg.fold]  # 假設現在 fold=0 -> fold0 就是驗證資料
     else:
         val = cfg.valid_df[cfg.valid_df.fold == cfg.fold]
     return val
