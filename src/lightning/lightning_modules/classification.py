@@ -199,7 +199,7 @@ class MyLightningModule(pl.LightningModule):
             # else:
             
             # self.criterion = torch.nn.BCEWithLogitsLoss() (all condition) -> Binary Cross-Entropy Loss(二元交叉熵損失)
-            loss = self.cfg.criterion(logits, targets)
+            loss = self.cfg.criterion(logits, targets)  # self.criterion = torch.nn.BCEWithLogitsLoss() -> configs 中定義
             '''
             # 反向傳播和權重更新是由 PyTorch Lightning 自動處理的：
             # 這一部分的過程並不需要手動寫出，因為 Lightning 會自動在每次 training_step 結束後進行反向傳播和權重更新。這些步驟是在 trainer.fit() 內部進行的。
