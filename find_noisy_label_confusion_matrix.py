@@ -797,7 +797,7 @@ for c in [c.replace('pred_', '') for c in pred_cols]:   # pred_cols = 75 個 各
 # oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv('results/oof_ensemble.csv', index=False)
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv', index=False)  # pred_cols(共 75 欄)、xxx_loss(也是 75 欄)
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
-
+oof.to_csv('oof6.csv')  # 我加 
 
 # ⑤-②  用 confusion matrix 的方式
 import numpy as np
