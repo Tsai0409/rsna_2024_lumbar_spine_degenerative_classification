@@ -799,37 +799,40 @@ oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
 oof.to_csv('oof6.csv')  # 我加 
 
+
 # ⑤-②  用 confusion matrix 的方式
 import numpy as np
 import pandas as pd
 
-# 讀取 oof_ensemble.csv
-oof = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv')
+# pred_cols = 你的預測欄位（應為 75 個，以 pred_ 開頭）
+# 比如：
+# pred_cols = [c for c in oof.columns if c.startswith('pred_') and c.endswith(('normal','moderate','severe'))]
 
-# pred_cols = 你前面已經定義過的預測欄位名
-# 以三分類組為單位，遍歷所有 group
 noisy_rows = []
-for i in range(0, 75, 3):
-    col_group = pred_cols[i:i+3]
-    base_col = col_group[0].replace('pred_', '').replace('_normal', '')
+for i in range(0, len(pred_cols), 3):
+    pred_col_group = pred_cols[i:i+3]
+    true_col_group = [c.replace('pred_', '') for c in pred_col_group]
 
-    # 取得預測label
-    pred_prob = oof[col_group].values
+    # 防呆：若真實欄位不存在就跳過
+    if not all([c in oof.columns for c in true_col_group]):
+        print(f"缺少真實標籤欄位：{true_col_group}")
+        continue
+
+    pred_prob = oof[pred_col_group].values  # 機率預測
+    true_onehot = oof[true_col_group].values.astype(int)  # one-hot 標籤
+
     pred_label = np.argmax(pred_prob, axis=1)
-
-    # 取得真實label
-    true_col_group = [c.replace('pred_', '') for c in col_group]
-    true_onehot = oof[true_col_group].values.astype(int)
     true_label = np.argmax(true_onehot, axis=1)
-
-    # 判斷是否錯誤
     is_noisy = pred_label != true_label
     noisy_idx = np.where(is_noisy)[0]
+
+    # 找出疾病名/level
+    base_col = pred_col_group[0].replace('pred_', '').replace('_normal', '')
+    level = base_col.split('_')[-2] + '_' + base_col.split('_')[-1]
+    target = '_'.join(base_col.split('_')[:-2])
+
     for idx in noisy_idx:
         study_id = oof.iloc[idx]['study_id']
-        # 取 level 名稱
-        level = base_col.split('_')[-2] + '_' + base_col.split('_')[-1]
-        target = '_'.join(base_col.split('_')[:-2])
         noisy_rows.append({
             'study_id': study_id,
             'target': target,
@@ -837,11 +840,11 @@ for i in range(0, 75, 3):
             'row_idx': idx,
         })
 
-# 組成 DataFrame 輸出
 noise_df = pd.DataFrame(noisy_rows)
 noise_df['study_level'] = noise_df['study_id'].astype(str) + '_' + noise_df['level']
-noise_df = noise_df.sort_values(['target','study_id','level'])
+noise_df = noise_df.sort_values(['target', 'study_id', 'level'])
 noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_confusion.csv', index=False)
+
 
 
 
