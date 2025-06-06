@@ -810,7 +810,7 @@ import pandas as pd
 
 noisy_rows = []
 for i in range(0, len(pred_cols), 3):
-    pred_col_group = pred_cols[i:i+3]
+    pred_col_group = pred_cols[i:i+3]  # pred_cols = 75 個 各個病狀的嚴重程度
     true_col_group = [c.replace('pred_', '') for c in pred_col_group]
 
     # 防呆：若真實欄位不存在就跳過
@@ -845,6 +845,49 @@ noise_df['study_level'] = noise_df['study_id'].astype(str) + '_' + noise_df['lev
 noise_df = noise_df.sort_values(['target', 'study_id', 'level'])
 noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_confusion.csv', index=False)
 
+import numpy as np
+import pandas as pd
+from collections import defaultdict
+
+# 記得 pred_cols 必須是有順序的一組一組，每3欄一個 group
+# 這裡直接先產生所有類別的統計
+result = defaultdict(lambda: defaultdict(int))  # result[group][class] = [TP,TN,FP,FN]
+
+for i in range(0, len(pred_cols), 3):
+    pred_col_group = pred_cols[i:i+3]
+    true_col_group = [c.replace('pred_', '') for c in pred_col_group]
+
+    base_col = pred_col_group[0].replace('pred_', '').replace('_normal', '')
+    class_names = ['normal', 'moderate', 'severe']
+
+    pred_prob = oof[pred_col_group].values
+    true_onehot = oof[true_col_group].values.astype(int)
+    pred_label = np.argmax(pred_prob, axis=1)
+    true_label = np.argmax(true_onehot, axis=1)
+
+    for class_idx, class_name in enumerate(class_names):
+        # binary: 以 class_idx 為正類，其他為負
+        pred_bin = (pred_label == class_idx)
+        true_bin = (true_label == class_idx)
+        TP = np.logical_and(pred_bin, true_bin).sum()
+        TN = np.logical_and(~pred_bin, ~true_bin).sum()
+        FP = np.logical_and(pred_bin, ~true_bin).sum()
+        FN = np.logical_and(~pred_bin, true_bin).sum()
+        result[base_col+'_'+class_name]['TP'] += TP
+        result[base_col+'_'+class_name]['TN'] += TN
+        result[base_col+'_'+class_name]['FP'] += FP
+        result[base_col+'_'+class_name]['FN'] += FN
+
+# 最後統計出來（以全部的 sum 為例，也可細分 group）
+TP = sum(v['TP'] for v in result.values())
+TN = sum(v['TN'] for v in result.values())
+FP = sum(v['FP'] for v in result.values())
+FN = sum(v['FN'] for v in result.values())
+
+print(f"TP: {TP}  TN: {TN}  FP: {FP}  FN: {FN}")
+
+# 如果想看單一 group 下某一類別的 TP/TN/FP/FN：
+# print(result['spinal_canal_stenosis_l1_l2_normal'])
 
 
 
