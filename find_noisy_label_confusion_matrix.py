@@ -517,6 +517,7 @@ for c in cols:
     oof.loc[oof[c].isnull(), 'sagittal_pred_'+c] = np.nan
 oof.to_csv('oof5.csv')  # 我加 -> 75 個實際 label + 150 預測 label(axial、sagittal)
 
+'''
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix, classification_report
@@ -567,12 +568,8 @@ print('\n[0] normal, [1] moderate, [2] severe\n')
 
 # 詳細分類報告
 print(classification_report(true_labels, pred_labels, target_names=['normal', 'moderate', 'severe']))
-
-
-
-
-
 '''
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -802,6 +799,53 @@ oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]].
 oof[['study_id']+pred_cols+[c.replace('pred_', '')+'_loss' for c in pred_cols]]
 
 
+# ⑤-②  用 confusion matrix 的方式
+import numpy as np
+import pandas as pd
+
+# 讀取 oof_ensemble.csv
+oof = pd.read_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/oof_ensemble.csv')
+
+# pred_cols = 你前面已經定義過的預測欄位名
+# 以三分類組為單位，遍歷所有 group
+noisy_rows = []
+for i in range(0, 75, 3):
+    col_group = pred_cols[i:i+3]
+    base_col = col_group[0].replace('pred_', '').replace('_normal', '')
+
+    # 取得預測label
+    pred_prob = oof[col_group].values
+    pred_label = np.argmax(pred_prob, axis=1)
+
+    # 取得真實label
+    true_col_group = [c.replace('pred_', '') for c in col_group]
+    true_onehot = oof[true_col_group].values.astype(int)
+    true_label = np.argmax(true_onehot, axis=1)
+
+    # 判斷是否錯誤
+    is_noisy = pred_label != true_label
+    noisy_idx = np.where(is_noisy)[0]
+    for idx in noisy_idx:
+        study_id = oof.iloc[idx]['study_id']
+        # 取 level 名稱
+        level = base_col.split('_')[-2] + '_' + base_col.split('_')[-1]
+        target = '_'.join(base_col.split('_')[:-2])
+        noisy_rows.append({
+            'study_id': study_id,
+            'target': target,
+            'level': level,
+            'row_idx': idx,
+        })
+
+# 組成 DataFrame 輸出
+noise_df = pd.DataFrame(noisy_rows)
+noise_df['study_level'] = noise_df['study_id'].astype(str) + '_' + noise_df['level']
+noise_df = noise_df.sort_values(['target','study_id','level'])
+noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_confusion.csv', index=False)
+
+
+
+
 # ⑤ 輸出含有 noisy 預測的樣本（th=0.8）
 th = 0.8
 m = {}
@@ -865,4 +909,3 @@ noise_df['study_level'] = noise_df.study_id.astype(str) + '_' + noise_df.level
 noise_df.to_csv(f'{WORKING_DIR}/csv_train/noise_reduction_by_oof_9/noisy_target_level_th09.csv', index=False)
 # print(th, noise_df.target.value_counts().values / (1975*5))
 print(th, noise_df.target.value_counts().values / (393*5))
-'''
