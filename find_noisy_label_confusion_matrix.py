@@ -956,17 +956,26 @@ print(cm)
 print('\n[0] normal, [1] moderate, [2] severe\n')
 print(classification_report(true_labels, pred_labels, target_names=['normal', 'moderate', 'severe']))
 
+# plt.figure(figsize=(6,5))
+# sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+#             xticklabels=['normal', 'moderate', 'severe'],
+#             yticklabels=['normal', 'moderate', 'severe'])
+# plt.xlabel("Predicted Label")
+# plt.ylabel("True Label")
+# plt.title("Confusion Matrix Heatmap (融合預測結果)")
+# plt.tight_layout()
+# plt.show()
+# plt.savefig("heatmap.png")
+
 plt.figure(figsize=(6,5))
 sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
             xticklabels=['normal', 'moderate', 'severe'],
             yticklabels=['normal', 'moderate', 'severe'])
-plt.xlabel("Predicted Label")
-plt.ylabel("True Label")
-plt.title("Confusion Matrix Heatmap (融合預測結果)")
+plt.xlabel("Predict")       # x軸改成 Predict
+plt.ylabel("Ground Truth")  # y軸改成 Ground Truth
+plt.title("Confusion Matrix Heatmap")
 plt.tight_layout()
 plt.show()
-plt.savefig("heatmap.png")
-
 
 # ⑤ 輸出含有 noisy 預測的樣本（th=0.8）
 th = 0.8
