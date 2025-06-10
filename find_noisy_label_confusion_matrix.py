@@ -968,12 +968,19 @@ print(classification_report(true_labels, pred_labels, target_names=['normal', 'm
 # plt.savefig("heatmap.png")
 
 plt.figure(figsize=(6,5))
-sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-            xticklabels=['normal', 'moderate', 'severe'],
-            yticklabels=['normal', 'moderate', 'severe'])
-plt.xlabel("Predict")       # x軸改成 Predict
-plt.ylabel("Ground Truth")  # y軸改成 Ground Truth
-plt.title("Confusion Matrix Heatmap")
+ax = sns.heatmap(
+    cm,
+    annot=True,
+    fmt="d",
+    cmap="Blues",
+    xticklabels=['normal', 'moderate', 'severe'],
+    yticklabels=['normal', 'moderate', 'severe']
+)
+ax.set_xlabel("Predict", fontsize=12)
+ax.xaxis.set_label_position('top')   # 把 x 軸標籤放到上面
+ax.xaxis.tick_top()                  # 把 x 軸 tick 也移到上面
+plt.ylabel("Ground Truth")
+plt.title("Confusion Matrix Heatmap", fontsize=14, pad=20)
 plt.tight_layout()
 plt.show()
 plt.savefig("heatmap.png")
