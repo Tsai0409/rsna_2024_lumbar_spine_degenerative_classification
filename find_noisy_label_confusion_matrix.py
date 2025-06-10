@@ -555,6 +555,9 @@ for feat in label_features:
     y_pred = np.argmax(y_pred_proba, axis=1)
     true_labels.append(y_true)
     pred_labels.append(y_pred)
+'''
+
+from sklearn.metrics import confusion_matrix, classification_report
 
 # 全部合併成 1D
 true_labels = np.concatenate(true_labels)
@@ -568,7 +571,20 @@ print('\n[0] normal, [1] moderate, [2] severe\n')
 
 # 詳細分類報告
 print(classification_report(true_labels, pred_labels, target_names=['normal', 'moderate', 'severe']))
-'''
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(6,5))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", 
+            xticklabels=['normal', 'moderate', 'severe'],
+            yticklabels=['normal', 'moderate', 'severe'])
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+plt.title("Confusion Matrix Heatmap (All labels)")
+plt.tight_layout()
+plt.show()
+
 
 import torch
 import torch.nn as nn
