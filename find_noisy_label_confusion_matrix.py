@@ -976,7 +976,7 @@ ax = sns.heatmap(
     xticklabels=['normal', 'moderate', 'severe'],
     yticklabels=['normal', 'moderate', 'severe']
 )
-ax.set_xlabel("Predict", fontsize=12)
+ax.set_xlabel("Predict")
 ax.xaxis.set_label_position('top')   # 把 x 軸標籤放到上面
 ax.xaxis.tick_top()                  # 把 x 軸 tick 也移到上面
 plt.ylabel("Ground Truth")
