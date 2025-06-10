@@ -976,6 +976,7 @@ plt.ylabel("Ground Truth")  # y軸改成 Ground Truth
 plt.title("Confusion Matrix Heatmap")
 plt.tight_layout()
 plt.show()
+plt.savefig("heatmap.png")
 
 # ⑤ 輸出含有 noisy 預測的樣本（th=0.8）
 th = 0.8
