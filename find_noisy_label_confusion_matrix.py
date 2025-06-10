@@ -965,7 +965,7 @@ plt.ylabel("True Label")
 plt.title("Confusion Matrix Heatmap (融合預測結果)")
 plt.tight_layout()
 plt.show()
-
+plt.savefig("heatmap.png")
 
 
 # ⑤ 輸出含有 noisy 預測的樣本（th=0.8）
