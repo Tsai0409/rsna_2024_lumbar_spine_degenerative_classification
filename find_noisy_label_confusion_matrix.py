@@ -517,7 +517,7 @@ for c in cols:
     oof.loc[oof[c].isnull(), 'sagittal_pred_'+c] = np.nan
 oof.to_csv('oof5.csv')  # 我加 -> 75 個實際 label + 150 預測 label(axial、sagittal)
 
-'''
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix, classification_report
@@ -555,7 +555,7 @@ for feat in label_features:
     y_pred = np.argmax(y_pred_proba, axis=1)
     true_labels.append(y_true)
     pred_labels.append(y_pred)
-'''
+
 
 from sklearn.metrics import confusion_matrix, classification_report
 
