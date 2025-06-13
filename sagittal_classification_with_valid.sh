@@ -31,7 +31,7 @@ configs=(
     "rsna_saggital_mil_nfn_crop_x05_y05_v2_with_valid"
 )
 # folds=(0 1 2 3 4)
-folds=(0)
+folds=(1)
 
 # 遍歷配置和摺疊數進行訓練與預測
 for config in "${configs[@]}"
