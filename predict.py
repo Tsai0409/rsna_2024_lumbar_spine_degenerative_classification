@@ -150,9 +150,10 @@ if __name__ == "__main__":
         print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
 
     # slice estimation ->
-    # class rsna_sagittal_level_cl_spinal_v1、class rsna_sagittal_level_cl_nfn_v1 -> self.predict_test = True
-    # class rsna_sagittal_cl -> self.predict_test = False
-    # axial, sagittal classification -> self.predict_test = False
+        # class rsna_sagittal_level_cl_spinal_v1、class rsna_sagittal_level_cl_nfn_v1 -> self.predict_test = True
+        # class rsna_sagittal_cl -> self.predict_test = False
+    # axial, sagittal classification ->
+        # self.predict_test = False
     if cfg.predict_test:
         test, test_loader = prepare_loader(cfg, split='test')  # 只有一個 fold 的 (DataFrame, DataLoader)
         preds = predict(cfg, test_loader)  # test_loader(images, labels)
