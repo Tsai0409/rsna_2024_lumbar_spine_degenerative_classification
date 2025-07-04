@@ -56,7 +56,8 @@ for fold, (train_index, val_index) in enumerate(mskf.split(one_hot_labels, one_h
 
 # 合併回來
 final_label_df = pd.concat([train_df, holdout_df])
-final_label_df.to_csv('train_with_fold_holdout.csv', index=False)
+final_label_df['fold'] = final_label_df['fold'].astype(int)
+final_label_df.to_csv('train_with_fold.csv', index=False)  # 只有 study_id 對應的 fold
 
 # =========================
 # 輸出
@@ -64,7 +65,13 @@ final_label_df.to_csv('train_with_fold_holdout.csv', index=False)
 train = pdf.merge(final_label_df, on='study_id').merge(df, on=['study_id', 'series_id'])
 train['fold'] = train['fold'].astype(int)
 
-train.to_csv('train_with_fold.csv', index=False)
+train.to_csv('train_with_fold_hold.csv', index=False)  # 原始 train_with_fold 的形式，加上 fold=-1 
+
+# 產生只有 fold 0~4 的 train_with_fold_holdout.csv
+train_wo_holdout = train[train['fold'] != -1].copy()
+train_wo_holdout.to_csv('train_with_fold_holdout.csv', index=False)  # # 原始 train_with_fold 的形式，只保留 fold0-4
+
+print("\n✅ 已輸出 train_with_fold_holdout.csv，只包含 fold 0~4 資料。")
 
 # 另外存一個 holdout 名單
 holdout_df[['study_id']].drop_duplicates().to_csv('holdout_test_study_ids.csv', index=False)
