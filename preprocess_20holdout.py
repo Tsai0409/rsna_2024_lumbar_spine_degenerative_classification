@@ -3,16 +3,22 @@ from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+# kaggle input
+DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classification"
+
+# 設定環境變數
+WORKING_DIR="/kaggle/working/duplicate"
+
 # 讀 sagittal + axial
-sa = pd.read_csv('sagittal_df.csv')
-ax = pd.read_csv('axial_df.csv')
+sa = pd.read_csv(f'{WORKING_DIR}/dcm_to_png_3/sagittal_df.csv')
+ax = pd.read_csv(f'{WORKING_DIR}/dcm_to_png_3/axial_df.csv')
 del ax['z']
 pdf = pd.concat([sa, ax])
 
 # 讀標籤
-label_df = pd.read_csv(f'{DATA_KAGGLE_DIR}/{train_test}.csv')
-df = pd.read_csv(f'{DATA_KAGGLE_DIR}/{train_test}_series_descriptions.csv')
-cood = pd.read_csv(f'{DATA_KAGGLE_DIR}/{train_test}_label_coordinates.csv')
+label_df = pd.read_csv(f'{DATA_KAGGLE_DIR}/train.csv')
+df = pd.read_csv(f'{DATA_KAGGLE_DIR}/train_series_descriptions.csv')
+cood = pd.read_csv(f'{DATA_KAGGLE_DIR}/train_label_coordinates.csv')
 
 # 先挑出標籤欄位
 label_features = []
