@@ -12,7 +12,8 @@ DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classificat
 WORKING_DIR = "/kaggle/working/duplicate"
 
 # train = pd.read_csv('input/train_with_fold.csv')
-train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+# train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+train = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv')
 train = train[train.series_description_y=='Axial T2']
 train['instance_number'] = train.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 
