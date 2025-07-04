@@ -69,3 +69,16 @@ train.to_csv('train_with_fold.csv', index=False)
 holdout_df[['study_id']].drop_duplicates().to_csv('holdout_test_study_ids.csv', index=False)
 
 print("✅ 完成，train_with_fold.csv 中 fold=-1 即為 holdout。")
+
+print("\n✅ 各 fold 資料量統計：")
+print(train['fold'].value_counts().sort_index())
+
+print("\n✅ 各 fold 對應的唯一 study_id 數量：")
+print(train.groupby("fold")["study_id"].nunique().sort_index())
+
+studyid_counts = train.groupby("fold")["study_id"].nunique().sort_index()
+total_studies = studyid_counts.sum()
+print("\n✅ 各 fold 對應的唯一 study_id 數量 & 百分比：")
+for fold, count in studyid_counts.items():
+    percent = (count / total_studies) * 100
+    print(f"  fold {fold:>2}: {count} studies ({percent:.2f}%)")
