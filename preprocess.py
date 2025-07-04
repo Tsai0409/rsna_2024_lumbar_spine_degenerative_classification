@@ -27,7 +27,7 @@ for c in list(label_df):
     if c == 'study_id':
         continue
     if len(label_df[label_df[c]=='Severe']) < 30:
-        label_features.append(c)  # 之後做 stratified split
+        label_features.append(c)  # 之後做 stratified split ->  K-Fold 時盡量把少數 Severe 平均分配到各 fold
 
 one_hot_labels = label_df[label_features].fillna('Normal/Mild').values
 mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)  # 建立一個多標籤分層交叉驗證 (MultilabelStratifiedKFold) 的對象，將資料分成 5 折，並使用隨機打亂資料（以 random_state=2021 保證結果可重現）
