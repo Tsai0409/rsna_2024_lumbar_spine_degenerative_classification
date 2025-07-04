@@ -56,6 +56,7 @@ for fold, (train_index, val_index) in enumerate(mskf.split(one_hot_labels, one_h
 
 # 合併回來
 final_label_df = pd.concat([train_df, holdout_df])
+final_label_df.to_csv('train_with_fold_holdout.csv', index=False)
 
 # =========================
 # 輸出
