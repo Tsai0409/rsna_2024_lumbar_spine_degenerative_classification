@@ -10,8 +10,8 @@ DATA_KAGGLE_DIR = "/kaggle/input/rsna-2024-lumbar-spine-degenerative-classificat
 WORKING_DIR="/kaggle/working/duplicate"
 
 # 讀 sagittal + axial
-sa = pd.read_csv(f'{WORKING_DIR}/dcm_to_png_3/sagittal_df.csv')
-ax = pd.read_csv(f'{WORKING_DIR}/dcm_to_png_3/axial_df.csv')
+sa = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
+ax = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/axial_df.csv')
 del ax['z']
 pdf = pd.concat([sa, ax])
 
