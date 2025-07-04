@@ -16,11 +16,11 @@ del ax['z']
 pdf = pd.concat([sa, ax])
 
 # label_df = pd.read_csv('input/train.csv')
-label_df = pd.read_csv(f'{DATA_KAGGLE_DIR}/{train_test}.csv')
+label_df = pd.read_csv(f'{DATA_KAGGLE_DIR}/train.csv')
 # df = pd.read_csv('input/train_series_descriptions.csv')
-df = pd.read_csv(f'{DATA_KAGGLE_DIR}/{train_test}_series_descriptions.csv')
+df = pd.read_csv(f'{DATA_KAGGLE_DIR}/train_series_descriptions.csv')
 # cood = pd.read_csv('input/train_label_coordinates.csv')
-cood = pd.read_csv(f'{DATA_KAGGLE_DIR}/{train_test}_label_coordinates.csv')
+cood = pd.read_csv(f'{DATA_KAGGLE_DIR}/train_label_coordinates.csv')
 
 label_features = []
 for c in list(label_df):
