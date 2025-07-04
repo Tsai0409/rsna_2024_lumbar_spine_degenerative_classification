@@ -346,7 +346,7 @@ for left_right in ['left', 'right']:
             idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Moderate', f'{col}_moderate'] = 1
             idf.loc[idf[col+'_'+level.replace('/', '_').lower()]=='Severe', f'{col}_severe'] = 1
         dfs.append(idf)
-    df = pd.concat(dfs)    
+    df = pd.concat(dfs)
     # p = f'input/sagittal_{left_right}_ss_range2_rolling5.csv'
     # 1. 自動擷取 label 欄位（使用 _normal/_moderate/_severe 結尾的欄位）
     label_cols = [col for col in df.columns if any(suffix in col for suffix in ['_normal', '_moderate', '_severe'])]
