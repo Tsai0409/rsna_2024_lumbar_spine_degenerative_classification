@@ -34,6 +34,3 @@ train = pdf.merge(label_df, on='study_id').merge(df, on=['study_id', 'series_id'
 train['fold'] = train['fold'].astype(int)
 # train.to_csv('input/train_with_fold.csv', index=False)
 train.to_csv('train_with_fold.csv', index=False)
-
-print("label_features = ", label_features)
-print('preprocess.py finish')
