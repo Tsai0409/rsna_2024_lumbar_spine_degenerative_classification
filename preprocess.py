@@ -43,12 +43,12 @@ train.to_csv('train_with_fold.csv', index=False)
 
 print("label_features = ", label_features)
 
-print("✅ stratified 會使用的 label_features 以及 Severe 樣本數：")
+print("\n✅ stratified 會使用的 label_features 以及 Severe 樣本數：")
 for c in label_features:
     severe_count = (label_df[c] == 'Severe').sum()
     print(f" - {c}: Severe 數量 = {severe_count}")
 
-print("✅ 所有標籤 Severe 樣本數統計：")
+print("\n✅ 所有標籤 Severe 樣本數統計：")
 for c in label_df.columns:
     if c == "study_id":
         continue
