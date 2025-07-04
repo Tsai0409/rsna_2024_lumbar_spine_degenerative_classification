@@ -26,7 +26,7 @@ folds=(0) # 現在只要執行 fold 0.1
 # if ! eval $cmd; then
 #     echo "Error: Preprocessing failed."
 #     exit 1
-# fi
+# fi 
 
 # 遍歷配置和摺疊數進行訓練與預測
 for config in "${configs[@]}"
