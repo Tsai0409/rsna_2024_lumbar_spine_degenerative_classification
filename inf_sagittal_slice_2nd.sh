@@ -11,7 +11,7 @@ PREDICT_SCRIPT="$WORKING_DIR/predict.py"
 # 配置名稱和摺疊數
 configs=("rsna_sagittal_cl")
 # folds=(0 1 2 3 4)
-folds=(1)
+folds=(0)
 
 # 確保需要的腳本存在
 if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT || ! -f $PREDICT_SCRIPT ]]; then
@@ -20,12 +20,12 @@ if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT || ! -f $PREDICT_SCRIPT ]]; 
 fi
 
 # 執行預處理
-cmd="python $PREPROCESS_SCRIPT"
-echo "Executing: $cmd"
-if ! eval $cmd; then
-    echo "Error: Preprocessing failed."
-    exit 1
-fi
+# cmd="python $PREPROCESS_SCRIPT"
+# echo "Executing: $cmd"
+# if ! eval $cmd; then
+#     echo "Error: Preprocessing failed."
+#     exit 1
+# fi
 
 # 遍歷配置和摺疊數進行訓練與預測
 for config in "${configs[@]}"
@@ -41,12 +41,12 @@ do
         fi
 
         # 執行預測腳本
-        infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
-        echo "Executing: $infcmd"
-        if ! eval $infcmd; then
-            echo "Error: Prediction failed for config $config fold $fold."
-            continue  # 跳過失敗的配置
-        fi
+        # infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
+        # echo "Executing: $infcmd"
+        # if ! eval $infcmd; then
+        #     echo "Error: Prediction failed for config $config fold $fold."
+        #     continue  # 跳過失敗的配置
+        # fi
 
         echo "----------------------------------------"
     done
