@@ -64,7 +64,7 @@ df['class_id'] = label_encoder.fit_transform(df[col])  # 將 class_name 自動�
 df = df.sort_values(['series_id', 'class_id'])  # 以 'series_id', 'class_id' 作為主要排序
 df = df[df.series_description_y == "Sagittal T2/STIR"]  # NFN
 # df.to_csv('input/train_for_yolo_10level_v1.csv', index=False)
-df.to_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_for_yolo_10level_v1.csv', index=False)
+df.to_csv('train_for_yolo_10level_v1.csv', index=False)
 
 targets = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal', 'l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']
 targets = [f'pred_{c}' for c in targets]  # pred_l1_spinal (沒有做 sigmoid)
@@ -78,7 +78,7 @@ oof['pred_spinal'] = oof[[c for c in pred_cols if 'spinal' in c]].mean(1)  # 用
 oof['pred_right_neural'] = oof[[c for c in pred_cols if 'right_neural' in c]].mean(1)
 oof['pred_left_neural'] = oof[[c for c in pred_cols if 'left_neural' in c]].mean(1)
 # oof.to_csv('results/rsna_sagittal_cl/oof.csv', index=False)
-oof.to_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/oof.csv', index=False)
+oof.to_csv('oof.csv', index=False)
 print('preprocess_for_sagittal_yolo.py finish')
 
 # train_for_yolo_10level_v1.csv 找出 bounding box 的位置
