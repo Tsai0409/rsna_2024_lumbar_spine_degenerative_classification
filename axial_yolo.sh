@@ -22,12 +22,12 @@ if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT ]]; then
 fi
 
 # 執行預處理
-cmd="python $PREPROCESS_SCRIPT"
-echo "Executing: $cmd"
-if ! eval $cmd; then
-    echo "Error: Preprocessing failed."
-    exit 1
-fi
+# cmd="python $PREPROCESS_SCRIPT"
+# echo "Executing: $cmd"
+# if ! eval $cmd; then
+#     echo "Error: Preprocessing failed."
+#     exit 1
+# fi
 
 # 遍歷配置和摺疊數進行訓練
 for config in "${configs[@]}"; do
