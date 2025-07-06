@@ -15,7 +15,8 @@ def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
 # df = pd.read_csv('input/train_with_fold.csv')
-df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+# df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv')
 df['instance_number'] = df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
 dfs = []
 for id, idf in df.groupby('series_id'):
