@@ -264,7 +264,7 @@ class SagittalMILDataset(Dataset):
         if a[1]<0:
             a = (a[0], 0)
         if b[1]<0:
-            b = (b[0], 0) 
+            b = (b[0], 0)
 
         # box_crop = True -> sagittal classification
         if self.cfg.box_crop:
