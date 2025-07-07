@@ -50,7 +50,8 @@ def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包�
         "url": "https://kaggle.com",
         "date_created": "2023-04-10T15:01:26+00:00"
     }
-    annotations_json["info"].append(info)
+    # annotations_json["info"].append(info)
+    annotations_json["info"] = info
 
     lic = {
             "id": 1,
