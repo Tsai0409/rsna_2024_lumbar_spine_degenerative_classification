@@ -194,7 +194,8 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
         self.epochs = 15
         self.box_crop = None
         # self.test_df = pd.read_csv('input/sagittal_df.csv')
-        self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
+        # self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
+        self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')
         self.predict_test = True
 
 class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh

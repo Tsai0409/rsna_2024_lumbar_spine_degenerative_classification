@@ -97,7 +97,7 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         
         # self.test_df_path = 'input/train_with_fold.csv'
         # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description_y=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
@@ -139,7 +139,7 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         
         # self.test_df_path = 'input/train_with_fold.csv'
         # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description_y=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
