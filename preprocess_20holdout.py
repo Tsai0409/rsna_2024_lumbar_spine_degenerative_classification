@@ -73,6 +73,14 @@ train_wo_holdout.to_csv('train_with_fold_holdout.csv', index=False)  # # 原始 
 
 print("\n✅ 已輸出 train_with_fold_holdout.csv，只包含 fold 0~4 資料。")
 
+
+# 只保留 fold=-1 做成一份測試清單
+train_holdout_only = train[train['fold'] == -1].copy()
+train_holdout_only.to_csv('train_with_fold_holdout_test.csv', index=False)
+
+print("✅ train_with_fold_holdout_test.csv 已經產生，包含 fold=-1 的資料。")
+
+
 # 另外存一個 holdout 名單
 holdout_df[['study_id']].drop_duplicates().to_csv('holdout_test_study_ids.csv', index=False)
 
