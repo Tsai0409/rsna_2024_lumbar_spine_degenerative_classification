@@ -1,5 +1,5 @@
 # preprocess_for_sagittal_stage2.py
-# !python {Target_path}/preprocess_for_sagittal_stage2.py --configs rsna_sagittal_level_cl_spinal_v1 rsna_sagittal_level_cl_nfn_v1 --folds 0
+# !python {Target_path}/preprocess_for_sagittal_stage2.py
 import pandas as pd
 import numpy as np
 
@@ -46,7 +46,7 @@ for fold in range(1):
     df.to_csv('df.csv', index=False)
     # fold_df = pd.read_csv('input/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]
     # fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]  # 篩選 DataFrame 只保留 fold 和 study_id 這兩個欄位，丟棄其他欄位
-    fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv').drop_duplicates('study_id')[['fold', 'study_id']]
+    fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv').drop_duplicates('study_id')[['fold', 'study_id']]
     # fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv', low_memory=False).drop_duplicates('study_id')[['fold', 'study_id']]
     fold_df.to_csv('fold_df.csv', index=False)
 
