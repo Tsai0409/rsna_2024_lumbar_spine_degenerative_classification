@@ -109,6 +109,6 @@ for fold in range(1):
     df['fold'] = df['fold'].astype(int)
 
     # 5. 輸出 CSV
-    df.to_csv(f'train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
+    df.to_csv(f'train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold0.csv', index=False)
 
 print('preprocess_for_sagittal_stage2.py finish')
