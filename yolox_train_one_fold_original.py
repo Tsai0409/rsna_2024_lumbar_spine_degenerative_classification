@@ -112,6 +112,8 @@ print(args)
 fold = args.fold
 config = args.config
 cfg = eval(args.config)()
+cfg.make_labels = args.make_labels
+
 # cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path
 # cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
 cfg.train_df.path = cfg.train_df.path
