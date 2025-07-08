@@ -44,6 +44,6 @@ for fold in range(1):
     # fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv').drop_duplicates('study_id')[['fold', 'study_id']]
     fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv', low_memory=False).drop_duplicates('study_id')[['fold', 'study_id']]
     # df.merge(fold_df, on='study_id').to_csv(f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
-    df.merge(fold_df, on='study_id').to_csv(f'{WORKING_DIR}/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)  # 這個產生的用意是什麼？
+    df.merge(fold_df, on='study_id').to_csv('train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)  # 這個產生的用意是什麼？
     
 print('preprocess_for_sagittal_stage2.py finish')
