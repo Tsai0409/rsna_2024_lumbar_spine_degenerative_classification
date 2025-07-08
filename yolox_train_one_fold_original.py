@@ -24,8 +24,21 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
+# def save_annot_json(json_annotation, filename):
+#     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
+
 def save_annot_json(json_annotation, filename):
+    if "info" not in json_annotation:
+        json_annotation["info"] = {
+            "year": "2025",
+            "version": "1",
+            "description": "Default description",
+            "contributor": "auto-check",
+            "url": "https://kaggle.com",
+            "date_created": "2025-07-08T00:00:00+00:00"
+        }
     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
+
 
 annotion_id = 0
 image_id_n = 0
@@ -150,8 +163,35 @@ val = cfg.train_df[cfg.train_df.fold == fold]
 
 print('len(train) / len(val):', len(tr), len(val))
 train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')
+
 train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'
 valid_json_filename = f'valid_{train_df_filename}_fold{fold}_len{len(val)}.json'
+
+# 組合 JSON 檔案的路徑
+train_json_path = f"{cfg.absolute_path}/input/annotations/{train_json_filename}"
+valid_json_path = f"{cfg.absolute_path}/input/annotations/{valid_json_filename}"
+
+# 檢查 JSON 是否正確
+import os
+
+def check_json_validity(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"❌ File does not exist: {path}")
+    with open(path) as f:
+        js = json.load(f)
+    assert "info" in js, f"❌ Missing 'info' in {path}"
+    assert "categories" in js and isinstance(js["categories"], list), f"❌ Invalid 'categories' in {path}"
+    assert "annotations" in js and isinstance(js["annotations"], list), f"❌ Invalid 'annotations' in {path}"
+
+
+print("🧐 Verifying COCO JSON format before training...")
+
+check_json_validity(train_json_path)
+print(f"✅ train JSON valid: {train_json_path}")
+
+check_json_validity(valid_json_path)
+print(f"✅ valid JSON valid: {valid_json_path}")
+
 
 if not cfg.inference_only:
     if os.path.exists(f"{cfg.absolute_path}/input/annotations/{train_json_filename}") & os.path.exists(f"{cfg.absolute_path}/input/annotations/{valid_json_filename}") & (not cfg.update_json):
