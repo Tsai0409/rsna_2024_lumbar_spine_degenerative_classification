@@ -36,7 +36,8 @@ folds=(0)
 # 遍歷配置和摺疊數進行訓練
 for config in "${configs[@]}"; do
     for fold in "${folds[@]}"; do
-        cmd="python $TRAIN_SCRIPT -c $config -f $fold"
+        # cmd="python $TRAIN_SCRIPT -c $config -f $fold"
+        cmd="python $TRAIN_SCRIPT -c $config -f $fold --make_labels"
         echo "Executing: $cmd"
         if ! eval $cmd; then
             echo "Error: Training failed for config $config fold $fold."
