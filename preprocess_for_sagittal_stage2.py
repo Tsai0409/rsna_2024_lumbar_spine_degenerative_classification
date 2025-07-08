@@ -105,7 +105,10 @@ for fold in range(1):
     # 4. 把 fold merge 回你原本的 df
     df = df.drop(columns=[c for c in df.columns if c.startswith('fold')], errors='ignore')  # 移除 fold_x/fold_y
 
-    df = df.merge(label_df[['study_id', 'fold']], on='study_id', how='left')
+    # df = df.merge(label_df[['study_id', 'fold']], on='study_id', how='left')
+    label_df_unique = label_df.drop_duplicates('study_id')  # 保證不會多對多
+    df = df.merge(label_df_unique[['study_id', 'fold']], on='study_id', how='left')
+
     df['fold'] = df['fold'].astype(int)
 
     # 5. 輸出 CSV
