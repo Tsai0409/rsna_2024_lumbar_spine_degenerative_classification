@@ -51,6 +51,64 @@ for fold in range(1):
     # fold_df.to_csv('fold_df.csv', index=False)
 
     # df.merge(fold_df, on='study_id').to_csv(f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
-    df.merge(fold_df, on='study_id').to_csv(f'train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)  # 這個產生的用意是什麼？
-    
+    # df.merge(fold_df, on='study_id')  # .to_csv(f'train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)  # 這個產生的用意是什麼？
+    label_df = df.merge(fold_df, on='study_id')
+
+
+    from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
+    # 假設 df 是你 merge 完的資料（已經有 study_id），而 label_df 是標註檔
+
+    # 1. 選出標籤欄位中 "Severe" 太少的
+    label_features = [
+        # Spinal canal stenosis
+        'spinal_canal_stenosis_l1_l2',
+        'spinal_canal_stenosis_l2_l3',
+        'spinal_canal_stenosis_l3_l4',
+        'spinal_canal_stenosis_l4_l5',
+        'spinal_canal_stenosis_l5_s1',
+
+        # Left neural foraminal narrowing
+        'left_neural_foraminal_narrowing_l1_l2',
+        'left_neural_foraminal_narrowing_l2_l3',
+        'left_neural_foraminal_narrowing_l3_l4',
+        'left_neural_foraminal_narrowing_l4_l5',
+        'left_neural_foraminal_narrowing_l5_s1',
+
+        # Right neural foraminal narrowing
+        'right_neural_foraminal_narrowing_l1_l2',
+        'right_neural_foraminal_narrowing_l2_l3',
+        'right_neural_foraminal_narrowing_l3_l4',
+        'right_neural_foraminal_narrowing_l4_l5',
+        'right_neural_foraminal_narrowing_l5_s1',
+    ]
+
+    # 建立一個 set 來避免重複
+    label_features_set = set(label_features)
+
+    # 根據條件補充其他欄位
+    for c in list(label_df):
+        if c == 'study_id' or c in label_features_set:
+            continue
+        if (label_df[c] == 'Severe').sum() < 30:
+            label_features.append(c)
+            label_features_set.add(c)  # 確保後續不會重複加
+
+    # 2. 對應欄位做 One-Hot（缺值補 Normal/Mild）
+    one_hot_labels = label_df[label_features].fillna('Normal/Mild').values
+
+    # 3. 建立 fold 列
+    label_df['fold'] = -1
+    mskf = MultilabelStratifiedKFold(n_splits=5, shuffle=True, random_state=2021)
+    for fold, (train_idx, val_idx) in enumerate(mskf.split(one_hot_labels, one_hot_labels)):
+        label_df.loc[val_idx, 'fold'] = fold
+
+    # 4. 把 fold merge 回你原本的 df
+    df = df.drop(columns=[c for c in df.columns if c.startswith('fold')], errors='ignore')  # 移除 fold_x/fold_y
+
+    df = df.merge(label_df[['study_id', 'fold']], on='study_id', how='left')
+    df['fold'] = df['fold'].astype(int)
+
+    # 5. 輸出 CSV
+    df.to_csv(f'train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv', index=False)
+
 print('preprocess_for_sagittal_stage2.py finish')
