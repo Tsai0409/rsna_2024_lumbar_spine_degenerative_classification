@@ -26,8 +26,31 @@ class NumpyEncoder(json.JSONEncoder):  # json.JSONEncoder 的自定義編碼器 
 
 # save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
 # filename = '/kaggle/working/duplicate/input/annotations/train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len9602.json'
-def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
-    json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)  # json.dump() 是 Python 的 json 模組中用來將 Python 物件寫入 JSON 檔案的函數；open(filename, 'w') 打開指定的檔案（這裡是 filename）以進行寫入模式
+# def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
+#     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)  # json.dump() 是 Python 的 json 模組中用來將 Python 物件寫入 JSON 檔案的函數；open(filename, 'w') 打開指定的檔案（這裡是 filename）以進行寫入模式
+
+def save_annot_json(json_annotation, filename):
+    # 補上 "info" 欄位如果缺失
+    if "info" not in json_annotation or not isinstance(json_annotation["info"], dict):
+        json_annotation["info"] = {
+            "year": "2025",
+            "version": "1",
+            "description": "Auto-filled COCO dataset info",
+            "contributor": "AutoGen",
+            "url": "",
+            "date_created": "2025-07-09T00:00:00+00:00"
+        }
+
+    # 補上 "licenses" 欄位如果缺失
+    if "licenses" not in json_annotation or not isinstance(json_annotation["licenses"], list):
+        json_annotation["licenses"] = [{
+            "id": 1,
+            "url": "",
+            "name": "Unknown"
+        }]
+
+    json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
+
 
 annotion_id = 0
 image_id_n = 0
