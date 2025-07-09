@@ -2,6 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore")
 import os
+import sys  # 我加
 import json
 import pandas as pd
 import numpy as np
@@ -24,28 +25,15 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
-# def save_annot_json(json_annotation, filename):
-#     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
-
 def save_annot_json(json_annotation, filename):
-    if "info" not in json_annotation:
-        json_annotation["info"] = {
-            "year": "2025",
-            "version": "1",
-            "description": "Default description",
-            "contributor": "auto-check",
-            "url": "https://kaggle.com",
-            "date_created": "2025-07-08T00:00:00+00:00"
-        }
     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
-
 
 annotion_id = 0
 image_id_n = 0
 def dataset2coco(df):
     global annotion_id
     global image_id_n
-    annotations_json = {
+    annotations_json = {  # 建立 annotations_json 字典
         "info": [],
         "licenses": [],
         "categories": categories,
@@ -55,7 +43,7 @@ def dataset2coco(df):
     info = {
         "year": "2023",
         "version": "1",
-        "description": f"{cfg.compe} dataset - COCO format",
+        "description": f"{cfg.compe} dataset - COCO format",  # cfg.compe = 'rsna_2024'
         "contributor": "yujiariyasu",
         "url": "https://kaggle.com",
         "date_created": "2023-04-10T15:01:26+00:00"
@@ -101,8 +89,11 @@ def dataset2coco(df):
 
 import argparse
 parser = argparse.ArgumentParser()
+# parser.add_argument("--config", '-c', type=str, default='Test', help="config name in configs.py")
 parser.add_argument("--config", '-c', type=str, default='Test', help="config name in yolo_configs.py")
+# parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in configs.py")
 parser.add_argument("--gpu", '-g', type=str, default='nochange', help="config name in yolo_configs.py")
+# parser.add_argument("--fold", type=int, default=0, help="fold num")
 parser.add_argument("--fold", '-f', type=int, default=0, help="fold num")
 parser.add_argument("--use_row", type=int, default=2, help="google spread sheet row")
 parser.add_argument("--make_labels", action='store_true', help="make_labels")
@@ -112,11 +103,11 @@ print(args)
 fold = args.fold
 config = args.config
 cfg = eval(args.config)()
-cfg.make_labels = args.make_labels
-
-# cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path
-# cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
+# absolute_path = /kaggle/working/duplicate
+print('absolute_path = '+cfg.absolute_path)
+# cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path  # train 照片路徑；ex:/kaggle/temp/axial_all_images/2767326159___223384___5.png
 cfg.train_df.path = cfg.train_df.path
+# cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
 cfg.test_df.path = cfg.test_df.path
 
 cfg.train_df.class_id = cfg.train_df.class_id.astype(int)
@@ -129,8 +120,8 @@ if 'y_min' not in list(cfg.train_df):
 if 'y_max' not in list(cfg.train_df):
     cfg.train_df['y_max'] = cfg.train_df['image_height'] * (cfg.train_df['y_center_scaled']+cfg.train_df['height_scaled']/2)
 
-# os.chdir('src/YOLOX')
 sys.path.append("/kaggle/working/duplicate/src/YOLOX")  # 我加
+# os.chdir('src/YOLOX')
 os.chdir('/kaggle/working/duplicate/src/YOLOX')
 
 print(f'\n----------------------- Config -----------------------')
@@ -142,7 +133,8 @@ for k, v in vars(cfg).items():
     config_str += f'{k}: {v}, '
 print(f'----------------------- Config -----------------------\n')
 
-
+# absolute_path = /kaggle/working/duplicate
+# configs = rsna_axial_all_images_left_yolox_x、rsna_axial_all_images_right_yolox_x
 config_path = f'configfile_{config}_fold{fold}.py'
 os.makedirs(f'{cfg.absolute_path}/results/{config}', exist_ok=True)
 
@@ -164,43 +156,19 @@ tr = cfg.train_df[cfg.train_df.fold != fold]
 val = cfg.train_df[cfg.train_df.fold == fold]
 
 print('len(train) / len(val):', len(tr), len(val))
-train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')
-
-train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'
+# self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
+train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')  # rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1
+train_json_filename = f'train_{train_df_filename}_fold{fold}_len{len(tr)}.json'  # train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len .json
 valid_json_filename = f'valid_{train_df_filename}_fold{fold}_len{len(val)}.json'
 
-# 組合 JSON 檔案的路徑
-train_json_path = f"{cfg.absolute_path}/input/annotations/{train_json_filename}"
-valid_json_path = f"{cfg.absolute_path}/input/annotations/{valid_json_filename}"
-
-# 檢查 JSON 是否正確
-import os
-
-def check_json_validity(path):
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"❌ File does not exist: {path}")
-    with open(path) as f:
-        js = json.load(f)
-    assert "info" in js, f"❌ Missing 'info' in {path}"
-    assert "categories" in js and isinstance(js["categories"], list), f"❌ Invalid 'categories' in {path}"
-    assert "annotations" in js and isinstance(js["annotations"], list), f"❌ Invalid 'annotations' in {path}"
-
-
-print("🧐 Verifying COCO JSON format before training...")
-
-check_json_validity(train_json_path)
-print(f"✅ train JSON valid: {train_json_path}")
-
-check_json_validity(valid_json_path)
-print(f"✅ valid JSON valid: {valid_json_path}")
-
-
+# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x 的 cfg.inference_only=False
+# class rsna_10classes_yolox_x 的 cfg.inference_only=True
 if not cfg.inference_only:
     if os.path.exists(f"{cfg.absolute_path}/input/annotations/{train_json_filename}") & os.path.exists(f"{cfg.absolute_path}/input/annotations/{valid_json_filename}") & (not cfg.update_json):
         print('make labels skip.')
     else:
         print('make labels start...')
-        train_annot_json = dataset2coco(tr)
+        train_annot_json = dataset2coco(tr)  # 會用到 cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path；可能有錯？
         valid_annot_json = dataset2coco(val)
         os.system(f'mkdir -p {cfg.absolute_path}/input/annotations/')
         save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
@@ -212,8 +180,6 @@ config_file_template = f'''
 # -*- coding:utf-8 -*-
 # Copyright (c) Megvii, Inc. and its affiliates.
 
-# import os
-
 import os
 import sys
 
@@ -223,9 +189,9 @@ os.chdir('/kaggle/working/duplicate/src/YOLOX')
 os.environ["PYTHONPATH"] = "/kaggle/working/duplicate/src/YOLOX:" + os.environ.get("PYTHONPATH", "")
 
 # 設定訓練命令 我加
-train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth'
+train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
 
-from yolox.exp import Exp as MyExp
+from yolox.exp import Exp as MyExp  # 用到 YOLOX/yolox
 
 class Exp(MyExp):
     def __init__(self):
@@ -251,7 +217,7 @@ class Exp(MyExp):
         self.max_epoch = {cfg.epochs}
         self.train_ann = "{cfg.absolute_path}/input/annotations/{train_json_filename}"
         self.val_ann = "{cfg.absolute_path}/input/annotations/{valid_json_filename}"
-        self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"
+        self.output_dir = "{cfg.absolute_path}/results/{config}/fold{fold}"  # absolute_path = /kaggle/working/duplicate
         self.input_size = {cfg.image_size}
         self.test_size = {cfg.image_size}
         self.no_aug_epochs = {cfg.no_aug_epochs} # 15
@@ -301,26 +267,27 @@ from pycocotools.coco import COCO
 from random import sample
 import importlib
 
+# class rsna_axial_all_images_left_yolox_x、class rsna_axial_all_images_right_yolox_x 的 cfg.inference_only=False
+# class rsna_10classes_yolox_x 的 cfg.inference_only=True
 if cfg.inference_only:
     print('inference_only.')
-else:
+else:  # here
     print('train start...')
     # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
     train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
 
-    if cfg.resume:
-        # train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
-        train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
-        print('using cfg.resume')
+    # class Baseline: cfg.resume = False
+    if cfg.resume:  # no here
+        train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
 
-    print('train_str:', train_str)
+    print('train_str:', train_str)  # train_str: python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth
     os.system(train_str)
 
 ### inference ###
 from torch.utils.data import Dataset, DataLoader
 from multiprocessing import cpu_count
 # sys.path.append('')
-sys.path.append(f'{cfg.absolute_path}/src/YOLOX')
+sys.path.append(f'{cfg.absolute_path}/src/YOLOX')  # /kaggle/working/duplicate/src/YOLOX
 
 from yolox.utils import postprocess
 from yolox.data.data_augment import ValTransform
