@@ -345,17 +345,29 @@ class Exp(MyExp):
 
     def after_epoch(self, epoch, ap50_95, ap50, summary_dict):
         # 每個 epoch 後呼叫：儲存 summary 成 json
+        import os, json
+        os.makedirs(self.output_dir, exist_ok=True)
         save_path = os.path.join(self.output_dir, f"epoch_{epoch}_summary.json")
-        import json
+
+        def default_encoder(obj):
+            import numpy as np
+            if isinstance(obj, (np.integer, np.int32, np.int64)):
+                return int(obj)
+            elif isinstance(obj, (np.floating, np.float32, np.float64)):
+                return float(obj)
+            elif isinstance(obj, (np.ndarray,)):
+                return obj.tolist()
+            return str(obj)
+
         with open(save_path, 'w') as f:
             json.dump({
                 "epoch": epoch,
                 "ap50_95": ap50_95,
                 "ap50": ap50,
                 "summary": summary_dict
-            }, f, indent=4)
-        print(f"✅ 已儲存 epoch summary JSON: {save_path}")
+            }, f, indent=4, default=default_encoder)
 
+        print(f"✅ 已儲存 epoch summary JSON: {save_path}")
 '''
 
 with open(config_path, 'w') as f:
