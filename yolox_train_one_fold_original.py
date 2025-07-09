@@ -342,6 +342,20 @@ class Exp(MyExp):
             self.scale = (0.1, 2)
             self.mosaic_scale = (0.8, 1.6)
             self.perspective = 0.0
+
+    def after_epoch(self, epoch, ap50_95, ap50, summary_dict):
+        # 每個 epoch 後呼叫：儲存 summary 成 json
+        save_path = os.path.join(self.output_dir, f"epoch_{epoch}_summary.json")
+        import json
+        with open(save_path, 'w') as f:
+            json.dump({
+                "epoch": epoch,
+                "ap50_95": ap50_95,
+                "ap50": ap50,
+                "summary": summary_dict
+            }, f, indent=4)
+        print(f"✅ 已儲存 epoch summary JSON: {save_path}")
+
 '''
 
 with open(config_path, 'w') as f:
