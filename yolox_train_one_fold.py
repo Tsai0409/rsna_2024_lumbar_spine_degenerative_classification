@@ -91,7 +91,7 @@ parser.add_argument("--config", '-c', type=str, default='Test',
                     help="config name in yolo_configs.py")  # here
 parser.add_argument("--gpu", '-g', type=str, default='nochange',
                     help="config name in yolo_configs.py")  # here
-parser.add_argument("--fold", type=int, default=0,
+parser.add_argument("--fold", '-f', type=int, default=0,
                     help="fold num")
 parser.add_argument("--use_row", type=int, default=2,
                     help="google spread sheet row")
