@@ -88,9 +88,9 @@ def dataset2coco(df):
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", '-c', type=str, default='Test',
-                    help="config name in configs.py")
+                    help="config name in yolo_configs.py")  # here
 parser.add_argument("--gpu", '-g', type=str, default='nochange',
-                    help="config name in configs.py")
+                    help="config name in yolo_configs.py")  # here
 parser.add_argument("--fold", type=int, default=0,
                     help="fold num")
 parser.add_argument("--use_row", type=int, default=2,
@@ -103,8 +103,10 @@ print(args)
 fold = args.fold
 config = args.config
 cfg = eval(args.config)()
-cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path
-cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
+# cfg.train_df.path = cfg.absolute_path + '/' + cfg.train_df.path
+# cfg.test_df.path = cfg.absolute_path + '/' + cfg.test_df.path
+cfg.train_df.path = cfg.train_df.path  # here
+cfg.test_df.path = cfg.test_df.path  # here
 
 cfg.train_df.class_id = cfg.train_df.class_id.astype(int)
 if 'x_min' not in list(cfg.train_df):
@@ -116,7 +118,9 @@ if 'y_min' not in list(cfg.train_df):
 if 'y_max' not in list(cfg.train_df):
     cfg.train_df['y_max'] = cfg.train_df['image_height'] * (cfg.train_df['y_center_scaled']+cfg.train_df['height_scaled']/2)
 
-os.chdir('src/YOLOX')
+# os.chdir('src/YOLOX')
+os.chdir('/kaggle/working/duplicate/src/YOLOX')  # here
+sys.path.append('/kaggle/working/duplicate/src/YOLOX')  # here
 
 print(f'\n----------------------- Config -----------------------')
 config_str = ''
@@ -171,6 +175,11 @@ config_file_template = f'''
 # Copyright (c) Megvii, Inc. and its affiliates.
 
 import os
+
+os.environ["PYTHONPATH"] = "/kaggle/working/duplicate/src/YOLOX:" + os.environ.get("PYTHONPATH", "")
+
+train_str = f'PYTHONPATH=/kaggle/working/duplicate/src/YOLOX python tools/train.py -f configfile_rsna_axial_all_images_left_yolox_x_fold0.py -d 1 -b 8 --fp16 -o -c /kaggle/input/pretrain-7/yolox_x.pth'
+
 
 from yolox.exp import Exp as MyExp
 
@@ -252,14 +261,14 @@ if cfg.inference_only:
     print('inference_only.')
 else:
     print('train start...')
-    train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'
-
+    train_str = f'python tools/train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.pretrained_path}'  # here
 
     if cfg.resume:
         train_str = f'python train.py -f {config_path} -d 1 -b {cfg.batch_size} --fp16 -o -c {cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth --resume --start_epoch {cfg.resume_start_epoch}'
 
     print('train_str:', train_str)
     os.system(train_str)
+
 
 ### inference ###
 from torch.utils.data import Dataset, DataLoader
