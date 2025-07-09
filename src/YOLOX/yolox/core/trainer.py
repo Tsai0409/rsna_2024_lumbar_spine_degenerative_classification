@@ -354,6 +354,15 @@ class Trainer:
         if self.save_history_ckpt:
             self.save_ckpt(f"epoch_{self.epoch + 1}", ap=ap50_95)
 
+        # ✅ 在每個 epoch 儲存 JSON summary（若 exp 中有定義 after_epoch）
+        if hasattr(self.exp, "after_epoch") and callable(getattr(self.exp, "after_epoch")):
+            self.exp.after_epoch(
+                self.epoch + 1,
+                ap50_95,
+                ap50,
+                summary
+            )
+    
     def save_ckpt(self, ckpt_name, update_best_ckpt=False, ap=None):
         if self.rank == 0:
             save_model = self.ema_model.ema if self.use_model_ema else self.model
