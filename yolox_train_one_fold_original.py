@@ -182,6 +182,41 @@ if len(val) == 0:
 print(f"✅ 資料正常！Train: {len(tr)} 筆, Val: {len(val)} 筆")
 print("🛡 資料檢查結束。\n")
 
+import cv2
+from tqdm import tqdm
+
+print("🖼 開始檢查圖片檔案是否存在與可讀取...")
+
+# 只檢查部分圖片（例如 100 張）避免太慢
+sample_paths = cfg.train_df['path'].dropna().unique()
+sample_paths = sample_paths[:100]  # 或用 random.sample 更隨機
+
+not_found = []
+not_readable = []
+
+for img_path in tqdm(sample_paths, desc="Checking images"):
+    if not os.path.exists(img_path):
+        not_found.append(img_path)
+        continue
+
+    img = cv2.imread(img_path)
+    if img is None:
+        not_readable.append(img_path)
+
+if not_found:
+    print(f"❌ 找不到圖片檔案數量：{len(not_found)}")
+    print("範例路徑：", not_found[:3])
+else:
+    print("✅ 所有測試圖片都存在於磁碟上")
+
+if not_readable:
+    print(f"❌ 有 {len(not_readable)} 張圖片 cv2.imread 讀取失敗（回傳 None）")
+    print("範例路徑：", not_readable[:3])
+else:
+    print("✅ 所有測試圖片 cv2.imread 讀取成功")
+
+print("🖼 圖片檢查結束。\n")
+
 
 print('len(train) / len(val):', len(tr), len(val))
 # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
