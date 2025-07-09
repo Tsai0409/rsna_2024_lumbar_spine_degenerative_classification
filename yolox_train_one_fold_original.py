@@ -347,7 +347,7 @@ class Exp(MyExp):
         # 每個 epoch 後呼叫：儲存 summary 成 json
         import os, json
         os.makedirs(self.output_dir, exist_ok=True)
-        save_path = os.path.join(self.output_dir, f"epoch_{epoch}_summary.json")
+        save_path = os.path.join(self.output_dir, f"epoch_{cfg.epochs}_summary.json")
 
         def default_encoder(obj):
             import numpy as np
