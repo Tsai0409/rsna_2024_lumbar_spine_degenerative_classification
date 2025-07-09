@@ -1,4 +1,3 @@
-# YOLOX/yolox/core/trainer.py
 #!/usr/bin/env python3
 # Copyright (c) Megvii, Inc. and its affiliates.
 
@@ -294,8 +293,7 @@ class Trainer:
 
             ckpt = torch.load(ckpt_file, map_location=self.device)
             # resume the model/optimizer state dict
-            # model.load_state_dict(ckpt["model"])
-            model.load_state_dict(ckpt["model"], strict=False)  # 我改
+            model.load_state_dict(ckpt["model"])
             self.optimizer.load_state_dict(ckpt["optimizer"])
             self.best_ap = ckpt.pop("best_ap", 0)
             # resume the training states variables
@@ -354,15 +352,6 @@ class Trainer:
         if self.save_history_ckpt:
             self.save_ckpt(f"epoch_{self.epoch + 1}", ap=ap50_95)
 
-        # ✅ 在每個 epoch 儲存 JSON summary（若 exp 中有定義 after_epoch）
-        if hasattr(self.exp, "after_epoch") and callable(getattr(self.exp, "after_epoch")):
-            self.exp.after_epoch(
-                self.epoch + 1,
-                ap50_95,
-                ap50,
-                summary
-            )
-    
     def save_ckpt(self, ckpt_name, update_best_ckpt=False, ap=None):
         if self.rank == 0:
             save_model = self.ema_model.ema if self.use_model_ema else self.model
