@@ -29,8 +29,8 @@ class NumpyEncoder(json.JSONEncoder):  # json.JSONEncoder 的自定義編碼器 
 # def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
 #     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)  # json.dump() 是 Python 的 json 模組中用來將 Python 物件寫入 JSON 檔案的函數；open(filename, 'w') 打開指定的檔案（這裡是 filename）以進行寫入模式
 
+
 def save_annot_json(json_annotation, filename):
-    # 補上 "info" 欄位如果缺失
     if "info" not in json_annotation or not isinstance(json_annotation["info"], dict):
         json_annotation["info"] = {
             "year": "2025",
@@ -41,7 +41,6 @@ def save_annot_json(json_annotation, filename):
             "date_created": "2025-07-09T00:00:00+00:00"
         }
 
-    # 補上 "licenses" 欄位如果缺失
     if "licenses" not in json_annotation or not isinstance(json_annotation["licenses"], list):
         json_annotation["licenses"] = [{
             "id": 1,
