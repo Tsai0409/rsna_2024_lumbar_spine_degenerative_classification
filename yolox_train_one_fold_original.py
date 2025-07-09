@@ -155,6 +155,34 @@ print('class_id_name_map:', class_id_name_map)
 tr = cfg.train_df[cfg.train_df.fold != fold]
 val = cfg.train_df[cfg.train_df.fold == fold]
 
+# ====== 資料檢查：訓練/驗證集是否正常 ======
+print("\n🛡 資料檢查開始...")
+
+required_columns = ['path', 'x_min', 'y_min', 'x_max', 'y_max', 'class_id']
+missing_cols = [col for col in required_columns if col not in cfg.train_df.columns]
+
+if len(cfg.train_df) == 0:
+    raise ValueError("❌ cfg.train_df 為空，請確認 CSV 是否正確讀入")
+
+if missing_cols:
+    raise ValueError(f"❌ 缺少必要欄位: {missing_cols}，請檢查 train_df 是否已經計算出 x_min/x_max 等欄位")
+
+if cfg.train_df[['x_min', 'y_min', 'x_max', 'y_max']].isnull().any().any():
+    raise ValueError("❌ 某些 bbox 欄位包含 NaN，可能是 scaled 座標轉換出錯")
+
+if (cfg.train_df['x_max'] <= cfg.train_df['x_min']).any() or (cfg.train_df['y_max'] <= cfg.train_df['y_min']).any():
+    raise ValueError("❌ 發現無效 bbox（x_max <= x_min 或 y_max <= y_min），請檢查標註格式")
+
+if len(tr) == 0:
+    raise ValueError("❌ 訓練資料筆數為 0，可能是 fold 設定錯誤")
+
+if len(val) == 0:
+    raise ValueError("❌ 驗證資料筆數為 0，請檢查 fold 是否切得太極端或資料太少")
+
+print(f"✅ 資料正常！Train: {len(tr)} 筆, Val: {len(val)} 筆")
+print("🛡 資料檢查結束。\n")
+
+
 print('len(train) / len(val):', len(tr), len(val))
 # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
 train_df_filename = args.config + '___' + cfg.train_df_path.split('/')[-1].replace('.csv', '')  # rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1
