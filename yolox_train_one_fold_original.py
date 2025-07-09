@@ -217,6 +217,23 @@ else:
 
 print("🖼 圖片檢查結束。\n")
 
+# ✅ 1. 檢查驗證集是否有標註資料
+# 檢查 val 是否真的有 bbox（確保 class_id 存在且 bbox 有意義）
+print("🔍 驗證資料 bbox 檢查...")
+print("val bbox count:", len(val))
+print("val 中不同 class 數量:", val['class_id'].nunique())
+print("val 中各 class 數量:")
+print(val['class_id'].value_counts())
+
+# 若要更詳細看是否有 bbox 無效
+invalid_bbox = val[(val['x_max'] <= val['x_min']) | (val['y_max'] <= val['y_min'])]
+print("❗ 無效 bbox 數量：", len(invalid_bbox))
+
+# ✅ 2. 檢查 cfg.predict_valid 是否為 True
+print("cfg.predict_valid =", cfg.predict_valid)
+
+# 
+
 
 print('len(train) / len(val):', len(tr), len(val))
 # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
@@ -289,6 +306,10 @@ class Exp(MyExp):
         self.categories = {categories}
         self.class_id_name_map = {class_id_name_map}
         ### need change ###
+
+        ### ✅ 新增這兩行 ###
+        self.save_history_ckpt = True
+        self.test_conf = 0.001
 
         ### fyi ###
         self.data_num_workers = {cfg.batch_size}
