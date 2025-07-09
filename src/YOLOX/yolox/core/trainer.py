@@ -177,7 +177,7 @@ class Trainer:
         )
         # Tensorboard and Wandb loggers
         if self.rank == 0:
-            if self.args.logger == "tensorboard":
+            if self.args.logger == "tensorboard":  # default
                 self.tblogger = SummaryWriter(os.path.join(self.file_name, "tensorboard"))
             elif self.args.logger == "wandb":
                 self.wandb_logger = WandbLogger.initialize_wandb_logger(
