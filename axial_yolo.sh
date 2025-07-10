@@ -8,27 +8,25 @@ PREPROCESS_SCRIPT="$WORKING_DIR/preprocess_for_axial_yolo.py"
 TRAIN_SCRIPT="$WORKING_DIR/yolox_train_one_fold.py"
 
 # 設定 YOLOX 路徑
-export PYTHONPATH=/kaggle/working/duplicate/src/YOLOX:$PYTHONPATH  # 新增
+export PYTHONPATH=/kaggle/working/duplicate/src/YOLOX:$PYTHONPATH  # 新增 
 
 # 配置名稱與摺疊數
-# configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
-configs=("rsna_axial_all_images_left_yolox_x")
-# folds=(0 1 2 3 4)
-folds=(0)
+configs=("rsna_axial_all_images_left_yolox_x" "rsna_axial_all_images_right_yolox_x")
+folds=(0 1 2 3 4)
 
 # 檢查所需的腳本是否存在
-# if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT ]]; then
-#     echo "Error: Missing required scripts in $WORKING_DIR"
-#     exit 1
-# fi
+if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT ]]; then
+    echo "Error: Missing required scripts in $WORKING_DIR"
+    exit 1
+fi
 
 # 執行預處理
-# cmd="python $PREPROCESS_SCRIPT"
-# echo "Executing: $cmd"
-# if ! eval $cmd; then
-#     echo "Error: Preprocessing failed."
-#     exit 1
-# fi
+cmd="python $PREPROCESS_SCRIPT"
+echo "Executing: $cmd"
+if ! eval $cmd; then
+    echo "Error: Preprocessing failed."
+    exit 1
+fi
 
 # 遍歷配置和摺疊數進行訓練
 for config in "${configs[@]}"; do

@@ -74,7 +74,7 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.fold = fold  # 我加
         self.compe = 'rsna_2024'
         self.update_json = False
-        self.no_aug_epochs = 15  # src/YOLOX/yolox/exp/yolox_base.py
+        self.no_aug_epochs = 15
         self.warmup_epochs = 5
         # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
         self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'
@@ -83,25 +83,23 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.predict_valid = True
         # self.train_df_path = 'input/train_axial_for_yolo_all_image_v1.csv'
         self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
-        # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/train_axial_for_yolo_all_image_v1.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df = self.train_df[self.train_df.condition == 'Left Subarticular Stenosis']
         self.train_df['class_id'] = 0
         self.train_df['class_name'] = 'left'
         self.predict_test = True
-        # self.epochs = 5
+        # self.epochs = 40
         self.epochs = 20
         val = self.train_df[self.train_df.fold==0]
         self.train_df['fold'] = -1
         self.train_df = pd.concat([self.train_df, val])
         
-        # self.test_df_path = 'input/train_with_fold.csv'
+#        self.test_df_path = 'input/train_with_fold.csv'
         self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
-        # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description_y=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
-        # ldf = pd.read_csv('input/axial_closest_df.csv')
+#        ldf = pd.read_csv('input/axial_closest_df.csv')
         ldf = pd.read_csv(f'{WORKING_DIR}/csv_train/axial_level_estimation_2/axial_closest_df.csv')
         ldf = ldf[ldf.closest==1]
         ldf = ldf[ldf.dis<3]
@@ -123,27 +121,24 @@ class rsna_axial_all_images_right_yolox_x(Baseline):
         self.batch_size = 8
         self.predict_valid = True
         # self.train_df_path = 'input/train_axial_for_yolo_all_image_v1.csv'
-        # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
-        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/train_axial_for_yolo_all_image_v1.csv'
+        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_axial_for_yolo_all_image_v1.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.train_df = self.train_df[self.train_df.condition != 'Left Subarticular Stenosis']
-        # self.train_df['class_id'] = 0
-        self.train_df['class_id'] = 1
+        self.train_df['class_id'] = 0
         self.train_df['class_name'] = 'right'
         self.predict_test = True
-        self.epochs = 40
-        # self.epochs = 20
+        # self.epochs = 40
+        self.epochs = 20
         val = self.train_df[self.train_df.fold==0]
         self.train_df['fold'] = -1
         self.train_df = pd.concat([self.train_df, val])
         
-        # self.test_df_path = 'input/train_with_fold.csv'
-        # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv'
+#        self.test_df_path = 'input/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.test_df = pd.read_csv(self.test_df_path)
         self.test_df = self.test_df[self.test_df.series_description_y=='Axial T2']
         self.test_df['instance_number'] = self.test_df.path.apply(lambda x: int(x.split('___')[-1].replace('.png', '')))
-        # ldf = pd.read_csv('input/axial_closest_df.csv')
+#        ldf = pd.read_csv('input/axial_closest_df.csv')
         ldf = pd.read_csv(f'{WORKING_DIR}/csv_train/axial_level_estimation_2/axial_closest_df.csv')
         ldf = ldf[ldf.closest==1]
         ldf = ldf[ldf.dis<3]
@@ -158,22 +153,17 @@ class rsna_10classes_yolox_x(Baseline):
         self.no_aug_epochs = 15
         self.warmup_epochs = 5
         # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
-        self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'  # -> 在什麼樣子的資料集做 pretrain？ -> COCO
+        self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'
         
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
-        # self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
-        # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_for_yolo_10level_v1.csv'  # 只有 Sagittal T2/STIR
-        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/train_for_yolo_10level_v1.csv'
-        # self.test_df_path = 'input/train_with_fold.csv'
-        # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv'
+        self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
+#        self.test_df_path = 'input/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.test_df = pd.read_csv(self.test_df_path)
-        # oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
-        # oof = pd.read_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/oof.csv')
-        oof = pd.read_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/oof.csv')
+        oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
         dfs = []
         for id, idf in oof.groupby('series_id'):
             idf = idf.sort_values(['x_pos', 'instance_number'])
@@ -182,7 +172,6 @@ class rsna_10classes_yolox_x(Baseline):
             dfs.append(ldf)
         self.test_df = pd.concat(dfs)
         self.predict_test = True
-        self.epochs = 40
-        # self.epochs = 20
-        # self.inference_only = True -> /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x/best_ckpt.pth 不會產生
-        self.inference_only = False 
+        # self.epochs = 40
+        self.epochs = 20
+        self.inference_only = True
