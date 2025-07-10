@@ -65,11 +65,13 @@ final_label_df.to_csv('train_with_fold.csv', index=False)  # 只有 study_id 對
 train = pdf.merge(final_label_df, on='study_id').merge(df, on=['study_id', 'series_id'])
 train['fold'] = train['fold'].astype(int)
 
-train.to_csv('train_with_fold_hold.csv', index=False)  # 原始 train_with_fold 的形式，加上 fold=-1 
+# train.to_csv('train_with_fold_hold.csv', index=False)  # 原始 train_with_fold 的形式，加上 fold=-1 
 
 # 產生只有 fold 0~4 的 train_with_fold_holdout.csv
 train_wo_holdout = train[train['fold'] != -1].copy()
 train_wo_holdout.to_csv('train_with_fold_holdout.csv', index=False)  # # 原始 train_with_fold 的形式，只保留 fold0-4
+
+train_wo_holdout[['study_id']].drop_duplicates().to_csv('train_with_fold_holdout_id.csv', index=False)
 
 print("\n✅ 已輸出 train_with_fold_holdout.csv，只包含 fold 0~4 資料。")
 
@@ -82,7 +84,7 @@ print("✅ train_with_fold_holdout_test.csv 已經產生，包含 fold=-1 的資
 
 
 # 另外存一個 holdout 名單
-holdout_df[['study_id']].drop_duplicates().to_csv('holdout_test_study_ids.csv', index=False)
+holdout_df[['study_id']].drop_duplicates().to_csv('train_with_fold_holdout_test_id.csv', index=False)
 
 print("✅ 完成，train_with_fold.csv 中 fold=-1 即為 holdout。")
 
