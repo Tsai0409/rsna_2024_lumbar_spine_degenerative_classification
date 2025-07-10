@@ -12,7 +12,7 @@ PREDICT_SCRIPT="$WORKING_DIR/predict.py"
 configs=("rsna_sagittal_level_cl_spinal_v1" "rsna_sagittal_level_cl_nfn_v1")
 # configs=("rsna_sagittal_level_cl_nfn_v1" "rsna_sagittal_level_cl_spinal_v1")
 # folds=(0 1 2 3 4)
-folds=(0) # 現在只要執行 fold 0.1
+folds=(1) # 現在只要執行 fold 0.1
 
 # 確保需要的腳本存在
 # if [[ ! -f $PREPROCESS_SCRIPT || ! -f $TRAIN_SCRIPT || ! -f $PREDICT_SCRIPT ]]; then

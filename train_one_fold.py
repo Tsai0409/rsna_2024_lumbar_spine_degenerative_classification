@@ -210,7 +210,7 @@ if __name__ == "__main__":
     # fold_0.ckpt 會存 epoch 5 的執行結果 (存最好的結果)
 
     # if args.fold == 3:
-    if args.fold == 0: # 現在只要執行 fold 0.1
+    if args.fold == 1: # 現在只要執行 fold 0.1
         cfg.train_df.to_csv(f'{OUTPUT_PATH}/train.csv', index=False)  # 把當前使用的檔案存下來
     os.system(f'rm -f {OUTPUT_PATH}/fold_{args.fold}-v*.ckpt')  # 刪除檔名像 fold_0-v1.ckpt、fold_0-v2.ckpt 的檔案
 
