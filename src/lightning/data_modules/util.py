@@ -24,10 +24,6 @@ def get_val(cfg):
     val = cfg.valid_df  # ✅ 整份 valid_df 都用
     print(f"using entire valid_df as val")
 
-    # ➕ 計算並顯示不同的 study_id 數量
-    num_studies = val['study_id'].nunique()
-    print(f"Number of unique study_id in val: {num_studies}")
-
     return val
 
 

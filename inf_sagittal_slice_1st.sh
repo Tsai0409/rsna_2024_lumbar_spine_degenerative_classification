@@ -40,6 +40,7 @@ do
             echo "Error: Training failed for config $config fold $fold."
             continue  # 跳過失敗的配置
         fi
+        
 
         # 執行預測腳本
         # infcmd="python $PREDICT_SCRIPT -c $config -f $fold"
