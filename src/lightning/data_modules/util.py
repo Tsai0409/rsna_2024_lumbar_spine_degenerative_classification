@@ -11,20 +11,20 @@ def pickle_load(path):
         return data
 
  # cfg.valid_df = None
-# def get_val(cfg):
-#     if cfg.valid_df is None: 
-#         val = cfg.train_df[cfg.train_df.fold == cfg.fold]  # 假設現在 fold=0 -> fold0 就是驗證資料
-#         print(f"using train_df as val")
-#     else:
-#         val = cfg.valid_df[cfg.valid_df.fold == cfg.fold]
-#         print(f"using valid_df as val")
-#     return val
-
 def get_val(cfg):
-    val = cfg.valid_df  # ✅ 整份 valid_df 都用
-    print(f"using entire valid_df as val")
-
+    if cfg.valid_df is None: 
+        val = cfg.train_df[cfg.train_df.fold == cfg.fold]  # 假設現在 fold=0 -> fold0 就是驗證資料
+        print(f"using train_df as val")
+    else:
+        val = cfg.valid_df[cfg.valid_df.fold == cfg.fold]
+        print(f"using valid_df as val")
     return val
+
+# def get_val(cfg):
+#     val = cfg.valid_df  # ✅ 整份 valid_df 都用
+#     print(f"using entire valid_df as val")
+
+#     return val
 
 
 def pad_to_square(a):
