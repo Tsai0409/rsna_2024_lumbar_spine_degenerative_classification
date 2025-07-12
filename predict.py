@@ -176,8 +176,10 @@ if __name__ == "__main__":
                 test[pred_cols] = preds[preds_n]
                 preds_n += 1
 
-        test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
-        print(f'test save to {OUTPUT_PATH}/test_fold{args.fold}.csv')
+        # test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
+        test.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
+        # print(f'test save to {OUTPUT_PATH}/test_fold{args.fold}.csv')
+        print(f'train save to {OUTPUT_PATH}/train_fold{args.fold}.csv')
 
 print('predict.py finish')
 
