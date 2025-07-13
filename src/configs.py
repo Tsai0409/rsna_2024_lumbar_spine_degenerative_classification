@@ -167,6 +167,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
         # self.test_df = pd.read_csv('input/sagittal_df.csv')
         # self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')  
         self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')  # -> 只有在 predict.py 中被使用到
+        self.train_2nd_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv')
         self.predict_test = True
         self.predict_train = True
 
@@ -198,6 +199,7 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
         # self.test_df = pd.read_csv('input/sagittal_df.csv')
         # self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
         self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')
+        self.train_2nd_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv')
         self.predict_test = True
         self.predict_train = True
 

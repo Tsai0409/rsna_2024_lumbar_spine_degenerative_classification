@@ -33,7 +33,8 @@ def get_val(cfg):
 # vaild test 時使用
 def prepare_classification_loader(cfg, split='val'):
     if split == 'train':
-        df = cfg.train_df[cfg.train_df.fold != cfg.fold]
+        # df = cfg.train_df[cfg.train_df.fold != cfg.fold]
+        df = cfg.train_2nd_df
     elif split == 'val':  # here
         df = get_val(cfg)  # return Dataframe (above)
     elif split == 'test':
