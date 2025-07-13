@@ -25,7 +25,7 @@ for fold in range(1):
     test[pred_cols] = np.mean(preds, 0)  # 將 test_fold0、test_fold1 各個欄位取平均；對所有 config 的預測結果按 axis=0 求均值，這表示對同一筆資料，不同模型（或不同設定）的預測結果取平均
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)  # 轉換為 0-1 的數字(做正規化)
     spinal = test.copy()
-    # spinal.to_csv('spinal.csv', index=False)
+    spinal.to_csv('spinal.csv', index=False)
 
     
     targets = ['l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']
@@ -45,7 +45,7 @@ for fold in range(1):
     test[pred_cols] = np.mean(preds, 0)
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)
     nfn = test.copy()
-    # nfn.to_csv('nfn.csv', index=False)
+    nfn.to_csv('nfn.csv', index=False)
 
     df = spinal.merge(nfn[['path']+pred_cols], on='path')
     df.to_csv('df.csv', index=False)
