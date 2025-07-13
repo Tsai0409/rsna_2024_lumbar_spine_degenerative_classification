@@ -20,7 +20,7 @@ for fold in range(1):
         # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
         # test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/test_fold{fold}.csv')  # /kaggle/working/duplicate/ckpt/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv (spinal test dataset)
         # test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv')
-        test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/train_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/train_fold1.csv')
         preds.append(test[pred_cols].values)  # 取出特定欄位 pred_cols（這些欄位代表各個標籤的預測結果），並使用 .values 轉換為 numpy 陣列
     test[pred_cols] = np.mean(preds, 0)  # 將 test_fold0、test_fold1 各個欄位取平均；對所有 config 的預測結果按 axis=0 求均值，這表示對同一筆資料，不同模型（或不同設定）的預測結果取平均
     test[pred_cols] = sigmoid(test[pred_cols]).astype(float)  # 轉換為 0-1 的數字(做正規化)
@@ -39,7 +39,7 @@ for fold in range(1):
         # test = pd.read_csv(f'results/{config}/test_fold{fold}.csv')
         # test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/test_fold{fold}.csv')
         # test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/oof_fold{fold}.csv')
-        test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/train_fold{fold}.csv')
+        test = pd.read_csv(f'{WORKING_DIR}/ckpt/{config}/train_fold1.csv')
 
         preds.append(test[pred_cols].values)
     test[pred_cols] = np.mean(preds, 0)
