@@ -176,10 +176,33 @@ if __name__ == "__main__":
                 test[pred_cols] = preds[preds_n]
                 preds_n += 1
 
-        # test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
-        test.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
-        # print(f'test save to {OUTPUT_PATH}/test_fold{args.fold}.csv')
-        print(f'train save to {OUTPUT_PATH}/train_fold{args.fold}.csv')
+        test.to_csv(f'{OUTPUT_PATH}/test_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/test_fold0.csv
+        # test.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
+        print(f'test save to {OUTPUT_PATH}/test_fold{args.fold}.csv')
+        # print(f'train save to {OUTPUT_PATH}/train_fold{args.fold}.csv')
+
+
+    if cfg.predict_train:
+        train_df, train_loader = prepare_loader(cfg, split='train')  # -> src/utils/dataloader_factory.py
+        preds = predict(cfg, train_loader)
+
+        preds_n = 0
+        for add_imsizes_n, add_imsizes in enumerate(cfg.add_imsizes_when_inference):
+            for tta_n in range(cfg.tta):
+                suffix = ''
+                if add_imsizes_n != 0:
+                    suffix = f'multi_scale_{add_imsizes_n}_'
+                if tta_n != 0:
+                    suffix += f'flip_{tta_n}'
+                if suffix == '':
+                    pred_cols = [f'pred_{c}' for c in cfg.label_features]
+                else:
+                    pred_cols = [f'pred_{c}_{suffix}' for c in cfg.label_features]
+                train_df[pred_cols] = preds[preds_n]
+                preds_n += 1
+
+        train_df.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
+        print(f'train predictions saved to {OUTPUT_PATH}/train_fold{args.fold}.csv')
 
 print('predict.py finish')
 

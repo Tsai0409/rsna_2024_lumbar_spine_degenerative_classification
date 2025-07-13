@@ -131,6 +131,7 @@ class rsna_v1(Baseline):
         self.compe = 'rsna_2024'
         self.predict_valid = True
         self.predict_test = False
+        self.predict_train = False
         self.model_name = 'convnext_small.in12k_ft_in1k_384'
         self.transform = medical_v3  # 定義在：src/utils/augmentations/augmentation.py
         self.batch_size = 8
@@ -167,6 +168,7 @@ class rsna_sagittal_level_cl_spinal_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
         # self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')  
         self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')  # -> 只有在 predict.py 中被使用到
         self.predict_test = True
+        self.predict_train = True
 
 class rsna_sagittal_level_cl_nfn_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
     def __init__(self, fold=0):
@@ -197,6 +199,7 @@ class rsna_sagittal_level_cl_nfn_v1(rsna_v1):  # inf_sagittal_slice_1st.sh
         # self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/dcm_to_png_3/sagittal_df.csv')
         self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')
         self.predict_test = True
+        self.predict_train = True
 
 class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
     def __init__(self, fold=0):
