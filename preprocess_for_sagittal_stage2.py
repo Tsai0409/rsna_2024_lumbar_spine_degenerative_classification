@@ -47,6 +47,9 @@ for fold in range(1):
     nfn = test.copy()
     nfn.to_csv('nfn.csv', index=False)
 
+    spinal = spinal.reset_index(drop=True)
+    nfn = nfn.reset_index(drop=True)
+
     # df = spinal.merge(nfn[['path']+pred_cols], on='path')
     df = spinal.merge(nfn[['path', 'fold']+pred_cols], on=['path', 'fold'])
     df.to_csv('df.csv', index=False)
