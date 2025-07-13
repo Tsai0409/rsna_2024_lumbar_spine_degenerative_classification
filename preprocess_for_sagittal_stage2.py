@@ -48,7 +48,7 @@ for fold in range(1):
     nfn.to_csv('nfn.csv', index=False)
 
     # df = spinal.merge(nfn[['path']+pred_cols], on='path')
-    df = spinal.merge(nfn[['path', 'fold']+pred_cols], on='path')
+    df = spinal.merge(nfn[['path', 'fold']+pred_cols], on=['path', 'fold'])
     df.to_csv('df.csv', index=False)
     # fold_df = pd.read_csv('input/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]
     # fold_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv').drop_duplicates('study_id')[['fold', 'study_id']]  # 篩選 DataFrame 只保留 fold 和 study_id 這兩個欄位，丟棄其他欄位
