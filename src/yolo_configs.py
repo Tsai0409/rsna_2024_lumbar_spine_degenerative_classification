@@ -69,7 +69,7 @@ class Baseline:
 ################
 class rsna_axial_all_images_left_yolox_x(Baseline):
 #     def __init__(self):
-    def __init__(self, fold=0):
+    def __init__(self, fold=1):
         super().__init__()
         self.fold = fold  # 我加
         self.compe = 'rsna_2024'
@@ -111,7 +111,7 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
 
 class rsna_axial_all_images_right_yolox_x(Baseline):
 #     def __init__(self):
-    def __init__(self, fold=0):
+    def __init__(self, fold=1):
         super().__init__()
         self.fold = fold  # 我加
         self.compe = 'rsna_2024'
