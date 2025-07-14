@@ -175,8 +175,10 @@ for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.
 print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
 tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
 tr.to_csv('tr.csv', index=False)
+print('tr.csv create')
 val = cfg.train_df[cfg.train_df.fold == fold]
 val.to_csv('val.csv', index=False)
+print('val.csv create')
 
 print('len(train) / len(val):', len(tr), len(val))
 # class_id_name_map: {0: 'left'} -> len(train) / len(val): 9602 1924
