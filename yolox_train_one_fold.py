@@ -26,8 +26,15 @@ class NumpyEncoder(json.JSONEncoder):  # json.JSONEncoder 的自定義編碼器 
 
 # save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
 # filename = '/kaggle/working/duplicate/input/annotations/train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold0_len9602.json'
-def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
-    json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)  # json.dump() 是 Python 的 json 模組中用來將 Python 物件寫入 JSON 檔案的函數；open(filename, 'w') 打開指定的檔案（這裡是 filename）以進行寫入模式
+# def save_annot_json(json_annotation, filename):  # filename 是 json 路徑
+#     json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)  # json.dump() 是 Python 的 json 模組中用來將 Python 物件寫入 JSON 檔案的函數；open(filename, 'w') 打開指定的檔案（這裡是 filename）以進行寫入模式
+def save_annot_json(json_annotation, filename):
+    required_keys = ['info', 'licenses', 'images', 'annotations', 'categories']
+    for key in required_keys:
+        if key not in json_annotation:
+            raise ValueError(f"❌ Missing required key '{key}' in annotation JSON.")
+    json.dump(json_annotation, open(filename, 'w'), indent=4, cls=NumpyEncoder)
+
 
 annotion_id = 0
 image_id_n = 0
@@ -174,10 +181,10 @@ for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.
     class_id_name_map[id] = c
 print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
 tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
-tr.to_csv('tr.csv', index=False)
+tr.to_csv(f'{cfg.absolute_path}/tr.csv', index=False)
 print('tr.csv create')
 val = cfg.train_df[cfg.train_df.fold == fold]
-val.to_csv('val.csv', index=False)
+val.to_csv(f'{cfg.absolute_path}/val.csv', index=False)
 print('val.csv create')
 
 print('len(train) / len(val):', len(tr), len(val))
