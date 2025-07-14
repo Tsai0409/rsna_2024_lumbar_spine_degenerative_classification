@@ -388,7 +388,22 @@ model.head.training=False
 model.training=False
 
 # get custom trained checkpoint
-ckpt_file = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"
+# ckpt_file = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"
+ckpt_best = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"
+ckpt_latest = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/latest_ckpt.pth"
+
+if os.path.exists(ckpt_best):
+    print(f'✅ Loading "{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt.pth"')
+    ckpt_file = ckpt_best
+elif os.path.exists(ckpt_latest):
+    print(f'✅ Loading "{cfg.absolute_path}/results/{config}/fold{fold}/{config}/latest_ckpt.pth"')
+    ckpt_file = ckpt_latest
+else:
+    raise FileNotFoundError("❌ No checkpoint found: neither best_ckpt.pth nor latest_ckpt.pth")
+
+ckpt = torch.load(ckpt_file, map_location="cpu")
+
+
 ckpt = torch.load(ckpt_file, map_location="cpu")
 model.load_state_dict(ckpt["model"])
 for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):
