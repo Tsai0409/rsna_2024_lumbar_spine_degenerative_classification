@@ -92,9 +92,9 @@ class rsna_axial_all_images_left_yolox_x(Baseline):
         self.epochs = 3
         # self.epochs = 20
         # val = self.train_df[self.train_df.fold==0]
-        val = self.train_df[self.train_df.fold==1]
-        self.train_df['fold'] = -1
-        self.train_df = pd.concat([self.train_df, val])
+        # val = self.train_df[self.train_df.fold==1]
+        # self.train_df['fold'] = -1
+        # self.train_df = pd.concat([self.train_df, val])
         
 #        self.test_df_path = 'input/train_with_fold.csv'
         # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
