@@ -349,8 +349,28 @@ class Exp(BaseExp):
         # NOTE: trainer shouldn't be an attribute of exp object
         return trainer
 
+    # def eval(self, model, evaluator, is_distributed, half=False, return_outputs=False):
+    #     return evaluator.evaluate(model, is_distributed, half, return_outputs=return_outputs)
+
     def eval(self, model, evaluator, is_distributed, half=False, return_outputs=False):
+        # === 檢查 evaluator 的 GT JSON ===
+        try:
+            coco_gt = evaluator.dataloader.dataset.coco
+            required_keys = ["info", "licenses", "categories", "images", "annotations"]
+            missing_keys = [k for k in required_keys if k not in coco_gt.dataset]
+
+            if missing_keys:
+                print(f"❌ [eval error] Missing keys in GT JSON: {missing_keys}")
+                print("📂 JSON 路徑:", coco_gt.dataset.get("path", "(無法取得)"))
+                raise KeyError(f"Invalid COCO JSON: missing {missing_keys}")
+            else:
+                print(f"✅ JSON 檢查通過，共 {len(coco_gt.dataset['images'])} 張圖，{len(coco_gt.dataset['annotations'])} 標註。")
+        except Exception as e:
+            print("🚨 JSON 檢查時發生錯誤:", e)
+
+        # === 執行評估 ===
         return evaluator.evaluate(model, is_distributed, half, return_outputs=return_outputs)
+
 
 
 def check_exp_value(exp: Exp):
