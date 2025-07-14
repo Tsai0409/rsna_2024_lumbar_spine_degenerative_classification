@@ -35,7 +35,7 @@ def dataset2coco(df):  # COCO 是一種常用的物件檢測資料格式，包�
     global annotion_id
     global image_id_n
     annotations_json = {  # 建立 annotations_json 字典
-        "info": [],
+        "info": {},
         "licenses": [],
         "categories": categories,
         "images": [],
