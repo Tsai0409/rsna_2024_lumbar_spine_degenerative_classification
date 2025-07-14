@@ -174,7 +174,9 @@ for n, (c, id) in enumerate(zip(cfg.train_df.sort_values('class_id').class_name.
     class_id_name_map[id] = c
 print('class_id_name_map:', class_id_name_map)  # class_id_name_map: {0: 'left'}？
 tr = cfg.train_df[cfg.train_df.fold != fold]  # DataFrame
+tr.to_csv('tr.csv', index=False)
 val = cfg.train_df[cfg.train_df.fold == fold]
+val.to_csv('val.csv', index=False)
 
 print('len(train) / len(val):', len(tr), len(val))
 # class_id_name_map: {0: 'left'} -> len(train) / len(val): 9602 1924
@@ -371,6 +373,9 @@ ckpt_file = f"{cfg.absolute_path}/results/{config}/fold{fold}/{config}/best_ckpt
 ckpt = torch.load(ckpt_file, map_location="cpu")
 model.load_state_dict(ckpt["model"])
 for mode, df in zip(['oof', 'test'], [val, cfg.test_df]):
+    if ((mode == 'test') & (not cfg.predict_test)):
+        df.to_csv('test.csv', index=False)
+
     if ((mode == 'oof') & (not cfg.predict_valid) or ((mode == 'test') & (not cfg.predict_test))):
         continue
     print('inference', mode, 'len(df):', len(df.drop_duplicates('path')))
