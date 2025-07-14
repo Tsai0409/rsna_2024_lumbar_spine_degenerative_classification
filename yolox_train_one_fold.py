@@ -185,6 +185,9 @@ tr.to_csv(f'{cfg.absolute_path}/tr.csv', index=False)
 print('tr.csv create')
 val = cfg.train_df[cfg.train_df.fold == fold]
 val.to_csv(f'{cfg.absolute_path}/val.csv', index=False)
+print("len(val):", len(val))
+print("val.columns:", val.columns)
+print(val[['path', 'x_min', 'y_min', 'x_max', 'y_max', 'class_id']].head())
 print('val.csv create')
 
 print('len(train) / len(val):', len(tr), len(val))
@@ -210,6 +213,13 @@ if not cfg.inference_only:  # configs=("rsna_axial_all_images_left_yolox_x" "rsn
         save_annot_json(train_annot_json, f"{cfg.absolute_path}/input/annotations/{train_json_filename}")
         save_annot_json(valid_annot_json, f"{cfg.absolute_path}/input/annotations/{valid_json_filename}")
 
+        val_json = dataset2coco(val)
+        save_annot_json(val_json, "val_debug.json")
+
+        # 驗證是否包含 info 和 licenses
+        print("val_debug.json keys:", val_json.keys())
+
+        
 config_file_template = f'''
 
 #!/usr/bin/env python3
