@@ -208,7 +208,8 @@ class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
         super().__init__()
         self.fold = fold  # 我加
         # self.train_df_path = f'input/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
-        self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_holdout_5/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
+        # self.train_df_path = f'{WORKING_DIR}/csv_train/sagittal_slice_estimation_holdout_5/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold{fold}.csv'
+        self.train_df_path = '{WORKING_DIR}/csv_train/sagittal_slice_estimation_holdout_5/train_for_sagittal_level_cl_v1_for_train_spinal_nfn_fold1.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal', 'l1_right_neural', 'l2_right_neural', 'l3_right_neural', 'l4_right_neural', 'l5_right_neural', 'l1_left_neural', 'l2_left_neural', 'l3_left_neural', 'l4_left_neural', 'l5_left_neural']
         self.label_features = ['pred_'+c for c in self.label_features]
