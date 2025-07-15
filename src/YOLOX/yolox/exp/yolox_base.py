@@ -41,10 +41,10 @@ class Exp(BaseExp):
         # self.data_dir = None
         self.data_dir = '/kaggle/working/duplicate/input'
         # name of annotation file for training
-        self.train_ann = "train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold1_len6136.json"
+        self.train_ann = "annotations/train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold1_len6136.json"
         # name of annotation file for evaluation
         # self.val_ann = "instances_val2017.json"
-        self.val_ann = "valid_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold1_len1549.json"
+        self.val_ann = "annotations/valid_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold1_len1549.json"
         # name of annotation file for testing
         self.test_ann = "instances_test2017.json"
 
@@ -360,6 +360,9 @@ class Exp(BaseExp):
             coco_gt = evaluator.dataloader.dataset.coco
             required_keys = ["info", "licenses", "categories", "images", "annotations"]
             missing_keys = [k for k in required_keys if k not in coco_gt.dataset]
+
+            # ✅ 加這一行：明確顯示目前讀取的 JSON 路徑
+            print("🔍 [Debug] Loaded JSON from:", coco_gt.dataset.get("path", "(無法取得)"))
 
             if missing_keys:
                 print(f"❌ [eval error] Missing keys in GT JSON: {missing_keys}")
