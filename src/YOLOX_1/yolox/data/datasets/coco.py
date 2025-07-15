@@ -62,7 +62,7 @@ class COCODataset(CacheDataset):
 
         self.coco = COCO(os.path.join(self.data_dir, "annotations", self.json_file))
         # remove_useless_info(self.coco)
-        if name != "val2017":
+        if "train" in self.json_file:
             remove_useless_info(self.coco)
 
         self.ids = self.coco.getImgIds()
