@@ -38,11 +38,13 @@ class Exp(BaseExp):
         # You can uncomment this line to specify a multiscale range
         # self.random_size = (14, 26)
         # dir of dataset images, if data_dir is None, this project will use `datasets` dir
-        self.data_dir = None
+        # self.data_dir = None
+        self.data_dir = '/kaggle/working/duplicate/input'
         # name of annotation file for training
-        self.train_ann = "instances_train2017.json"
+        self.train_ann = "train_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold1_len6136.json"
         # name of annotation file for evaluation
-        self.val_ann = "instances_val2017.json"
+        # self.val_ann = "instances_val2017.json"
+        self.val_ann = "valid_rsna_axial_all_images_left_yolox_x___train_axial_for_yolo_all_image_v1_fold1_len1549.json"
         # name of annotation file for testing
         self.test_ann = "instances_test2017.json"
 
