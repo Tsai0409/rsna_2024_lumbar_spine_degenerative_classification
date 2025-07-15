@@ -62,8 +62,11 @@ class COCODataset(CacheDataset):
 
         self.coco = COCO(os.path.join(self.data_dir, "annotations", self.json_file))
         # remove_useless_info(self.coco)
+        print(f"[COCODataset] JSON file: {self.json_file}")
         if "train" in self.json_file:
+            print("[COCODataset] Removing unused info from COCO JSON (train mode)")
             remove_useless_info(self.coco)
+
 
         self.ids = self.coco.getImgIds()
         self.num_imgs = len(self.ids)
