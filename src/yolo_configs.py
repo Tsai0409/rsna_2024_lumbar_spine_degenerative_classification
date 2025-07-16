@@ -159,17 +159,22 @@ class rsna_10classes_yolox_x(Baseline):
         self.no_aug_epochs = 15
         self.warmup_epochs = 5
         # self.pretrained_path = '/groups/gca50041/ariyasu/yolox_weights/yolox_x.pth'
-        self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'
+        self.pretrained_path = '/kaggle/input/pretrain-7/yolox_x.pth'  # -> 在什麼樣子的資料集做 pretrain？ -> COCO
         
         self.image_size = (512, 512)
         self.batch_size = 8
         self.predict_valid = True
-        self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
-#        self.test_df_path = 'input/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
+        # self.train_df_path = 'input/train_for_yolo_10level_v1.csv'
+        # self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/train_for_yolo_10level_v1.csv'  # 只有 Sagittal T2/STIR
+        self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/train_for_yolo_10level_v1.csv'
+        # self.test_df_path = 'input/train_with_fold.csv'
+        # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.test_df = pd.read_csv(self.test_df_path)
-        oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
+        # oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
+        # oof = pd.read_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_6/oof.csv')
+        oof = pd.read_csv(f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/oof.csv')
         dfs = []
         for id, idf in oof.groupby('series_id'):
             idf = idf.sort_values(['x_pos', 'instance_number'])
@@ -178,6 +183,7 @@ class rsna_10classes_yolox_x(Baseline):
             dfs.append(ldf)
         self.test_df = pd.concat(dfs)
         self.predict_test = True
-        # self.epochs = 40
-        self.epochs = 20
-        self.inference_only = True
+        self.epochs = 40
+        # self.epochs = 20
+        # self.inference_only = True -> /kaggle/working/duplicate/results/rsna_10classes_yolox_x/fold0/rsna_10classes_yolox_x/best_ckpt.pth 不會產生
+        self.inference_only = False 
