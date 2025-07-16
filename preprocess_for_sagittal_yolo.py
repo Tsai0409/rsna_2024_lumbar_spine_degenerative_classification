@@ -71,7 +71,8 @@ targets = [f'pred_{c}' for c in targets]  # pred_l1_spinal (沒有做 sigmoid)
 pred_cols = [f'pred_{c}' for c in targets]  # pred_pred_l1_spinal (有做 sigmoid)
 
 # oof = pd.concat([pd.read_csv(f'results/rsna_sagittal_cl/oof_fold{fold}.csv') for fold in range(5)])
-oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof_fold{fold}.csv') for fold in range(1)])  # 在 slice estimation 最後得到各個類別的分數
+# oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof_fold{fold}.csv') for fold in range(1)])  # 在 slice estimation 最後得到各個類別的分數
+oof = pd.concat([pd.read_csv(f'{WORKING_DIR}/ckpt/rsna_sagittal_cl/oof_fold1.csv') for fold in range(1)])  # 在 slice estimation 最後得到各個類別的分數
 
 oof[pred_cols] = sigmoid(oof[pred_cols])
 oof['pred_spinal'] = oof[[c for c in pred_cols if 'spinal' in c]].mean(1)  # 用有做 sigmoid 的結果去平均
