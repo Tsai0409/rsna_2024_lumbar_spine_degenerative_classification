@@ -229,7 +229,11 @@ class rsna_sagittal_cl(rsna_v1):  # inf_sagittal_slice_2nd.sh
         self.rsna_2024_agg_val = False
         self.epochs = 15
         self.box_crop = None
-        self.predict_test = False
+        # self.predict_test = False
+        self.predict_test = True
+        self.test_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')
+        self.predict_train = True
+        self.train_2nd_df = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv')
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # classification for axial (stage 2)
