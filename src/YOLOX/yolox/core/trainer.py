@@ -127,8 +127,8 @@ class Trainer:
         )
 
     def before_train(self):
-        logger.info("args: {}".format(self.args))
-        logger.info("exp value:\n{}".format(self.exp))
+        # logger.info("args: {}".format(self.args))
+        # logger.info("exp value:\n{}".format(self.exp))
 
         # model related init
         torch.cuda.set_device(self.local_rank)
@@ -189,7 +189,7 @@ class Trainer:
                 raise ValueError("logger must be either 'tensorboard' or 'wandb'")
 
         logger.info("Training start...")
-        logger.info("\n{}".format(model))
+        # logger.info("\n{}".format(model))
 
     def after_train(self):
         logger.info(
