@@ -168,7 +168,7 @@ class rsna_10classes_yolox_x(Baseline):
         self.train_df_path = f'{WORKING_DIR}/csv_train/region_estimation_by_yolox_holdout_6/train_for_yolo_10level_v1.csv'
         # self.test_df_path = 'input/train_with_fold.csv'
         # self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv'
-        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv'
+        self.test_df_path = f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv'
         self.train_df = pd.read_csv(self.train_df_path)
         self.test_df = pd.read_csv(self.test_df_path)
         # oof = pd.read_csv(f'results/rsna_sagittal_cl/oof.csv')
