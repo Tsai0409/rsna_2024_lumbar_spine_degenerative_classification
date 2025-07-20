@@ -51,7 +51,7 @@ fi
 # 配置與摺疊設定
 configs=("rsna_10classes_yolox_x")
 # folds=(0 1 2 3 4)
-folds=(0 1)
+folds=(1)
 
 # 遍歷每個配置與摺疊進行訓練
 for config in "${configs[@]}"; do

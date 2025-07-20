@@ -15,7 +15,8 @@ df['pred_level'] = df.level.values
 df = df[df.dis < 3]
 df = df[df.closest == 1][['series_id', 'instance_number', 'pred_level', 'dis']]
 # al = pd.read_csv('input/train_with_fold.csv')
-al = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+# al = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
+al = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')
 
 tr = al.merge(df, on=['series_id', 'instance_number'])
 
@@ -38,7 +39,7 @@ for col in label_features:  # 轉為 one-hot vector；一張 圖片 真的可以
 
 # axial right
 # test = pd.read_csv('results/rsna_axial_all_images_right_yolox_x/test_fold0.csv')
-test = pd.read_csv(f'{WORKING_DIR}/results/rsna_axial_all_images_right_yolox_x/test_fold0.csv')
+test = pd.read_csv(f'{WORKING_DIR}/results/rsna_axial_all_images_right_yolox_x/test_fold1.csv')
 dfs=[]
 for p, pdf in tqdm(test.groupby(["path", 'class_id'])):  # class_id = 0(right)
     dfs.append(pdf[pdf.conf==pdf.conf.max()])
@@ -48,7 +49,7 @@ for c in ['conf', 'x_min', 'y_min', 'x_max', 'y_max']:
 
 # axial left
 # test = pd.read_csv('results/rsna_axial_all_images_left_yolox_x/test_fold0.csv')
-test = pd.read_csv(f'{WORKING_DIR}/results/rsna_axial_all_images_left_yolox_x/test_fold0.csv')
+test = pd.read_csv(f'{WORKING_DIR}/results/rsna_axial_all_images_left_yolox_x/test_fold1.csv')
 dfs=[]
 for p, pdf in tqdm(test.groupby(["path", 'class_id'])):  # class_id = 0(left)
     dfs.append(pdf[pdf.conf==pdf.conf.max()])
