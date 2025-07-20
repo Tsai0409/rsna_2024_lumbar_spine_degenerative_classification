@@ -16,7 +16,7 @@ df = df[df.dis < 3]
 df = df[df.closest == 1][['series_id', 'instance_number', 'pred_level', 'dis']]
 # al = pd.read_csv('input/train_with_fold.csv')
 # al = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_4/train_with_fold.csv')
-al = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout_test.csv')
+al = pd.read_csv(f'{WORKING_DIR}/csv_train/preprocess_holdout_4/train_with_fold_holdout.csv')
 
 tr = al.merge(df, on=['series_id', 'instance_number'])
 
