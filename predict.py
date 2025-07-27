@@ -182,27 +182,38 @@ if __name__ == "__main__":
         # print(f'train save to {OUTPUT_PATH}/train_fold{args.fold}.csv')
 
 
+    # if cfg.predict_train:
+    #     train_df, train_loader = prepare_loader(cfg, split='train')  # -> src/utils/dataloader_factory.py
+    #     preds = predict(cfg, train_loader)
+
+    #     preds_n = 0
+    #     for add_imsizes_n, add_imsizes in enumerate(cfg.add_imsizes_when_inference):
+    #         for tta_n in range(cfg.tta):
+    #             suffix = ''
+    #             if add_imsizes_n != 0:
+    #                 suffix = f'multi_scale_{add_imsizes_n}_'
+    #             if tta_n != 0:
+    #                 suffix += f'flip_{tta_n}'
+    #             if suffix == '':
+    #                 pred_cols = [f'pred_{c}' for c in cfg.label_features]
+    #             else:
+    #                 pred_cols = [f'pred_{c}_{suffix}' for c in cfg.label_features]
+    #             train_df[pred_cols] = preds[preds_n]
+    #             preds_n += 1
+
+    #     train_df.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
+    #     print(f'train predictions saved to {OUTPUT_PATH}/train_fold{args.fold}.csv')
+
     if cfg.predict_train:
-        train_df, train_loader = prepare_loader(cfg, split='train')  # -> src/utils/dataloader_factory.py
+        train_df, train_loader = prepare_loader(cfg, split='train')
         preds = predict(cfg, train_loader)
 
-        preds_n = 0
-        for add_imsizes_n, add_imsizes in enumerate(cfg.add_imsizes_when_inference):
-            for tta_n in range(cfg.tta):
-                suffix = ''
-                if add_imsizes_n != 0:
-                    suffix = f'multi_scale_{add_imsizes_n}_'
-                if tta_n != 0:
-                    suffix += f'flip_{tta_n}'
-                if suffix == '':
-                    pred_cols = [f'pred_{c}' for c in cfg.label_features]
-                else:
-                    pred_cols = [f'pred_{c}_{suffix}' for c in cfg.label_features]
-                train_df[pred_cols] = preds[preds_n]
-                preds_n += 1
+        # 統一預測欄位名稱為 pred_pred_*
+        pred_cols = [f'pred_pred_{c}' for c in cfg.label_features]
+        train_df[pred_cols] = preds[0]  # 注意：這假設 preds[0] 是 numpy array or tensor
 
-        train_df.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
-        print(f'train predictions saved to {OUTPUT_PATH}/train_fold{args.fold}.csv')
+        train_df.to_csv(f'{OUTPUT_PATH}/oof_train_fold{args.fold}.csv', index=False)
+        print(f'train oof saved to {OUTPUT_PATH}/oof_train_fold{args.fold}.csv')
 
 print('predict.py finish')
 
