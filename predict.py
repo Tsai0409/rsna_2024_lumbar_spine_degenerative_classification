@@ -209,7 +209,7 @@ if __name__ == "__main__":
         preds = predict(cfg, train_loader)
 
         # 統一預測欄位名稱為 pred_pred_*
-        pred_cols = [f'pred_pred_{c}' for c in cfg.label_features]
+        pred_cols = [f'pred_{c}' for c in cfg.label_features]
         train_df[pred_cols] = preds[0]  # 注意：這假設 preds[0] 是 numpy array or tensor
 
         train_df.to_csv(f'{OUTPUT_PATH}/oof_train_fold{args.fold}.csv', index=False)
