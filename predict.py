@@ -239,6 +239,11 @@ if __name__ == "__main__":
         train.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
         print(f'val save to {OUTPUT_PATH}/train_fold{args.fold}.csv')
 
+    print(f"type of preds: {type(preds)}")
+    print(f"length of preds: {len(preds)}")
+    print(f"sample of preds[0][0]: {preds[0][0]}")  # 機率 or logits？
+    print(f"sample of preds[1][0]: {preds[1][0]}")  # 應該是 logits
+
     # if cfg.predict_train:
     #     train_df, train_loader = prepare_loader(cfg, split='train')
     #     preds = predict(cfg, train_loader)
