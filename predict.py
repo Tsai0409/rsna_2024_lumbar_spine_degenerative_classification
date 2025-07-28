@@ -206,14 +206,52 @@ if __name__ == "__main__":
 
     if cfg.predict_train:
         train_df, train_loader = prepare_loader(cfg, split='train')
-        preds = predict(cfg, train_loader)
+        preds, raw_preds = predict(cfg, train_loader)
 
-        # 統一預測欄位名稱為 pred_pred_*
-        pred_cols = [f'pred_{c}' for c in cfg.label_features]
-        train_df[pred_cols] = preds[0]  # 注意：這假設 preds[0] 是 numpy array or tensor
+        preds_n = 0
+        for add_imsizes_n, add_imsizes in enumerate(cfg.add_imsizes_when_inference):
+            for tta_n in range(cfg.tta):
+                suffix = ''
+                if add_imsizes_n != 0:
+                    suffix = f'multi_scale_{add_imsizes_n}_'
+                if tta_n != 0:
+                    suffix += f'flip_{tta_n}'
 
-        train_df.to_csv(f'{OUTPUT_PATH}/oof_train_fold{args.fold}.csv', index=False)
-        print(f'train oof saved to {OUTPUT_PATH}/oof_train_fold{args.fold}.csv')
+                # 機率 sigmoid 結果（pred_pred_XXX）
+                prob_cols = [f'pred_pred_{c}_{suffix}' if suffix else f'pred_pred_{c}' for c in cfg.label_features]
+                train_df[prob_cols] = preds[preds_n]
+
+                # 原始 logits 結果（pred_XXX）
+                logit_cols = [f'pred_{c}_{suffix}' if suffix else f'pred_{c}' for c in cfg.label_features]
+                train_df[logit_cols] = raw_preds[preds_n]
+
+                preds_n += 1
+
+        train_df.to_csv(f'{OUTPUT_PATH}/train_fold{args.fold}.csv', index=False)
+        print(f'train predictions saved to {OUTPUT_PATH}/train_fold{args.fold}.csv')
+
+
+    # if cfg.predict_train:
+    #     train_df, train_loader = prepare_loader(cfg, split='train')
+    #     preds = predict(cfg, train_loader)
+
+    #     # 統一預測欄位名稱為 pred_pred_*
+    #     pred_cols = [f'pred_{c}' for c in cfg.label_features]
+    #     train_df[pred_cols] = preds[0]  # 注意：這假設 preds[0] 是 numpy array or tensor
+
+    #     train_df.to_csv(f'{OUTPUT_PATH}/oof_train_fold{args.fold}.csv', index=False)
+    #     print(f'train oof saved to {OUTPUT_PATH}/oof_train_fold{args.fold}.csv')
+
+    # # self.predict_valid = True (all condition)
+    # if cfg.predict_valid:  # 驗證集的預測；val_dataloader 定義在 data_module/classificaiton.py 中；val_loader 是以(image, label) 的資料型態回傳
+    #     val, val_loader = prepare_loader(cfg, split='val')  # val: DataFrame，包含驗證集的原始資料（例如 ID、標籤等）；val_loader:DataLoader，可以依批次讀取驗證集的資料，方便後續推論使用。
+    #     preds = predict(cfg, val_loader)
+    #     pred_cols = [f'pred_{c}' for c in cfg.label_features]  # self.label_features = ['l1_spinal', 'l2_spinal', 'l3_spinal', 'l4_spinal', 'l5_spinal']
+    #     val[pred_cols] = preds[0]
+    #     val.to_csv(f'{OUTPUT_PATH}/oof_fold{args.fold}.csv', index=False)  # /kaggle/working/ckpt/rsna_sagittal_level_cl_spinal_v1/oof_fold0.csv
+    #     print(f'val save to {OUTPUT_PATH}/oof_fold{args.fold}.csv')
+
+
 
 print('predict.py finish')
 
